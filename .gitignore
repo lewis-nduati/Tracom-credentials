@@ -1,0 +1,15 @@
+# Environment variables
+.env
+.env.local
+
+# Node
+node_modules/
+npm-debug.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Keys and secrets
+*.pem
+*.key
