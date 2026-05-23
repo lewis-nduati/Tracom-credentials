@@ -63,6 +63,8 @@ import { cn } from "~/lib/utils";
 import { RESOLVED_COMMITMENT_STATUSES } from "~/config/ui-constants";
 import { toast } from "sonner";
 import { RegisterCourse } from "~/components/studio/register-course";
+import { SetCoursePrerequisites } from "~/components/tx/set-course-prerequisites";
+import { COURSE_PREREQUISITES } from "~/config/course-prerequisites";
 // Note: computeSltHashDefinite removed - no longer needed with hook-based data
 
 // =============================================================================
@@ -1415,6 +1417,22 @@ function CourseEditorContent({ courseId }: { courseId: string }) {
                     )}
                   </div>
                 </StudioFormSection>
+
+                {/* Prerequisites - Owner only, shown when a prerequisite is configured */}
+                {isOwner && COURSE_PREREQUISITES[courseId] && (
+                  <StudioFormSection
+                    title="Prerequisites"
+                    description="Require students to hold a credential from another course before enrolling"
+                  >
+                    <SetCoursePrerequisites
+                      courseId={courseId}
+                      moduleHashes={modules.map((m) => m.sltHash)}
+                      prerequisiteStateId={COURSE_PREREQUISITES[courseId]!.studentStateId}
+                      prerequisiteCourseName={COURSE_PREREQUISITES[courseId]!.courseName}
+                      onSuccess={() => void refetchCourse()}
+                    />
+                  </StudioFormSection>
+                )}
 
                 {/* Course ID */}
                 <StudioFormSection title="Course ID" description="Unique identifier for this course">
