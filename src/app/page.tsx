@@ -12,8 +12,8 @@ export default function Home() {
       <section className="flex flex-1 flex-col items-center px-6 pt-[4vh]">
         {/* Logo — pinned near top so it doesn't shift between states */}
         <Image
-          src="/logos/logo-with-typography-stacked.svg"
-          alt="Andamio"
+          src="/logos/tracom-logo.svg"
+          alt="Tracom Academy"
           width={200}
           height={200}
           className="shrink-0"

@@ -115,7 +115,7 @@ export function LandingHero() {
               className="object-contain hidden dark:block"
             />
           </div>
-          <span className="text-muted-foreground text-center text-sm sm:text-base">Join projects.</span>
+          <span className="text-muted-foreground text-center text-sm sm:text-base">Get hired</span>
         </div>
       </div>
 
@@ -128,7 +128,7 @@ export function LandingHero() {
           <div className="flex flex-col items-center text-center p-6 gap-4">
             <AndamioHeading level={3} size="base">Get Started</AndamioHeading>
             <p className="text-sm text-muted-foreground">
-              Connect your wallet and create your on-chain identity
+              Connect your wallet and create your Tracom Academy identity on Cardano
             </p>
             <AndamioButton onClick={handleEnter} className="w-full mt-auto">
               Enter
@@ -138,7 +138,7 @@ export function LandingHero() {
           <div className="flex flex-col items-center text-center p-6 gap-4">
             <AndamioHeading level={3} size="base">Explore</AndamioHeading>
             <p className="text-sm text-muted-foreground">
-              Browse courses and projects to see what&apos;s available
+              Explore Tracom Academy courses and earn verifiable credentials
             </p>
             <AndamioButton asChild variant="outline" className="w-full mt-auto">
               <Link href="/course">Browse</Link>
@@ -154,12 +154,6 @@ export function LandingHero() {
               <Link href="/studio">Launch</Link>
             </AndamioButton>
           </div>
-        </div>
-
-        <div className="pt-4 pb-8">
-          <Link href="/migrate" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-            Have a V1 Access Token? Migrate to V2 →
-          </Link>
         </div>
       </div>
     </div>
