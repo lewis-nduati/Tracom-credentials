@@ -1,0 +1,24 @@
+# Dependencies — never useful to read
+node_modules/
+
+# Build output
+.next/
+out/
+build/
+
+# Auto-generated — read only when explicitly needed
+src/types/generated/gateway.ts
+src/types/generated/api-metadata.json
+openapi.json
+
+# Lockfile — never useful
+package-lock.json
+
+# Large binary/asset files
+public/logos/tracom-logo.svg
+public/logos/tracom-logo-light.svg
+public/logos/logo-with-typography*.svg
+public/landing-page-icons/
+
+# TypeScript build cache
+*.tsbuildinfo
