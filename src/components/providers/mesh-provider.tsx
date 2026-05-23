@@ -34,11 +34,18 @@ export function MeshProvider({ children }: { children: ReactNode }) {
   const [Provider, setProvider] = useState<ComponentType<{ children: ReactNode }> | null>(null);
 
   useEffect(() => {
-    // Dynamically import MeshProvider only on client-side to avoid
-    // "Cannot redefine property: chunk" error from cardano-peer-connect
-    void import("@meshsdk/react").then((mod) => {
+    // Initialize libsodium WASM before mounting the Mesh wallet context.
+    // Ed25519PrivateKey and Bip32PrivateKey call sodium functions synchronously,
+    // so any wallet operation that reaches @cardano-sdk/crypto before sodium.ready
+    // resolves will throw "libsodium not initialized". Awaiting here guarantees
+    // sodium is ready before the first wallet connect/auth attempt.
+    const init = async () => {
+      const sodium = await import("libsodium-wrappers-sumo");
+      await sodium.default.ready;
+      const mod = await import("@meshsdk/react");
       setProvider(() => mod.MeshProvider);
-    });
+    };
+    void init();
   }, []);
 
   // Render children without MeshProvider during SSR/loading
