@@ -19,7 +19,7 @@ const STEPS = [
   {
     step: "03",
     title: "Earn credential",
-    desc: "Your certificate is minted on-chain, permanently recorded.",
+    desc: "Your certificate is issued permanently and can never be altered or revoked.",
   },
   {
     step: "04",
@@ -31,15 +31,15 @@ const STEPS = [
 const PROOF_CARDS = [
   {
     title: "100% Verifiable",
-    desc: "Every credential is anchored on Cardano. Anyone can confirm it is real — no middlemen, no email required.",
+    desc: "Issued by Tracom Academy and independently verifiable by any employer — no calls, no middlemen.",
   },
   {
     title: "Forever",
-    desc: "On-chain credentials cannot be revoked, lost, or expire. Your achievement is permanent.",
+    desc: "Your credential doesn't expire, can't be lost, and doesn't depend on Tracom's systems staying online.",
   },
   {
     title: "Yours",
-    desc: "Your credential lives in your wallet. You control it. You share it when you choose.",
+    desc: "Your credential belongs to you. You control it, you share it, and it follows you anywhere.",
   },
 ] as const;
 
