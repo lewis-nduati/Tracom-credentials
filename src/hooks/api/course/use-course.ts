@@ -22,6 +22,7 @@
  */
 
 import { useQuery } from "@tanstack/react-query";
+import { env } from "~/env";
 // Import directly from gateway.ts to avoid circular dependency with ~/types/generated
 import type {
   MergedCourseDetail,
@@ -320,8 +321,14 @@ export function useActiveCourses() {
         items = result.data ?? [];
       }
 
-      // Transform to app-level types with camelCase fields, then keep public only
-      return items.map(transformCourse).filter((course) => course.isPublic);
+      // Transform to app-level types, then filter to public Tracom courses only.
+      // NEXT_PUBLIC_COURSE_OWNER scopes the browse page to courses owned by this
+      // instance — without it, the page shows all courses on the shared preprod network.
+      const courseOwner = env.NEXT_PUBLIC_COURSE_OWNER;
+      return items
+        .map(transformCourse)
+        .filter((course) => course.isPublic)
+        .filter((course) => !courseOwner || course.owner === courseOwner);
     },
     staleTime: 60_000,
   });
