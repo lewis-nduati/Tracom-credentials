@@ -39,7 +39,7 @@ import { ConnectWalletGate } from "~/components/auth/connect-wallet-gate";
 import { ManagersManage } from "~/components/tx";
 import { StudioFormSection } from "~/components/studio/studio-editor-pane";
 import { RegisterProject } from "~/components/studio/register-project";
-import { PrerequisiteList } from "~/components/project/prerequisite-list";
+import { PrerequisiteList } from "~/components/projects/prerequisite-list";
 import { formatLovelace } from "~/lib/cardano-utils";
 import { RESOLVED_COMMITMENT_STATUSES } from "~/config/ui-constants";
 import { useProject, projectKeys } from "~/hooks/api/project/use-project";

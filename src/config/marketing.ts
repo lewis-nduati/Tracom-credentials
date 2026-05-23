@@ -68,7 +68,7 @@ export const MARKETING = {
   pioneers: {
     title: "What are Pioneers?",
     description: [
-      "Following patterns from Gimbalabs in 2021, we're inviting early adopters to shape Andamio V2 before mainnet. This isn't just beta testing — it's co-creation.",
+      "We're inviting early adopters to shape Tracom Academy's credential platform before mainnet. This isn't just beta testing — it's co-creation.",
       "Your questions become documentation. Your bugs become fixes. Your ideas become features.",
     ],
     linkText: "Read the Pioneers documentation",

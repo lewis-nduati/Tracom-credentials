@@ -37,7 +37,7 @@ import { toast } from "sonner";
 import { getTransactionExplorerUrl } from "~/lib/constants";
 import { useStudentCompletionsForPrereqs } from "~/hooks/api/course/use-student-completions-for-prereqs";
 import { checkProjectEligibility } from "~/lib/project-eligibility";
-import { PrerequisiteList } from "~/components/project/prerequisite-list";
+import { PrerequisiteList } from "~/components/projects/prerequisite-list";
 
 // ── Pure helpers (no component state dependency) ──────────────────────────
 

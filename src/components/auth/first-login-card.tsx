@@ -124,7 +124,7 @@ export function FirstLoginCard({
           <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
             <SuccessIcon className="h-8 w-8 text-primary" />
           </div>
-          <AndamioCardTitle className="text-2xl">Welcome to Andamio!</AndamioCardTitle>
+          <AndamioCardTitle className="text-2xl">Welcome to Tracom Academy!</AndamioCardTitle>
           <AndamioCardDescription className="mx-auto max-w-sm text-center">
             Signed in as <span className="font-mono font-semibold text-foreground">{alias}</span>. {terminalMessage}
           </AndamioCardDescription>
@@ -305,7 +305,7 @@ export function FirstLoginCard({
         {txConfirmed && (
           <div className="rounded-sm border border-primary/20 bg-primary/5 p-5 text-center space-y-3">
             <AndamioText className="font-semibold text-lg">
-              Welcome to Andamio!
+              Welcome to Tracom Academy!
             </AndamioText>
             <div className="flex items-center justify-center gap-2">
               <LoadingIcon className="h-4 w-4 animate-spin text-primary" />

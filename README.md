@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Tracom Academy — Blockchain Credential Platform
+
+A course credential platform for [Tracom Academy](https://tracom.co.ke), built on Cardano using the [Andamio](https://andamio.io) protocol.
+
+Students complete courses, earn verifiable on-chain credentials, and build a blockchain-backed learning record.
+
+## Stack
+
+- **Next.js 16** (App Router, Turbopack)
+- **Cardano / Andamio Protocol** — smart contracts for credentials and course management
+- **Mesh SDK** — wallet integration (CIP-30)
+- **tRPC + TanStack Query** — API layer
+- **Tailwind CSS + shadcn/ui** — UI components
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+npm install
+cp .env.example .env.local
+# Fill in your Andamio API key and Access Token Policy ID
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variable | Required | Description |
+|---|---|---|
+| `ANDAMIO_API_KEY` | Yes | Server-side key for the Andamio Gateway |
+| `NEXT_PUBLIC_ANDAMIO_GATEWAY_URL` | Yes | Gateway URL (preprod or mainnet) |
+| `NEXT_PUBLIC_CARDANO_NETWORK` | Yes | `preprod` \| `mainnet` \| `preview` |
+| `NEXT_PUBLIC_ACCESS_TOKEN_POLICY_ID` | Yes | Andamio Access Token policy ID |
+| `NEXT_PUBLIC_BLOCKFROST_PROJECT_ID` | No | Required for social wallet TX submission |
 
-## Learn More
+## Scripts
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run dev        # development server
+npm run build      # production build
+npm run check      # lint + typecheck
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Scope (v1)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Course credential flow only. Project and treasury features are disabled in this release.
 
-## Deploy on Vercel
+## Links
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [Tracom Academy](https://tracom.co.ke)
+- [Andamio Docs](https://docs.andamio.io)
+- [GitHub](https://github.com/lewis-nduati/Tracom-credentials)

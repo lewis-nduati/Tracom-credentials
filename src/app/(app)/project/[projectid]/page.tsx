@@ -39,7 +39,7 @@ import {
   CourseIcon,
   LockedIcon,
 } from "~/components/icons";
-import { PrerequisiteList } from "~/components/project/prerequisite-list";
+import { PrerequisiteList } from "~/components/projects/prerequisite-list";
 import { useAndamioAuth } from "~/hooks/auth/use-andamio-auth";
 import { useContributorCommitments } from "~/hooks/api/project/use-project-contributor";
 import { useStudentCompletionsForPrereqs } from "~/hooks/api/course/use-student-completions-for-prereqs";

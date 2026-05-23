@@ -1,0 +1,13 @@
+{
+  "enabledPlugins": {
+    "andamio-dev@andamio": true
+  },
+  "extraKnownMarketplaces": {
+    "andamio": {
+      "source": {
+        "source": "github",
+        "repo": "Andamio-Platform/andamio-marketplace"
+      }
+    }
+  }
+}
