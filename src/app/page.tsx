@@ -43,6 +43,8 @@ export default function Home() {
               tracom.co.ke
             </a>
             <span className="text-white/20">·</span>
+            <span>Powered by Andamio on Cardano</span>
+            <span className="text-white/20">·</span>
             <span className="font-mono uppercase tracking-wider">{network}</span>
           </div>
         </div>
