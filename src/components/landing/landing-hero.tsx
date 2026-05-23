@@ -83,10 +83,10 @@ export function LandingHero() {
       <section className="bg-[#1A3D6B] text-white px-6 py-20 sm:py-28">
         <div className="max-w-3xl mx-auto text-center space-y-6">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-tight">
-            Your Skills,<br />Verified on Cardano
+            Credentials Employers<br />Can Trust
           </h1>
           <p className="text-lg sm:text-xl text-white/70 max-w-xl mx-auto leading-relaxed">
-            Earn blockchain credentials from Tracom Academy. Permanent, portable, and verifiable by anyone.
+            Earn verified credentials from Tracom Academy.
           </p>
           <div className="pt-2">
             <button
