@@ -29,17 +29,17 @@ export const BRANDING = {
   /** URL paths for logos/icons */
   logo: {
     /** Horizontal logo for light backgrounds */
-    horizontal: "/logos/logo-with-typography.svg",
+    horizontal: "/logos/tracom-logo-light.svg",
     /** Horizontal logo for dark backgrounds */
-    horizontalDark: "/logos/logo-with-typography-dark.svg",
+    horizontalDark: "/logos/tracom-logo.svg",
     /** Stacked logo for light backgrounds */
-    stacked: "/logos/logo-with-typography-stacked.svg",
+    stacked: "/logos/tracom-logo-light.svg",
     /** Stacked logo for dark backgrounds */
-    stackedDark: "/logos/logo-with-typography-stacked-dark.svg",
+    stackedDark: "/logos/tracom-logo.svg",
     /** Legacy icon reference (for components that still use icons) */
     icon: "ModuleIcon",
     /** Favicon path */
-    favicon: "/favicon.ico",
+    favicon: "/favicon.svg",
     /** OG image for social sharing */
     ogImage: "/og-image.png",
   },

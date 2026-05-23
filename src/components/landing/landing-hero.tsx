@@ -1,20 +1,53 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAndamioAuth } from "~/hooks/auth/use-andamio-auth";
-import { AndamioButton } from "~/components/andamio/andamio-button";
-import { AndamioHeading } from "~/components/andamio/andamio-heading";
 import { AccessTokenOnboarding } from "~/components/auth/access-token-onboarding";
+
+const STEPS = [
+  {
+    step: "01",
+    title: "Complete a course",
+    desc: "Finish Tracom Academy coursework and assignments at your pace.",
+  },
+  {
+    step: "02",
+    title: "Submit evidence",
+    desc: "Your instructor reviews and approves your submitted work.",
+  },
+  {
+    step: "03",
+    title: "Earn credential",
+    desc: "Your certificate is minted on-chain, permanently recorded.",
+  },
+  {
+    step: "04",
+    title: "Unlock opportunities",
+    desc: "Share your credential with any employer, anywhere in the world.",
+  },
+] as const;
+
+const PROOF_CARDS = [
+  {
+    title: "100% Verifiable",
+    desc: "Every credential is anchored on Cardano. Anyone can confirm it is real — no middlemen, no email required.",
+  },
+  {
+    title: "Forever",
+    desc: "On-chain credentials cannot be revoked, lost, or expire. Your achievement is permanent.",
+  },
+  {
+    title: "Yours",
+    desc: "Your credential lives in your wallet. You control it. You share it when you choose.",
+  },
+] as const;
 
 export function LandingHero() {
   const [showEnter, setShowEnter] = React.useState(false);
   const router = useRouter();
   const { isAuthenticated, user, isWalletConnected } = useAndamioAuth();
 
-  // Auto-redirect authenticated users with access token to dashboard
   React.useEffect(() => {
     if (isAuthenticated && user?.accessTokenAlias) {
       router.push("/dashboard");
@@ -33,12 +66,9 @@ export function LandingHero() {
     }
   };
 
-  // Once the wallet is connected (and authenticating or authenticated), hand
-  // off to the shared onboarding component. It handles authenticating spinner,
-  // V2/V1 scans, migrate card, registration flow, and the post-mint ceremony.
   if (showEnter || isWalletConnected) {
     return (
-      <div className="flex flex-1 w-full items-center justify-center">
+      <div className="flex items-center justify-center min-h-[60vh] px-6 py-16">
         <AccessTokenOnboarding
           onActivated={goToDashboard}
           onExistingTokenDetected={goToDashboard}
@@ -47,115 +77,71 @@ export function LandingHero() {
     );
   }
 
-  // Default hero view - clean vertical CTAs
   return (
-    <div className="flex flex-col items-center text-center max-w-4xl mx-auto gap-8 sm:gap-12">
-      {/* Value prop: icon + text pairs with arrows */}
-      <div className="flex flex-col sm:flex-row items-center gap-6 sm:gap-16">
-        <div className="flex flex-col items-center gap-3 w-32 sm:w-44">
-          <div className="relative h-24 w-24 sm:h-36 sm:w-36 translate-x-4">
-            <Image
-              src="/landing-page-icons/01-complete-courses-black.png"
-              alt="Complete courses"
-              fill
-              sizes="(min-width: 640px) 144px, 96px"
-              priority
-              className="object-contain dark:hidden"
-            />
-            <Image
-              src="/landing-page-icons/01-complete-courses-white.png"
-              alt="Complete courses"
-              fill
-              sizes="(min-width: 640px) 144px, 96px"
-              priority
-              className="object-contain hidden dark:block"
-            />
+    <>
+      {/* Hero */}
+      <section className="bg-[#1A3D6B] text-white px-6 py-20 sm:py-28">
+        <div className="max-w-3xl mx-auto text-center space-y-6">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-tight">
+            Your Skills,<br />Verified on Cardano
+          </h1>
+          <p className="text-lg sm:text-xl text-white/70 max-w-xl mx-auto leading-relaxed">
+            Earn blockchain credentials from Tracom Academy. Permanent, portable, and verifiable by anyone.
+          </p>
+          <div className="pt-2">
+            <button
+              onClick={handleEnter}
+              className="bg-white text-[#1A3D6B] font-semibold px-8 py-3 rounded-md hover:bg-white/90 active:bg-white/80 transition-colors text-base cursor-pointer"
+            >
+              Connect Wallet
+            </button>
           </div>
-          <span className="text-muted-foreground text-center text-sm sm:text-base">Complete courses.</span>
         </div>
-        <span className="hidden sm:block text-3xl sm:text-4xl text-muted-foreground">→</span>
-        <div className="flex flex-col items-center gap-3 w-32 sm:w-44">
-          <div className="relative h-24 w-24 sm:h-36 sm:w-36">
-            <Image
-              src="/landing-page-icons/02-earn-credentials-black.png"
-              alt="Earn credentials"
-              fill
-              sizes="(min-width: 640px) 144px, 96px"
-              priority
-              className="object-contain dark:hidden"
-            />
-            <Image
-              src="/landing-page-icons/02-earn-credentials-white.png"
-              alt="Earn credentials"
-              fill
-              sizes="(min-width: 640px) 144px, 96px"
-              priority
-              className="object-contain hidden dark:block"
-            />
-          </div>
-          <span className="text-muted-foreground text-center text-sm sm:text-base translate-x-2">Earn credentials.</span>
-        </div>
-        <span className="hidden sm:block text-3xl sm:text-4xl text-muted-foreground">→</span>
-        <div className="flex flex-col items-center gap-3 w-32 sm:w-44">
-          <div className="relative h-24 w-24 sm:h-36 sm:w-36">
-            <Image
-              src="/landing-page-icons/03-join-projects-black.png"
-              alt="Join projects"
-              fill
-              sizes="(min-width: 640px) 144px, 96px"
-              priority
-              className="object-contain dark:hidden"
-            />
-            <Image
-              src="/landing-page-icons/03-join-projects-white.png"
-              alt="Join projects"
-              fill
-              sizes="(min-width: 640px) 144px, 96px"
-              priority
-              className="object-contain hidden dark:block"
-            />
-          </div>
-          <span className="text-muted-foreground text-center text-sm sm:text-base">Get hired</span>
-        </div>
-      </div>
+      </section>
 
-      {/* CTA Cards */}
-      <div className="w-full max-w-4xl">
-        <hr className="border-border" />
-      </div>
-      <div className="w-full max-w-4xl">
-        <div className="grid gap-6 sm:grid-cols-3">
-          <div className="flex flex-col items-center text-center p-6 gap-4">
-            <AndamioHeading level={3} size="base">Get Started</AndamioHeading>
-            <p className="text-sm text-muted-foreground">
-              Connect your wallet and create your Tracom Academy identity on Cardano
-            </p>
-            <AndamioButton onClick={handleEnter} className="w-full mt-auto">
-              Enter
-            </AndamioButton>
-          </div>
-
-          <div className="flex flex-col items-center text-center p-6 gap-4">
-            <AndamioHeading level={3} size="base">Explore</AndamioHeading>
-            <p className="text-sm text-muted-foreground">
-              Explore Tracom Academy courses and earn verifiable credentials
-            </p>
-            <AndamioButton asChild variant="outline" className="w-full mt-auto">
-              <Link href="/course">Browse</Link>
-            </AndamioButton>
-          </div>
-
-          <div className="flex flex-col items-center text-center p-6 gap-4">
-            <AndamioHeading level={3} size="base">Build</AndamioHeading>
-            <p className="text-sm text-muted-foreground">
-              Launch a project and onboard contributors
-            </p>
-            <AndamioButton asChild variant="outline" className="w-full mt-auto">
-              <Link href="/studio">Launch</Link>
-            </AndamioButton>
+      {/* 4-Step Flow */}
+      <section className="bg-white px-6 py-16 sm:py-20 border-b border-slate-100">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-center text-2xl font-semibold text-slate-800 mb-12">
+            How it works
+          </h2>
+          <div className="flex flex-col sm:flex-row items-start justify-center">
+            {STEPS.map(({ step, title, desc }, i) => (
+              <React.Fragment key={step}>
+                <div className="flex flex-col items-center text-center flex-1 px-4 mb-8 sm:mb-0">
+                  <div className="w-12 h-12 rounded-full border-2 border-[#1A3D6B] flex items-center justify-center mb-4 shrink-0">
+                    <span className="text-sm font-bold text-[#1A3D6B]">{step}</span>
+                  </div>
+                  <h3 className="font-semibold text-slate-800 mb-2 text-sm sm:text-base">{title}</h3>
+                  <p className="text-sm text-slate-500 leading-relaxed max-w-[160px]">{desc}</p>
+                </div>
+                {i < STEPS.length - 1 && (
+                  <div className="hidden sm:flex items-start justify-center pt-5 shrink-0 text-slate-300 text-2xl">
+                    →
+                  </div>
+                )}
+              </React.Fragment>
+            ))}
           </div>
         </div>
-      </div>
-    </div>
+      </section>
+
+      {/* Proof Cards */}
+      <section className="bg-slate-50 px-6 py-16 sm:py-20">
+        <div className="max-w-4xl mx-auto">
+          <div className="grid sm:grid-cols-3 gap-6">
+            {PROOF_CARDS.map(({ title, desc }) => (
+              <div
+                key={title}
+                className="bg-white border border-slate-200 rounded-md p-6"
+              >
+                <h3 className="font-semibold text-slate-800 text-lg mb-3">{title}</h3>
+                <p className="text-sm text-slate-500 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
   );
 }

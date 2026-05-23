@@ -21,7 +21,10 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: BRANDING.fullTitle,
   description: BRANDING.description,
-  icons: [{ rel: "icon", url: BRANDING.logo.favicon }],
+  icons: [
+    { rel: "icon", url: BRANDING.logo.favicon, type: "image/svg+xml" },
+    { rel: "icon", url: "/favicon.ico" },
+  ],
   openGraph: {
     title: BRANDING.fullTitle,
     description: BRANDING.description,
