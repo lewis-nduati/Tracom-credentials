@@ -16,7 +16,7 @@ export const MARKETING = {
    */
   hero: {
     badge: `${BRANDING.name} Pioneers Preview`,
-    title: "Build the Future of Learning",
+    title: "Learn on Cardano. Keep the proof.",
     subtitle: `Help us build ${BRANDING.name} V2.`,
     lead: `You're early. This is a preview of the next generation of ${BRANDING.name} — contribution-centered learning on Cardano. Explore, experiment, break things. Your feedback shapes what we ship.`,
     primaryCta: {
@@ -68,8 +68,8 @@ export const MARKETING = {
   pioneers: {
     title: "What are Pioneers?",
     description: [
-      "We're inviting early adopters to shape Tracom Academy's credential platform before mainnet. This isn't just beta testing — it's co-creation.",
-      "Your questions become documentation. Your bugs become fixes. Your ideas become features.",
+      "Tracom Academy's credential platform is still being built. We're inviting early users to help shape it before mainnet.",
+      "When you find something broken or confusing, that goes straight into what we build next.",
     ],
     linkText: "Read the Pioneers documentation",
     linkHref: `${BRANDING.links.docs}/docs/pioneers`,
@@ -89,7 +89,7 @@ export const MARKETING = {
    */
   finalCta: {
     title: "Ready?",
-    description: "Connect a preprod wallet and start exploring.",
+    description: "Connect a preprod wallet and try it out.",
     buttonText: "Go to Dashboard",
     buttonHref: "/dashboard",
   },

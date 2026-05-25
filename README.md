@@ -26,14 +26,12 @@ This project fills that gap.
 
 ## What This Project Does
 
-Students who complete Tracom Academy courses earn on-chain credentials issued on Cardano through the Andamio protocol. These credentials live in the student's wallet — not in a database, not on a PDF, not behind a login.
-
-Specifically:
+Students who complete Tracom Academy courses earn on-chain credentials issued on Cardano through the Andamio protocol. These credentials live in the student's wallet, not in a database or behind a login.
 
 - **Course enrollment** — Students connect a Cardano wallet and mint an access token, which becomes their on-chain identity.
 - **Evidence submission** — Students commit their assignment work on-chain. Instructors review it through the Studio interface.
 - **Credential issuance** — Once an instructor approves, a course credential token is minted to the student's wallet.
-- **Credential portability** — The credential is a Cardano native asset. Any employer, institution, or system can verify it directly on-chain without contacting Tracom.
+- **Credential portability** — The credential is a Cardano native asset. Any employer can verify it directly on-chain without contacting Tracom.
 
 ---
 
@@ -43,7 +41,7 @@ Specifically:
 
 **Not on mainnet.** Everything runs on Cardano preprod (testnet). Mainnet deployment is a separate milestone that requires a production Andamio instance provisioned for Tracom.
 
-**Not a full Andamio replacement.** Andamio provides the protocol, the API, and the transaction layer. This project provides Tracom's identity, branding, and the student-facing experience on top of that.
+**Not a full Andamio replacement.** Andamio handles the protocol, API, and transaction layer. This project is Tracom's branded interface on top of that.
 
 **Not enterprise-ready yet.** v1 covers the course credential flow only. Project coordination, treasury management, and multi-institution features are out of scope for this release.
 
@@ -51,9 +49,9 @@ Specifically:
 
 ## Design Principles
 
-**Verifiable.** Every credential is anchored on Cardano. Verification requires no API call to Tracom, no email to an administrator, no third-party registry.
+**Verifiable.** Every credential is anchored on Cardano. Any employer can check it directly on-chain, without calling Tracom or using a third-party registry.
 
-**Permanent.** On-chain credentials do not expire, cannot be silently revoked, and survive Tracom's systems going offline. The blockchain is the record.
+**Permanent.** On-chain credentials don't expire and survive Tracom going offline. A credential issued today still verifies in 2040.
 
 **Portable.** Credentials live in the student's wallet. They are not locked to Tracom's platform. A student who earned a credential in 2026 can prove it in 2036 without Tracom's involvement.
 

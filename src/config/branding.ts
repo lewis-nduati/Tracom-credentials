@@ -24,7 +24,7 @@ export const BRANDING = {
 
   /** Longer description for landing pages */
   longDescription:
-    "Blockchain credentialing for Tracom Academy students on Cardano - Earn verifiable credentials for completing courses and projects, showcasing your skills on the blockchain.",
+    "Tracom Academy students earn verifiable credentials on Cardano for completing courses and projects. Credentials are blockchain-issued and independently verifiable by anyone.",
 
   /** URL paths for logos/icons */
   logo: {

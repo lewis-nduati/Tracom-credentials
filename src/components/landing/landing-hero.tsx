@@ -24,8 +24,8 @@ const STEPS = [
   },
   {
     step: "04",
-    title: "Unlock opportunities",
-    desc: "Share your credential with any employer, anywhere in the world.",
+    title: "Prove your skills",
+    desc: "Send it to any employer. They verify it on-chain themselves.",
   },
 ] as const;
 
@@ -36,11 +36,11 @@ const VALUES = [
   },
   {
     label: "Permanent record",
-    body: "Stored on-chain. It doesn't expire, can't be lost, and doesn't depend on Tracom's systems.",
+    body: "Stored on-chain. It doesn't expire or depend on Tracom's systems staying online.",
   },
   {
     label: "Yours alone",
-    body: "Your credential lives in your wallet. You control it, share it, and take it with you.",
+    body: "Your credential is in your wallet. You decide where it goes and who sees it.",
   },
 ] as const;
 
@@ -158,12 +158,12 @@ export function LandingHero() {
                 variant="lead"
                 className="max-w-md leading-relaxed text-white/65"
               >
-                Complete a course. Earn a credential issued permanently to your
-                blockchain wallet. Share it with any employer, anywhere.
+                Finish a course and Tracom issues your credential to your
+                wallet. Any employer can check it on-chain themselves.
               </AndamioText>
               <button
                 onClick={handleEnter}
-                className="cursor-pointer rounded-md bg-background px-8 py-3.5 text-base font-semibold text-brand-navy transition-all hover:bg-background/90 active:scale-[0.98]"
+                className="cursor-pointer rounded-md bg-white px-8 py-3.5 text-base font-semibold text-brand-navy transition-all hover:bg-white/90 active:scale-[0.98]"
               >
                 Connect Wallet
               </button>
@@ -183,7 +183,7 @@ export function LandingHero() {
               <AndamioHeading level={3} size="xl" className="mb-2">
                 {label}
               </AndamioHeading>
-              <AndamioText variant="small" className="leading-relaxed">
+              <AndamioText variant="small" className="leading-relaxed text-accent-foreground/70">
                 {body}
               </AndamioText>
             </div>
@@ -201,7 +201,7 @@ export function LandingHero() {
             {STEPS.map(({ step, title, desc }) => (
               <div key={step}>
                 <span
-                  className="mb-3 block select-none text-7xl font-black leading-none text-brand-navy/[0.08]"
+                  className="mb-3 block select-none text-7xl font-black leading-none text-foreground/[0.08]"
                   aria-hidden="true"
                 >
                   {step}
@@ -226,7 +226,7 @@ export function LandingHero() {
           </AndamioHeading>
           <button
             onClick={handleEnter}
-            className="cursor-pointer whitespace-nowrap rounded-md bg-background px-7 py-3 text-base font-semibold text-brand-navy transition-all hover:bg-background/90 active:scale-[0.98] sm:shrink-0"
+            className="cursor-pointer whitespace-nowrap rounded-md bg-white px-7 py-3 text-base font-semibold text-brand-navy transition-all hover:bg-white/90 active:scale-[0.98] sm:shrink-0"
           >
             Connect Wallet
           </button>
