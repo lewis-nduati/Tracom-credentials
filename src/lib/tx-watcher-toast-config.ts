@@ -15,7 +15,7 @@ export function buildWatcherToastConfig(txType: TransactionType): TxToastConfig 
   const ui = getTransactionUI(txType);
   return {
     successTitle: ui.successInfo,
-    successDescription: "Transaction confirmed and database updated.",
+    successDescription: ui.celebrationDescription ?? "Transaction confirmed.",
     errorTitle: "Transaction Failed",
   };
 }

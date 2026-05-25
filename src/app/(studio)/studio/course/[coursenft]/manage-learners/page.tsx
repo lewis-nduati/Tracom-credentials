@@ -1,11 +1,13 @@
 "use client";
 
 import { useMemo } from "react";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useCourse } from "~/hooks/api/course/use-course";
 import { useTeacherAssignmentCommitments } from "~/hooks/api/course/use-course-teacher";
 import {
   AndamioBadge,
+  AndamioButton,
   AndamioCard,
   AndamioCardContent,
   AndamioCardDescription,
@@ -26,7 +28,7 @@ import {
   AndamioDashboardStat,
   AndamioScrollArea,
 } from "~/components/andamio";
-import { LearnerIcon, AssignmentIcon, SuccessIcon } from "~/components/icons";
+import { LearnerIcon, AssignmentIcon, SuccessIcon, TeacherIcon } from "~/components/icons";
 import { RequireCourseAccess } from "~/components/auth/require-course-access";
 
 /**
@@ -125,6 +127,26 @@ function ManageLearnersContent({ courseId }: { courseId: string }) {
         />
       </div>
 
+      {/* Pending review CTA */}
+      {learnerStats.size > 0 && Array.from(learnerStats.values()).some(s => s.pending > 0) && (
+        <div className="flex items-center justify-between rounded-md border border-primary/20 bg-primary/5 px-4 py-3">
+          <div className="flex items-center gap-3">
+            <TeacherIcon className="h-4 w-4 text-primary" />
+            <div>
+              <AndamioText className="font-medium text-sm">Assignments pending review</AndamioText>
+              <AndamioText variant="muted" className="text-xs">
+                {Array.from(learnerStats.values()).reduce((sum, s) => sum + s.pending, 0)} submission{Array.from(learnerStats.values()).reduce((sum, s) => sum + s.pending, 0) !== 1 ? "s" : ""} waiting for your decision
+              </AndamioText>
+            </div>
+          </div>
+          <Link href={`/studio/course/${courseId}/teacher`}>
+            <AndamioButton size="sm">
+              Review assignments
+            </AndamioButton>
+          </Link>
+        </div>
+      )}
+
       {/* Learners Card */}
       <AndamioCard>
         <AndamioCardHeader>
@@ -156,16 +178,18 @@ function ManageLearnersContent({ courseId }: { courseId: string }) {
                   <AndamioTableRow>
                     <AndamioTableHead className="w-[50px]">#</AndamioTableHead>
                     <AndamioTableHead>Student</AndamioTableHead>
-                    <AndamioTableHead className="w-[100px] text-center">Submitted</AndamioTableHead>
-                    <AndamioTableHead className="w-[100px] text-center">Completed</AndamioTableHead>
-                    <AndamioTableHead className="w-[100px] text-center">Pending</AndamioTableHead>
+                    <AndamioTableHead className="w-[90px] text-center">Submitted</AndamioTableHead>
+                    <AndamioTableHead className="w-[90px] text-center">Completed</AndamioTableHead>
+                    <AndamioTableHead className="w-[90px] text-center">Pending</AndamioTableHead>
+                    <AndamioTableHead className="w-[80px]" />
                   </AndamioTableRow>
                 </AndamioTableHeader>
                 <AndamioTableBody>
                   {learners.map((alias, index) => {
                     const stats = learnerStats.get(alias)!;
+                    const reviewUrl = `/studio/course/${courseId}/teacher?student=${encodeURIComponent(alias)}`;
                     return (
-                      <AndamioTableRow key={alias}>
+                      <AndamioTableRow key={alias} className={stats.pending > 0 ? "cursor-pointer hover:bg-muted/50" : undefined}>
                         <AndamioTableCell className="text-muted-foreground">
                           {index + 1}
                         </AndamioTableCell>
@@ -191,6 +215,15 @@ function ManageLearnersContent({ courseId }: { courseId: string }) {
                           ) : (
                             <span className="text-muted-foreground">0</span>
                           )}
+                        </AndamioTableCell>
+                        <AndamioTableCell className="text-right">
+                          {stats.pending > 0 ? (
+                            <Link href={reviewUrl}>
+                              <AndamioButton variant="outline" size="sm" className="h-7 text-xs px-2.5">
+                                Review
+                              </AndamioButton>
+                            </Link>
+                          ) : null}
                         </AndamioTableCell>
                       </AndamioTableRow>
                     );

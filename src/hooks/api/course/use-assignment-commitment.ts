@@ -192,7 +192,6 @@ export function useAssignmentCommitment(
       }
 
       const apiResponse = (await response.json()) as StudentAssignmentCommitmentResponse;
-      console.log("[useAssignmentCommitment] API response:", apiResponse);
 
       // `data` is declared required on the generated type but keep the guard
       // as defense against malformed runtime responses.
@@ -263,8 +262,6 @@ export function useSubmitEvidence() {
         ? `${GATEWAY_API_BASE}/course/student/commitment/update`
         : `${GATEWAY_API_BASE}/course/student/commitment/submit`;
 
-      console.log("[useSubmitEvidence]", isUpdate ? "Updating" : "Creating", "evidence in DB");
-
       const response = await authenticatedFetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -280,7 +277,6 @@ export function useSubmitEvidence() {
         throw new Error(`Failed to save evidence: ${response.status}`);
       }
 
-      console.log("[useSubmitEvidence] Evidence saved to database");
     },
     // NOTE: We intentionally do NOT invalidate queries here.
     // Evidence is saved to DB before the TX, but we want the UI to stay in the

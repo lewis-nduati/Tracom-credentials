@@ -93,7 +93,7 @@ export function AssessAssignment({
           console.log("[AssessAssignment] TX confirmed and DB updated by gateway");
 
           const actionText = assessmentResult === "accept" ? "accepted" : "refused";
-          toast.success("Assessment Submitted!", {
+          toast.success("Assessment submitted", {
             description: `${studentAlias}'s assignment has been ${actionText}`,
           });
 

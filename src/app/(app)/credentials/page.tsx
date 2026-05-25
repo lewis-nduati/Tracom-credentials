@@ -66,7 +66,7 @@ export default function CredentialsPage() {
         />
         <AndamioEmptyState
           icon={CredentialIcon}
-          title="Access Token Required"
+          title="Access token required"
           description="You need an access token to view your credentials. Mint one from your dashboard."
           action={
             <Link href="/dashboard">
@@ -93,7 +93,7 @@ export default function CredentialsPage() {
         />
         <AndamioEmptyState
           icon={CredentialIcon}
-          title="Unable to Load Credentials"
+          title="Unable to load credentials"
           description="There was an error loading your credentials from the blockchain."
           action={
             <AndamioButton onClick={() => refetch()}>Try Again</AndamioButton>
@@ -113,7 +113,7 @@ export default function CredentialsPage() {
         />
         <AndamioEmptyState
           icon={CredentialIcon}
-          title="Start Earning Credentials"
+          title="Start earning credentials"
           description="Complete courses to earn on-chain credentials. Your achievements will be permanently recorded on the Cardano blockchain."
           action={
             <Link href="/course">
@@ -172,41 +172,23 @@ export default function CredentialsPage() {
               <div className="flex items-start justify-between">
                 <AndamioCardIconHeader
                   icon={CredentialIcon}
-                  title="Course Credential"
+                  title={course.title ?? "Course credential"}
                   iconColor="text-primary"
                 />
                 <AndamioBadge status="success">Earned</AndamioBadge>
               </div>
             </AndamioCardHeader>
             <AndamioCardContent className="space-y-4">
-              {/* Course Title */}
-              {course.title && (
-                <div className="space-y-1">
-                  <AndamioText variant="small" className="text-xs uppercase tracking-wide text-muted-foreground">
-                    Course
-                  </AndamioText>
-                  <AndamioText className="font-medium">
-                    {course.title}
-                  </AndamioText>
-                </div>
-              )}
-
-              {/* Course ID */}
-              <div className="space-y-1">
-                <AndamioText variant="small" className="text-xs uppercase tracking-wide text-muted-foreground">
-                  Course ID
-                </AndamioText>
-                <code className="text-xs font-mono bg-muted px-2 py-1 rounded block truncate">
-                  {course.courseId}
-                </code>
-              </div>
 
               {/* On-chain info */}
               <div className="flex items-center gap-2 text-muted-foreground">
                 <OnChainIcon className="h-3.5 w-3.5" />
                 <AndamioText variant="small" className="text-xs">
-                  Verified on Cardano blockchain
+                  Verified on Cardano
                 </AndamioText>
+                <code className="ml-auto text-[10px] font-mono text-muted-foreground/60 truncate max-w-[120px]">
+                  {course.courseId.slice(0, 12)}…
+                </code>
               </div>
 
               {/* Actions */}

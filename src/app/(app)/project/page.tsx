@@ -159,8 +159,8 @@ function ProjectCatalogContent() {
         />
         <AndamioEmptyState
           icon={ProjectIcon}
-          title="No Published Projects"
-          description="There are currently no published projects available. Check back later."
+          title="No published projects"
+          description="No projects have been published yet. Complete courses to become eligible when projects open."
         />
       </div>
     );
@@ -290,7 +290,7 @@ function ProjectCatalogContent() {
       ) : (
         <AndamioEmptyState
           icon={ProjectIcon}
-          title="No Matching Projects"
+          title="No matching projects"
           description="Try adjusting your search or filters to find what you're looking for."
         />
       )}

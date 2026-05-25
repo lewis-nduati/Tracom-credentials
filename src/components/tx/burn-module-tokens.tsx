@@ -97,7 +97,7 @@ export function BurnModuleTokens({
           console.log("[BurnModuleTokens] TX confirmed and DB updated by gateway");
 
           const moduleCount = modulesToBurn.length;
-          toast.success("Modules Disabled Successfully!", {
+          toast.success("Modules disabled", {
             description: `${moduleCount} module${moduleCount > 1 ? "s" : ""} removed from blockchain`,
           });
 

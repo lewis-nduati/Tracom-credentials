@@ -6,24 +6,20 @@ import {
   AndamioCard,
   AndamioCardContent,
   AndamioCardHeader,
+  AndamioCardTitle,
 } from "~/components/andamio/andamio-card";
 import { AndamioBadge } from "~/components/andamio/andamio-badge";
 import { AndamioButton } from "~/components/andamio/andamio-button";
 import { AndamioText } from "~/components/andamio/andamio-text";
-import { AndamioCardIconHeader } from "~/components/andamio/andamio-card-icon-header";
 import { AndamioSkeleton } from "~/components/andamio/andamio-skeleton";
 import { AndamioEmptyState } from "~/components/andamio/andamio-empty-state";
 import {
-  AchievementIcon,
   RefreshIcon,
   CourseIcon,
   CredentialIcon,
-  LearnerIcon,
   ExternalLinkIcon,
-  SuccessIcon,
 } from "~/components/icons";
 import { useDashboardData } from "~/contexts/dashboard-context";
-import type { DashboardCredentialSummary } from "~/hooks/api";
 
 interface StudentAccomplishmentsProps {
   accessTokenAlias: string | null | undefined;
@@ -45,16 +41,12 @@ export function StudentAccomplishments({ accessTokenAlias }: StudentAccomplishme
 
   if (isLoading) {
     return (
-      <AndamioCard className="md:col-span-2">
+      <AndamioCard>
         <AndamioCardHeader className="pb-3">
-          <AndamioCardIconHeader icon={AchievementIcon} title="My Accomplishments" />
+          <AndamioCardTitle>My Accomplishments</AndamioCardTitle>
         </AndamioCardHeader>
         <AndamioCardContent className="space-y-3">
-          <div className="grid gap-3 sm:grid-cols-3">
-            {[1, 2, 3].map((i) => (
-              <AndamioSkeleton key={i} className="h-16 w-full rounded-lg" />
-            ))}
-          </div>
+          <AndamioSkeleton className="h-4 w-3/4" />
           <div className="space-y-1.5">
             {[1, 2, 3].map((i) => (
               <AndamioSkeleton key={i} className="h-10 w-full" />
@@ -88,10 +80,10 @@ export function StudentAccomplishments({ accessTokenAlias }: StudentAccomplishme
 
   if (totalCourses === 0 || error) {
     return (
-      <AndamioCard className="md:col-span-2">
+      <AndamioCard>
         <AndamioCardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <AndamioCardIconHeader icon={AchievementIcon} title="My Accomplishments" />
+            <AndamioCardTitle>My Accomplishments</AndamioCardTitle>
             {!error && (
               <AndamioButton variant="ghost" size="icon-sm" onClick={refetch} aria-label="Refresh accomplishments">
                 <RefreshIcon className="h-4 w-4" />
@@ -102,8 +94,8 @@ export function StudentAccomplishments({ accessTokenAlias }: StudentAccomplishme
         <AndamioCardContent>
           <AndamioEmptyState
             icon={CourseIcon}
-            title="No Courses Yet"
-            description="Enroll in a course to start your learning journey on-chain."
+            title="No courses yet"
+            description="Enroll in a course to earn your first on-chain credential."
             action={
               <Link href="/course">
                 <AndamioButton size="sm">
@@ -119,45 +111,22 @@ export function StudentAccomplishments({ accessTokenAlias }: StudentAccomplishme
   }
 
   return (
-    <AndamioCard className="md:col-span-2">
+    <AndamioCard>
       <AndamioCardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <AndamioCardIconHeader icon={AchievementIcon} title="My Accomplishments" />
-          <div className="flex items-center gap-2">
-            <AndamioBadge variant="secondary" className="text-xs">
-              {totalCourses} {totalCourses === 1 ? "course" : "courses"}
-            </AndamioBadge>
-            <AndamioButton variant="ghost" size="icon-sm" onClick={refetch} aria-label="Refresh accomplishments">
-              <RefreshIcon className="h-4 w-4" />
-            </AndamioButton>
-          </div>
+          <AndamioCardTitle>My Accomplishments</AndamioCardTitle>
+          <AndamioButton variant="ghost" size="icon-sm" onClick={refetch} aria-label="Refresh accomplishments">
+            <RefreshIcon className="h-4 w-4" />
+          </AndamioButton>
         </div>
       </AndamioCardHeader>
       <AndamioCardContent className="space-y-4">
-        {/* Stats row */}
-        <div className="grid gap-3 sm:grid-cols-3">
-          <div className="flex items-center gap-2 bg-secondary/10 rounded-lg px-3 py-2">
-            <LearnerIcon className="h-4 w-4 text-secondary shrink-0" />
-            <div>
-              <AndamioText className="text-lg font-semibold">{enrolledCount}</AndamioText>
-              <AndamioText variant="small" className="text-xs">Enrolled</AndamioText>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 bg-primary/10 rounded-lg px-3 py-2">
-            <SuccessIcon className="h-4 w-4 text-primary shrink-0" />
-            <div>
-              <AndamioText className="text-lg font-semibold">{completedCount}</AndamioText>
-              <AndamioText variant="small" className="text-xs">Completed</AndamioText>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 bg-primary/10 rounded-lg px-3 py-2">
-            <CredentialIcon className="h-4 w-4 text-primary shrink-0" />
-            <div>
-              <AndamioText className="text-lg font-semibold">{totalCredentials}</AndamioText>
-              <AndamioText variant="small" className="text-xs">Credentials</AndamioText>
-            </div>
-          </div>
-        </div>
+        {/* Summary line */}
+        <AndamioText variant="small" className="text-muted-foreground">
+          {enrolledCount} {enrolledCount === 1 ? "course" : "courses"} enrolled,{" "}
+          {completedCount} completed,{" "}
+          {totalCredentials} {totalCredentials === 1 ? "credential" : "credentials"} earned
+        </AndamioText>
 
         {/* Course list */}
         <div className="space-y-1.5">

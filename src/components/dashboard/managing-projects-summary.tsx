@@ -6,11 +6,11 @@ import {
   AndamioCard,
   AndamioCardContent,
   AndamioCardHeader,
+  AndamioCardTitle,
 } from "~/components/andamio/andamio-card";
 import { AndamioBadge } from "~/components/andamio/andamio-badge";
 import { AndamioButton } from "~/components/andamio/andamio-button";
 import { AndamioText } from "~/components/andamio/andamio-text";
-import { AndamioCardIconHeader } from "~/components/andamio/andamio-card-icon-header";
 import { AndamioSkeleton } from "~/components/andamio/andamio-skeleton";
 import {
   ManagerIcon,
@@ -50,7 +50,7 @@ export function ManagingProjectsSummary({ accessTokenAlias }: ManagingProjectsSu
     return (
       <AndamioCard>
         <AndamioCardHeader className="pb-3">
-          <AndamioCardIconHeader icon={ManagerIcon} title="Managing" />
+          <AndamioCardTitle>Managing</AndamioCardTitle>
         </AndamioCardHeader>
         <AndamioCardContent className="space-y-3">
           {[1, 2, 3].map((i) => (
@@ -79,7 +79,7 @@ export function ManagingProjectsSummary({ accessTokenAlias }: ManagingProjectsSu
     <AndamioCard>
       <AndamioCardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <AndamioCardIconHeader icon={ManagerIcon} title="Managing" />
+          <AndamioCardTitle>Managing</AndamioCardTitle>
           <div className="flex items-center gap-2">
             <AndamioBadge variant="secondary" className="text-xs">
               {managingProjects.length} active
@@ -91,16 +91,9 @@ export function ManagingProjectsSummary({ accessTokenAlias }: ManagingProjectsSu
         </div>
       </AndamioCardHeader>
       <AndamioCardContent className="space-y-3">
-        {/* Summary stat */}
-        <div className="flex items-center gap-2 bg-secondary/10 rounded-lg px-3 py-2">
-          <ManagerIcon className="h-4 w-4 text-secondary" />
-          <div>
-            <AndamioText className="text-lg font-semibold">{managingProjects.length}</AndamioText>
-            <AndamioText variant="small" className="text-xs">
-              {managingProjects.length === 1 ? "Project" : "Projects"} managing
-            </AndamioText>
-          </div>
-        </div>
+        <AndamioText variant="small" className="text-muted-foreground">
+          {managingProjects.length} {managingProjects.length === 1 ? "project" : "projects"} managing
+        </AndamioText>
 
         {/* Project list */}
         <div className="space-y-1.5">

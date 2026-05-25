@@ -6,11 +6,11 @@ import {
   AndamioCard,
   AndamioCardContent,
   AndamioCardHeader,
+  AndamioCardTitle,
 } from "~/components/andamio/andamio-card";
 import { AndamioBadge } from "~/components/andamio/andamio-badge";
 import { AndamioButton } from "~/components/andamio/andamio-button";
 import { AndamioText } from "~/components/andamio/andamio-text";
-import { AndamioCardIconHeader } from "~/components/andamio/andamio-card-icon-header";
 import { AndamioSkeleton } from "~/components/andamio/andamio-skeleton";
 import { AndamioEmptyState } from "~/components/andamio/andamio-empty-state";
 import {
@@ -53,7 +53,7 @@ export function PendingAssessmentsSummary({ accessTokenAlias }: PendingAssessmen
     return (
       <AndamioCard>
         <AndamioCardHeader className="pb-3">
-          <AndamioCardIconHeader icon={ManagerIcon} title="Pending Reviews" />
+          <AndamioCardTitle>Pending Reviews</AndamioCardTitle>
         </AndamioCardHeader>
         <AndamioCardContent className="space-y-3">
           {[1, 2, 3].map((i) => (
@@ -76,7 +76,7 @@ export function PendingAssessmentsSummary({ accessTokenAlias }: PendingAssessmen
       <AndamioCard>
         <AndamioCardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <AndamioCardIconHeader icon={ManagerIcon} title="Pending Reviews" />
+            <AndamioCardTitle>Pending Reviews</AndamioCardTitle>
             <AndamioButton variant="ghost" size="icon-sm" onClick={refetch}>
               <RefreshIcon className="h-4 w-4" />
             </AndamioButton>
@@ -120,7 +120,7 @@ export function PendingAssessmentsSummary({ accessTokenAlias }: PendingAssessmen
       <AndamioCard>
         <AndamioCardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <AndamioCardIconHeader icon={ManagerIcon} title="Pending Reviews" />
+            <AndamioCardTitle>Pending Reviews</AndamioCardTitle>
             <AndamioButton variant="ghost" size="icon-sm" onClick={refetch}>
               <RefreshIcon className="h-4 w-4" />
             </AndamioButton>
@@ -129,8 +129,8 @@ export function PendingAssessmentsSummary({ accessTokenAlias }: PendingAssessmen
         <AndamioCardContent>
           <AndamioEmptyState
             icon={SuccessIcon}
-            title="All Caught Up!"
-            description="No pending reviews at this time."
+            title="All caught up"
+            description="No pending task reviews."
           />
         </AndamioCardContent>
       </AndamioCard>
@@ -141,7 +141,7 @@ export function PendingAssessmentsSummary({ accessTokenAlias }: PendingAssessmen
     <AndamioCard>
       <AndamioCardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <AndamioCardIconHeader icon={ManagerIcon} title="Pending Reviews" />
+          <AndamioCardTitle>Pending Reviews</AndamioCardTitle>
           <div className="flex items-center gap-2">
             <AndamioBadge variant="secondary" className="text-xs">
               {totalPending} pending
@@ -153,16 +153,9 @@ export function PendingAssessmentsSummary({ accessTokenAlias }: PendingAssessmen
         </div>
       </AndamioCardHeader>
       <AndamioCardContent className="space-y-3">
-        {/* Summary stat */}
-        <div className="flex items-center gap-2 bg-muted/10 rounded-lg px-3 py-2">
-          <ManagerIcon className="h-4 w-4 text-muted-foreground" />
-          <div>
-            <AndamioText className="text-lg font-semibold">{totalPending}</AndamioText>
-            <AndamioText variant="small" className="text-xs">
-              {totalPending === 1 ? "Submission" : "Submissions"} awaiting review
-            </AndamioText>
-          </div>
-        </div>
+        <AndamioText variant="small" className="text-muted-foreground">
+          {totalPending} {totalPending === 1 ? "submission" : "submissions"} awaiting review
+        </AndamioText>
 
         {/* Project list */}
         <div className="space-y-1.5">

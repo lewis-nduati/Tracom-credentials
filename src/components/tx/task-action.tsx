@@ -117,7 +117,7 @@ export function TaskAction({
         if (status.state === "updated" || isStalled) {
           console.log("[TaskAction] TX confirmed:", status.state, isStalled ? "(stalled)" : "");
 
-          toast.success("Task Action Completed!", {
+          toast.success("Task submitted", {
             description: isStalled
               ? `Confirmed on-chain. Gateway sync pending — your data will update shortly.`
               : `Action on ${taskTitle ?? taskCode} recorded successfully`,

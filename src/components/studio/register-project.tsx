@@ -70,7 +70,7 @@ export function RegisterProject({ projectId, owner, managers }: RegisterProjectP
       await invalidateOwnerProjects();
       await invalidateProjects.all();
 
-      toast.success("Project registered!", {
+      toast.success("Project registered", {
         description: `"${title}" is now ready to use`,
       });
 

@@ -50,6 +50,11 @@ export interface TransactionUIConfig {
   /** Success message shown after transaction completes */
   successInfo: string;
   /**
+   * Description shown in the celebration modal for Moments of Commitment.
+   * Falls back to a generic message if absent.
+   */
+  celebrationDescription?: string;
+  /**
    * Whether this transaction requires DB updates after on-chain confirmation.
    * - true: Register with gateway for status tracking (default)
    * - false: Pure on-chain TX, no DB state to update (e.g., Access Token Mint)
@@ -116,7 +121,8 @@ export const TRANSACTION_UI: Record<TransactionType, TransactionUIConfig> = {
     ],
     footerLink: getDocsUrl("accessTokenMint"),
     footerLinkText: "Tx Documentation",
-    successInfo: "Access Token Created!",
+    successInfo: "Access token created",
+    celebrationDescription: "You're registered on Cardano. Enroll in a course to start earning credentials.",
     requiresDBUpdate: false, // No DB state to update after confirmation
     requiresOnChainConfirmation: true, // Track on-chain confirmation via gateway
   },
@@ -129,7 +135,7 @@ export const TRANSACTION_UI: Record<TransactionType, TransactionUIConfig> = {
     ],
     footerLink: getDocsUrl("accessTokenMint"),
     footerLinkText: "Tx Documentation",
-    successInfo: "V2 access token claimed successfully!",
+    successInfo: "V2 access token claimed",
     requiresDBUpdate: false,
     requiresOnChainConfirmation: true,
   },
@@ -146,7 +152,8 @@ export const TRANSACTION_UI: Record<TransactionType, TransactionUIConfig> = {
     ],
     footerLink: getDocsUrl("courseCreate"),
     footerLinkText: "Tx Documentation",
-    successInfo: "Course created successfully!",
+    successInfo: "Course created",
+    celebrationDescription: "Your course is live on Cardano. Students can now enroll.",
     requiresDBUpdate: true,
   },
 
@@ -158,7 +165,8 @@ export const TRANSACTION_UI: Record<TransactionType, TransactionUIConfig> = {
     ],
     footerLink: getDocsUrl("projectCreate"),
     footerLinkText: "Tx Documentation",
-    successInfo: "Project created successfully!",
+    successInfo: "Project created",
+    celebrationDescription: "Your project is live on Cardano. Eligible contributors can now apply.",
     requiresDBUpdate: true,
   },
 
@@ -174,7 +182,7 @@ export const TRANSACTION_UI: Record<TransactionType, TransactionUIConfig> = {
     ],
     footerLink: getDocsUrl("teachersManage"),
     footerLinkText: "Tx Documentation",
-    successInfo: "Course teachers updated successfully!",
+    successInfo: "Teachers updated",
     requiresDBUpdate: true,
   },
 
@@ -191,7 +199,7 @@ export const TRANSACTION_UI: Record<TransactionType, TransactionUIConfig> = {
     ],
     footerLink: getDocsUrl("modulesManage"),
     footerLinkText: "Tx Documentation",
-    successInfo: "Course modules managed successfully!",
+    successInfo: "Modules updated",
     requiresDBUpdate: true,
   },
 
@@ -203,7 +211,7 @@ export const TRANSACTION_UI: Record<TransactionType, TransactionUIConfig> = {
     ],
     footerLink: getDocsUrl("assignmentsAssess"),
     footerLinkText: "Tx Documentation",
-    successInfo: "Assessment Submitted!",
+    successInfo: "Assessment submitted",
     requiresDBUpdate: true,
   },
 
@@ -220,7 +228,7 @@ export const TRANSACTION_UI: Record<TransactionType, TransactionUIConfig> = {
     ],
     footerLink: getDocsUrl("assignmentCommit"),
     footerLinkText: "Tx Documentation",
-    successInfo: "Assignment Submitted!",
+    successInfo: "Assignment submitted",
     requiresDBUpdate: true,
   },
 
@@ -233,7 +241,7 @@ export const TRANSACTION_UI: Record<TransactionType, TransactionUIConfig> = {
     ],
     footerLink: getDocsUrl("assignmentUpdate"),
     footerLinkText: "Tx Documentation",
-    successInfo: "Assignment Updated!",
+    successInfo: "Assignment updated",
     requiresDBUpdate: true,
   },
 
@@ -245,7 +253,8 @@ export const TRANSACTION_UI: Record<TransactionType, TransactionUIConfig> = {
     ],
     footerLink: getDocsUrl("credentialClaim"),
     footerLinkText: "Tx Documentation",
-    successInfo: "Credential claimed successfully!",
+    successInfo: "Credential earned",
+    celebrationDescription: "Your achievement is permanently recorded on Cardano. No one can take it from you.",
     requiresDBUpdate: true,
   },
 
@@ -261,7 +270,7 @@ export const TRANSACTION_UI: Record<TransactionType, TransactionUIConfig> = {
     ],
     footerLink: getDocsUrl("managersManage"),
     footerLinkText: "Tx Documentation",
-    successInfo: "Project managers updated successfully!",
+    successInfo: "Managers updated",
     requiresDBUpdate: true,
   },
 
@@ -273,7 +282,7 @@ export const TRANSACTION_UI: Record<TransactionType, TransactionUIConfig> = {
     ],
     footerLink: getDocsUrl("blacklistManage"),
     footerLinkText: "Tx Documentation",
-    successInfo: "Contributor blacklist updated successfully!",
+    successInfo: "Blacklist updated",
     requiresDBUpdate: true,
   },
 
@@ -289,7 +298,7 @@ export const TRANSACTION_UI: Record<TransactionType, TransactionUIConfig> = {
     ],
     footerLink: getDocsUrl("tasksManage"),
     footerLinkText: "Tx Documentation",
-    successInfo: "Project tasks managed successfully!",
+    successInfo: "Tasks updated",
     requiresDBUpdate: true,
   },
 
@@ -301,7 +310,7 @@ export const TRANSACTION_UI: Record<TransactionType, TransactionUIConfig> = {
     ],
     footerLink: getDocsUrl("tasksAssess"),
     footerLinkText: "Tx Documentation",
-    successInfo: "Task assessment submitted successfully!",
+    successInfo: "Assessment submitted",
     requiresDBUpdate: true,
   },
 
@@ -318,7 +327,7 @@ export const TRANSACTION_UI: Record<TransactionType, TransactionUIConfig> = {
     ],
     footerLink: getDocsUrl("taskCommit"),
     footerLinkText: "Tx Documentation",
-    successInfo: "Successfully committed to task!",
+    successInfo: "Committed to task",
     requiresDBUpdate: true,
   },
 
@@ -330,7 +339,7 @@ export const TRANSACTION_UI: Record<TransactionType, TransactionUIConfig> = {
     ],
     footerLink: getDocsUrl("taskAction"),
     footerLinkText: "Tx Documentation",
-    successInfo: "Task action completed successfully!",
+    successInfo: "Evidence submitted",
     requiresDBUpdate: true,
   },
 
@@ -342,7 +351,8 @@ export const TRANSACTION_UI: Record<TransactionType, TransactionUIConfig> = {
     ],
     footerLink: getDocsUrl("contributorCredentialClaim"),
     footerLinkText: "Tx Documentation",
-    successInfo: "Credentials claimed successfully!",
+    successInfo: "Credential earned",
+    celebrationDescription: "Your contribution is recorded on-chain as a verifiable credential.",
     requiresDBUpdate: true,
   },
 
@@ -358,7 +368,7 @@ export const TRANSACTION_UI: Record<TransactionType, TransactionUIConfig> = {
     ],
     footerLink: getDocsUrl("treasuryAddFunds"),
     footerLinkText: "Tx Documentation",
-    successInfo: "Funds added to treasury successfully!",
+    successInfo: "Funds added",
     requiresDBUpdate: true,
   },
 };

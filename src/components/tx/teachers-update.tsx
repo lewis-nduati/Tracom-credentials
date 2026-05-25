@@ -70,7 +70,7 @@ export function TeachersUpdate({
     {
       onComplete: (status) => {
         if (status.state === "updated") {
-          toast.success("Teachers Updated!", {
+          toast.success("Teachers updated", {
             description: "Course teachers have been updated.",
           });
           setOptimisticAdds((prev) => [...prev, ...aliasesToAdd]);

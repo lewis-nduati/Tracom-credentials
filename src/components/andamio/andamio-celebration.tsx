@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useCelebrationStore } from "~/stores/celebration-store";
 import { AndamioHeading, AndamioText, AndamioButton } from "~/components/andamio";
 import { CelebrateIcon, StarIcon, SparkleIcon, CloseIcon } from "~/components/icons";
@@ -30,9 +30,10 @@ interface Particle {
 export function AndamioCelebration() {
   const { active, dismiss } = useCelebrationStore();
   const [particles, setParticles] = useState<Particle[]>([]);
+  const reducedMotion = useReducedMotion();
 
   useEffect(() => {
-    if (active) {
+    if (active && !reducedMotion) {
       // Generate random particles for the burst
       const icons = [CelebrateIcon, StarIcon, SparkleIcon];
       const colors = ["text-primary", "text-success", "text-info", "text-warning"];
@@ -46,7 +47,7 @@ export function AndamioCelebration() {
       }));
       setParticles(newParticles);
     }
-  }, [active]);
+  }, [active, reducedMotion]);
 
   return (
     <AnimatePresence>
@@ -74,8 +75,8 @@ export function AndamioCelebration() {
                   rotate: Math.random() * 360,
                 }}
                 transition={{
-                  duration: 2.5,
-                  ease: "easeOut",
+                  duration: 1.6,
+                  ease: [0.22, 1, 0.36, 1],
                 }}
                 className={cn("absolute pointer-events-none", p.color)}
                 style={{ width: p.size, height: p.size }}
@@ -94,7 +95,7 @@ export function AndamioCelebration() {
             className="relative pointer-events-auto bg-card border shadow-2xl rounded-sm p-8 max-w-sm w-full mx-4 flex flex-col items-center text-center gap-4"
           >
             <div className="flex h-14 w-14 items-center justify-center rounded-sm bg-primary/10">
-              {active.icon ?? <CelebrateIcon className="h-7 w-7 text-primary animate-bounce" />}
+              {active.icon ?? <CelebrateIcon className="h-7 w-7 text-primary animate-pulse" />}
             </div>
 
             <div className="space-y-2">

@@ -219,13 +219,11 @@ export function MintAccessToken({ onSuccess, onSubmitted, skipCeremony = false }
       onComplete: (status) => {
         // "updated" means Gateway has confirmed TX AND updated DB
         if (status.state === "updated") {
-          console.log("[MintAccessToken] TX confirmed and DB updated by gateway");
-
           if (skipCeremony) {
             // Parent handles ceremony - just refresh and callback
             refreshAuth();
-            toast.success("Access Token Created!", {
-              description: `Your alias ${alias} is now live on Cardano`,
+            toast.success("Access token created", {
+              description: `Your alias ${alias} is now live on Cardano.`,
             });
             void onSuccess?.();
           } else {
@@ -233,13 +231,11 @@ export function MintAccessToken({ onSuccess, onSubmitted, skipCeremony = false }
             // The old JWT doesn't have accessTokenAlias, so any operations
             // (course_create, project_create) would use the wrong owner alias.
             // We show celebration first, then auto-transition to reconnect flow.
-            console.log("[MintAccessToken] TX confirmed - showing celebration");
             setCeremonyState("celebration");
 
             // Auto-transition to reconnect flow after 2 seconds
             // This gives users a moment to celebrate before we clear the session
             setTimeout(() => {
-              console.log("[MintAccessToken] Auto-transitioning to reconnect flow");
               logout("access_token_mint"); // Clears JWT AND disconnects wallet
               setCeremonyState("reconnecting");
             }, 2000);
@@ -264,7 +260,6 @@ export function MintAccessToken({ onSuccess, onSubmitted, skipCeremony = false }
   useEffect(() => {
     if (isPureOnChainSuccess && !hasHandledSuccessRef.current) {
       hasHandledSuccessRef.current = true;
-      console.log("[MintAccessToken] Pure on-chain TX submitted successfully");
 
       if (skipCeremony) {
         // Parent handles ceremony
@@ -276,7 +271,6 @@ export function MintAccessToken({ onSuccess, onSubmitted, skipCeremony = false }
 
         // Auto-transition to reconnect flow after 2 seconds
         setTimeout(() => {
-          console.log("[MintAccessToken] Auto-transitioning to reconnect flow (pure on-chain)");
           logout("access_token_mint");
           setCeremonyState("reconnecting");
         }, 2000);
@@ -474,17 +468,17 @@ export function MintAccessToken({ onSuccess, onSubmitted, skipCeremony = false }
         <AndamioCardHeader className="text-center pb-2 relative">
           {/* Celebration confetti effect */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-            <div className="absolute top-0 left-1/4 text-2xl animate-bounce" style={{ animationDelay: "0ms" }}>🎉</div>
-            <div className="absolute top-2 right-1/4 text-2xl animate-bounce" style={{ animationDelay: "150ms" }}>✨</div>
-            <div className="absolute top-4 left-1/3 text-xl animate-bounce" style={{ animationDelay: "300ms" }}>🎊</div>
-            <div className="absolute top-1 right-1/3 text-xl animate-bounce" style={{ animationDelay: "450ms" }}>⭐</div>
+            <div className="absolute top-0 left-1/4 text-2xl animate-pulse" style={{ animationDelay: "0ms" }}>🎉</div>
+            <div className="absolute top-2 right-1/4 text-2xl animate-pulse" style={{ animationDelay: "200ms" }}>✨</div>
+            <div className="absolute top-4 left-1/3 text-xl animate-pulse" style={{ animationDelay: "400ms" }}>🎊</div>
+            <div className="absolute top-1 right-1/3 text-xl animate-pulse" style={{ animationDelay: "600ms" }}>⭐</div>
           </div>
 
           <div className="mx-auto mb-3 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 relative z-10">
             <CelebrateIcon className="h-10 w-10 text-primary" />
           </div>
           <AndamioCardTitle className="text-2xl">
-            Access Token Created!
+            Access token created
           </AndamioCardTitle>
           <AndamioCardDescription className="mx-auto max-w-sm text-center text-base">
             Your alias{" "}

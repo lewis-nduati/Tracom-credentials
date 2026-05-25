@@ -1,9 +1,6 @@
-"use client";
-
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useTheme } from "next-themes";
 import { ModuleIcon } from "~/components/icons";
 import { BRANDING, SIDEBAR_LAYOUT } from "~/config";
 import { cn } from "~/lib/utils";
@@ -47,20 +44,6 @@ export function SidebarHeader({
   href,
   className,
 }: SidebarHeaderProps) {
-  const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  // Prevent hydration mismatch - theme is undefined on server
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Select logo based on theme (default to light for SSR)
-  const logoSrc =
-    mounted && resolvedTheme === "dark"
-      ? BRANDING.logo.horizontalDark
-      : BRANDING.logo.horizontal;
-
   const linkHref = href ?? (variant === "logo" ? "/" : "/dashboard");
   const headerHeight =
     variant === "logo"
@@ -83,7 +66,7 @@ export function SidebarHeader({
           <span className="text-sm font-semibold text-sidebar-foreground truncate">
             {BRANDING.name}
           </span>
-          <span className="text-[9px] text-muted-foreground truncate leading-tight">
+          <span className="text-[9px] text-sidebar-foreground/50 truncate leading-tight">
             {subtitle}
           </span>
         </Link>
@@ -102,7 +85,7 @@ export function SidebarHeader({
     >
       <Link href={linkHref}>
         <Image
-          src={logoSrc}
+          src={BRANDING.logo.horizontalDark}
           alt={BRANDING.name}
           width={120}
           height={28}

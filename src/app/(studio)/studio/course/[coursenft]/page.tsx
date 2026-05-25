@@ -168,7 +168,7 @@ function VideoPreview({ url }: { url: string }) {
   }
 
   return (
-    <div className="relative h-24 overflow-hidden rounded-lg border bg-black">
+    <div className="relative h-24 overflow-hidden rounded-lg border bg-[oklch(0.05_0_0)]">
       <iframe
         src={embedUrl}
         className="absolute inset-0 h-full w-full"

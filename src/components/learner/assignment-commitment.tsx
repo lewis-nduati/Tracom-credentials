@@ -98,11 +98,11 @@ export function AssignmentCommitment({
         if (status.state === "updated") {
           // Show enrollment toast for first-time enrollment
           if (!wasEnrolledBeforeTx) {
-            toast.success("You're enrolled!", {
+            toast.success("Enrolled", {
               description: "You are now enrolled in this course.",
             });
           }
-          triggerSuccess("Assignment committed to blockchain!");
+          triggerSuccess("Assignment committed to blockchain.");
           void refetchCommitment();
           // Invalidate student courses and commitments so sidebar badges refresh
           void queryClient.invalidateQueries({
@@ -121,7 +121,7 @@ export function AssignmentCommitment({
     {
       onComplete: (status) => {
         if (status.state === "updated") {
-          triggerSuccess("Assignment updated on blockchain!");
+          triggerSuccess("Assignment updated on blockchain.");
           void refetchCommitment();
           // Invalidate student commitments list so sidebar badges refresh
           void queryClient.invalidateQueries({
@@ -198,10 +198,8 @@ export function AssignmentCommitment({
         evidenceHash: hash,
         isUpdate: false,
       });
-      console.log("[AssignmentCommitment] Evidence saved to DB at finalize");
     } catch (dbError) {
       // STOP - evidence must be saved before we allow TX
-      console.error("[AssignmentCommitment] Failed to save evidence:", dbError);
       toast.error("Failed to save your work", {
         description: "Please try again. Your work must be saved before submitting.",
       });
@@ -239,10 +237,8 @@ export function AssignmentCommitment({
         evidenceHash: hash,
         isUpdate: hasDbRecord, // Use /update if DB record exists, /submit if not
       });
-      console.log("[AssignmentCommitment] Revised evidence saved to DB (isUpdate:", hasDbRecord, ")");
     } catch (dbError) {
       // STOP - evidence must be saved before we allow TX
-      console.error("[AssignmentCommitment] Failed to save revision:", dbError);
       toast.error("Failed to save your revision", {
         description: "Please try again. Your work must be saved before resubmitting.",
       });
@@ -381,7 +377,7 @@ export function AssignmentCommitment({
         {/* Top-level TX success — persists after view transition to new branch */}
         {(commitTxConfirmed || updateTxConfirmed) && (
           <TxConfirmationSuccess
-            message={commitTxConfirmed ? "Assignment submitted successfully!" : "Evidence updated successfully!"}
+            message={commitTxConfirmed ? "Assignment submitted." : "Evidence updated."}
           />
         )}
 
@@ -490,7 +486,7 @@ export function AssignmentCommitment({
                   txStatus={updateTxStatus}
                   txConfirmed={updateTxConfirmed}
                   onRetry={() => updateTx.reset()}
-                  successMessage="Revised work submitted successfully!"
+                  successMessage="Revision submitted."
                 />
                 {updateTx.state === "idle" && !updateTxConfirmed && (
                   <div className="flex justify-end gap-2">
@@ -550,7 +546,7 @@ export function AssignmentCommitment({
                     txStatus={commitTxStatus}
                     txConfirmed={commitTxConfirmed}
                     onRetry={() => commitTx.reset()}
-                    successMessage="Assignment submitted successfully!"
+                    successMessage="Assignment submitted."
                   />
                   {commitTx.state === "idle" && !commitTxConfirmed && (
                     <div className="flex justify-end gap-2">

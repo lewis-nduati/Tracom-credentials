@@ -3,7 +3,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { useAndamioAuth } from "~/hooks/auth/use-andamio-auth";
-import { DashboardProvider } from "~/contexts/dashboard-context";
+import { DashboardProvider, useDashboardData } from "~/contexts/dashboard-context";
 import { ConnectWalletGate } from "~/components/auth/connect-wallet-gate";
 import { MyLearning } from "~/components/learner/my-learning";
 import { ProjectUnlockProgress } from "~/components/learner/project-unlock-progress";
@@ -24,6 +24,7 @@ import {
   checkAndClearJustMintedFlag,
 } from "~/components/dashboard/post-mint-auth-prompt";
 import { AndamioText } from "~/components/andamio";
+import type { AuthUser } from "~/lib/andamio-auth";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -55,8 +56,8 @@ export default function DashboardPage() {
     // Default: Standard auth prompt
     return (
       <ConnectWalletGate
-        title="Your Learning Journey Starts Here"
-        description="Connect your Cardano wallet to see your courses, credentials, and project opportunities."
+        title="Connect to view your dashboard"
+        description="Connect your Cardano wallet to see your courses, credentials, and project contributions."
       />
     );
   }
@@ -92,64 +93,75 @@ export default function DashboardPage() {
 
   return (
     <DashboardProvider>
-      <div className="space-y-6">
-        {/* Welcome Hero - Main identity display */}
-        <WelcomeHero accessTokenAlias={user.accessTokenAlias!} />
+      <DashboardContent user={user} jwtExpiration={jwtExpiration} />
+    </DashboardProvider>
+  );
+}
 
-        {/* My Learning Section */}
-        <MyLearning />
+interface DashboardContentProps {
+  user: AuthUser;
+  jwtExpiration: Date | null;
+}
 
-        {/* Project Unlock Progress - Shows prerequisites progress or aspirational empty state */}
+function DashboardContent({ user, jwtExpiration }: DashboardContentProps) {
+  const { teacher, projects, isLoading } = useDashboardData();
+
+  const hasTeachingOrManaging =
+    isLoading ||
+    (teacher?.courses?.length ?? 0) > 0 ||
+    (projects?.managing?.length ?? 0) > 0;
+
+  const hasContributing =
+    isLoading || (projects?.contributing?.length ?? 0) > 0;
+
+  return (
+    <div className="space-y-10">
+      {/* Zone 1: Identity */}
+      <WelcomeHero accessTokenAlias={user.accessTokenAlias!} />
+
+      {/* Zone 2: Learning (dominant) */}
+      <MyLearning />
+
+      {/* Zone 3: Progress + Accomplishments */}
+      <div className="space-y-4">
         <ProjectUnlockProgress />
+        <div className="grid gap-4 md:grid-cols-2">
+          <StudentAccomplishments accessTokenAlias={user.accessTokenAlias} />
+          <OnChainStatus accessTokenAlias={user.accessTokenAlias} />
+        </div>
+      </div>
 
-        {/* Accomplishments & On-Chain Data */}
-        <section className="space-y-4">
-          <AndamioText variant="overline" as="div">
-            Accomplishments
-          </AndamioText>
-          <div className="grid gap-6 md:grid-cols-2">
-            <StudentAccomplishments accessTokenAlias={user.accessTokenAlias} />
-            <OnChainStatus accessTokenAlias={user.accessTokenAlias} />
-          </div>
-        </section>
-
-        {/* Teaching & Managing */}
+      {/* Zone 4a: Teaching & Managing (hidden when no data) */}
+      {hasTeachingOrManaging && (
         <section className="space-y-4">
           <AndamioText variant="overline" as="div">
             Teaching & Managing
           </AndamioText>
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-2">
             <PendingReviewsSummary accessTokenAlias={user.accessTokenAlias} />
             <PendingAssessmentsSummary accessTokenAlias={user.accessTokenAlias} />
             <OwnedCoursesSummary accessTokenAlias={user.accessTokenAlias} />
             <ManagingProjectsSummary accessTokenAlias={user.accessTokenAlias} />
           </div>
         </section>
+      )}
 
-        {/* Contributing */}
+      {/* Zone 4b: Contributing (hidden when no data) */}
+      {hasContributing && (
         <section className="space-y-4">
           <AndamioText variant="overline" as="div">
             Contributing
           </AndamioText>
-          <div className="grid gap-6 md:grid-cols-2">
-            <ContributingProjectsSummary accessTokenAlias={user.accessTokenAlias} />
-          </div>
+          <ContributingProjectsSummary accessTokenAlias={user.accessTokenAlias} />
         </section>
+      )}
 
-        {/* Account */}
-        <section className="space-y-4">
-          <AndamioText variant="overline" as="div">
-            Account
-          </AndamioText>
-          <div className="grid gap-6 md:grid-cols-2">
-            <AccountDetailsCard
-              cardanoBech32Addr={user.cardanoBech32Addr}
-              accessTokenAlias={user.accessTokenAlias}
-              jwtExpiration={jwtExpiration}
-            />
-          </div>
-        </section>
-      </div>
-    </DashboardProvider>
+      {/* Zone 5: Account */}
+      <AccountDetailsCard
+        cardanoBech32Addr={user.cardanoBech32Addr}
+        accessTokenAlias={user.accessTokenAlias}
+        jwtExpiration={jwtExpiration}
+      />
+    </div>
   );
 }

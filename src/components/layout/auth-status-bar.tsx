@@ -198,7 +198,7 @@ export function AuthStatusBar() {
                 />
                 <span
                   className={cn(
-                    "text-xs font-mono",
+                    "text-xs font-mono tabular-nums",
                     timeUntilExpiry === "Expired"
                       ? "text-destructive"
                       : isExpiringSoon
@@ -234,7 +234,7 @@ export function AuthStatusBar() {
               variant="ghost"
               size="sm"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="h-9 w-9 p-0 text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/15"
+              className="h-10 w-10 p-0 text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/15"
               aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
             >
               {theme === "dark" ? (

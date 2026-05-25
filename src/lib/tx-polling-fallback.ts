@@ -65,6 +65,32 @@ const MAX_CONSECUTIVE_ERRORS = 10;
 const MAX_CONSECUTIVE_404S = 5;
 
 /**
+ * Default backoff when rate-limited (429) and no Retry-After header is present.
+ */
+const RATE_LIMIT_BACKOFF_MS = 15_000;
+
+/**
+ * Max consecutive 429 responses before giving up and treating as a gateway error.
+ * Prevents an infinite loop if the rate limiter is permanently stuck.
+ */
+const MAX_CONSECUTIVE_429S = 8;
+
+/** Await a delay that respects an optional AbortSignal. */
+async function delay(ms: number, signal?: AbortSignal): Promise<void> {
+  return new Promise<void>((resolve, reject) => {
+    const timer = setTimeout(resolve, ms);
+    signal?.addEventListener(
+      "abort",
+      () => {
+        clearTimeout(timer);
+        reject(new DOMException("Aborted", "AbortError"));
+      },
+      { once: true }
+    );
+  });
+}
+
+/**
  * Internal sentinel for the 404-budget terminal so the watcher store can
  * distinguish it from other synthetic terminals and route to the indexer
  * fallback before firing handleTerminal.
@@ -85,6 +111,7 @@ export async function pollUntilTerminal(
   let stalledCount = 0;
   let consecutiveErrors = 0;
   let consecutive404s = 0;
+  let consecutive429s = 0;
 
   for (let i = 0; i < maxPolls; i++) {
     if (signal?.aborted) return null;
@@ -144,12 +171,47 @@ export async function pollUntilTerminal(
 
           continue;
         }
+
+        if (response.status === 429) {
+          // Rate limited: back off without burning the error budget.
+          // Don't call onError — 429 is expected under load and not actionable.
+          consecutive429s++;
+          consecutiveErrors = 0; // 429 is not a gateway error
+
+          if (consecutive429s >= MAX_CONSECUTIVE_429S) {
+            // Stuck in rate-limit loop — surface as a gateway error
+            const rateLimitStatus: TxStatus = {
+              tx_hash: txHash,
+              tx_type: "",
+              state: "failed",
+              retry_count: 0,
+              last_error:
+                "The gateway is rate limiting status checks. Your transaction was submitted and may still confirm. Please refresh the page later.",
+            };
+            callbacks.onComplete?.(rateLimitStatus);
+            return rateLimitStatus;
+          }
+
+          const retryAfterHeader = response.headers.get("Retry-After");
+          const backoffMs = retryAfterHeader
+            ? Math.min(parseInt(retryAfterHeader, 10) * 1000, 60_000)
+            : RATE_LIMIT_BACKOFF_MS;
+
+          await delay(backoffMs, signal).catch((err: unknown) => {
+            if (err instanceof DOMException && err.name === "AbortError") return;
+            throw err;
+          });
+          if (signal?.aborted) return null;
+          continue;
+        }
+
         throw new Error(`Failed to get TX status: ${response.status}`);
       }
 
-      // Successful response — reset error counters
+      // Successful response — reset all error counters
       consecutiveErrors = 0;
       consecutive404s = 0;
+      consecutive429s = 0;
 
       const status = (await response.json()) as TxStatus;
       callbacks.onStatus?.(status);

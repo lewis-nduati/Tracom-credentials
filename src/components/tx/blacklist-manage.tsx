@@ -80,10 +80,9 @@ export function BlacklistManage({
       onComplete: (status) => {
         // "updated" means Gateway has confirmed TX AND updated DB
         if (status.state === "updated") {
-          console.log("[BlacklistManage] TX confirmed and DB updated by gateway");
 
           const actionText = action === "add" ? "added to" : "removed from";
-          toast.success("Blacklist Updated!", {
+          toast.success("Blacklist updated", {
             description: `Contributors ${actionText} blacklist`,
           });
 
@@ -132,7 +131,6 @@ export function BlacklistManage({
         aliases_to_remove,
       },
       onSuccess: async (txResult) => {
-        console.log("[BlacklistManage] TX submitted successfully!", txResult);
       },
       onError: (txError) => {
         console.error("[BlacklistManage] Error:", txError);

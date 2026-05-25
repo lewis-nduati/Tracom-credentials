@@ -96,10 +96,8 @@ export function CredentialClaim({
       onComplete: (status) => {
         // "updated" means Gateway has confirmed TX AND updated DB
         if (status.state === "updated") {
-          console.log("[CredentialClaim] TX confirmed and DB updated by gateway");
-
-          toast.success("Credential Claimed!", {
-            description: `You've earned your credential for ${moduleTitle ?? moduleCode}`,
+          toast.success("Credential earned", {
+            description: `Your credential for ${moduleTitle ?? moduleCode} is recorded on Cardano.`,
           });
 
           void onSuccess?.();
@@ -124,12 +122,6 @@ export function CredentialClaim({
       params: {
         alias: user.accessTokenAlias,
         course_id: courseId,
-      },
-      onSuccess: async (txResult) => {
-        console.log("[CredentialClaim] TX submitted successfully!", txResult);
-      },
-      onError: (txError) => {
-        console.error("[CredentialClaim] Error:", txError);
       },
     });
   };
@@ -190,9 +182,9 @@ export function CredentialClaim({
             <div className="flex items-center gap-3">
               <SuccessIcon className="h-5 w-5 text-primary" />
               <div className="flex-1">
-                <span className="font-medium text-primary">Credential Claimed!</span>
+                <span className="font-medium text-primary">Credential earned</span>
                 <AndamioText variant="small">
-                  Your credential has been added to your wallet!
+                  Permanently recorded on Cardano.
                 </AndamioText>
               </div>
             </div>

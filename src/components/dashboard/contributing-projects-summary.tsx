@@ -6,15 +6,14 @@ import {
   AndamioCard,
   AndamioCardContent,
   AndamioCardHeader,
+  AndamioCardTitle,
 } from "~/components/andamio/andamio-card";
 import { AndamioBadge } from "~/components/andamio/andamio-badge";
 import { AndamioButton } from "~/components/andamio/andamio-button";
 import { AndamioText } from "~/components/andamio/andamio-text";
-import { AndamioCardIconHeader } from "~/components/andamio/andamio-card-icon-header";
 import { AndamioSkeleton } from "~/components/andamio/andamio-skeleton";
 import { AndamioEmptyState } from "~/components/andamio/andamio-empty-state";
 import {
-  ContributorIcon,
   RefreshIcon,
   ProjectIcon,
   ExternalLinkIcon,
@@ -51,7 +50,7 @@ export function ContributingProjectsSummary({ accessTokenAlias }: ContributingPr
     return (
       <AndamioCard>
         <AndamioCardHeader className="pb-3">
-          <AndamioCardIconHeader icon={ContributorIcon} title="My Contributions" />
+          <AndamioCardTitle>My Contributions</AndamioCardTitle>
         </AndamioCardHeader>
         <AndamioCardContent className="space-y-3">
           {[1, 2, 3].map((i) => (
@@ -76,7 +75,7 @@ export function ContributingProjectsSummary({ accessTokenAlias }: ContributingPr
       <AndamioCard>
         <AndamioCardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <AndamioCardIconHeader icon={ContributorIcon} title="My Contributions" />
+            <AndamioCardTitle>My Contributions</AndamioCardTitle>
             {!error && (
               <AndamioButton variant="ghost" size="icon-sm" onClick={refetch}>
                 <RefreshIcon className="h-4 w-4" />
@@ -87,7 +86,7 @@ export function ContributingProjectsSummary({ accessTokenAlias }: ContributingPr
         <AndamioCardContent>
           <AndamioEmptyState
             icon={ProjectIcon}
-            title="No Contributions Yet"
+            title="No contributions yet"
             description="Join a project to start contributing and earning rewards."
             action={
               <Link href="/project">
@@ -107,7 +106,7 @@ export function ContributingProjectsSummary({ accessTokenAlias }: ContributingPr
     <AndamioCard>
       <AndamioCardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <AndamioCardIconHeader icon={ContributorIcon} title="My Contributions" />
+          <AndamioCardTitle>My Contributions</AndamioCardTitle>
           <div className="flex items-center gap-2">
             <AndamioBadge variant="secondary" className="text-xs">
               {contributingProjects.length} active
@@ -119,16 +118,9 @@ export function ContributingProjectsSummary({ accessTokenAlias }: ContributingPr
         </div>
       </AndamioCardHeader>
       <AndamioCardContent className="space-y-3">
-        {/* Summary stat */}
-        <div className="flex items-center gap-2 bg-primary/10 rounded-lg px-3 py-2">
-          <ContributorIcon className="h-4 w-4 text-primary" />
-          <div>
-            <AndamioText className="text-lg font-semibold">{contributingProjects.length}</AndamioText>
-            <AndamioText variant="small" className="text-xs">
-              {contributingProjects.length === 1 ? "Project" : "Projects"} contributing to
-            </AndamioText>
-          </div>
-        </div>
+        <AndamioText variant="small" className="text-muted-foreground">
+          {contributingProjects.length} {contributingProjects.length === 1 ? "project" : "projects"} active
+        </AndamioText>
 
         {/* Project list */}
         <div className="space-y-1.5">

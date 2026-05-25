@@ -63,7 +63,7 @@ export default function CoursePage() {
   if (error) {
     return (
       <AndamioNotFoundCard
-        title="Unable to Load Courses"
+        title="Unable to load courses"
         message={error}
       />
     );
@@ -79,7 +79,7 @@ export default function CoursePage() {
         />
         <AndamioEmptyState
           icon={CourseIcon}
-          title="No Courses Available Yet"
+          title="No courses available yet"
           description="Courses are being prepared. In the meantime, explore projects or set up your access token."
         />
       </div>

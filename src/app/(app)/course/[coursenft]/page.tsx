@@ -159,11 +159,11 @@ function CourseDetailContent() {
         <div className="flex flex-wrap gap-3 sm:gap-4 mt-4">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <CourseIcon className="h-4 w-4 shrink-0" />
-            <span>{resolvedModules.length} {resolvedModules.length === 1 ? "Module" : "Modules"}</span>
+            <span>{resolvedModules.length} {resolvedModules.length === 1 ? "module" : "modules"}</span>
           </div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <SLTIcon className="h-4 w-4 shrink-0" />
-            <span>{totalSlts} Learning {totalSlts === 1 ? "Target" : "Targets"}</span>
+            <span>{totalSlts} learning {totalSlts === 1 ? "target" : "targets"}</span>
           </div>
         </div>
       </div>

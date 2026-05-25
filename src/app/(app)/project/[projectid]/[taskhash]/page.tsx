@@ -269,7 +269,7 @@ export default function TaskDetailPage() {
   } else if (!activeCommitment) {
     commitmentCardDescription = "Commit to this task to get started";
   } else if (commitmentStatus === "ACCEPTED") {
-    commitmentCardDescription = "Your work has been accepted!";
+    commitmentCardDescription = "Your work has been accepted.";
   } else {
     commitmentCardDescription = "Track your progress on this task";
   }

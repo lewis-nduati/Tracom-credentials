@@ -105,9 +105,7 @@ export function ProjectCredentialClaim({
       onComplete: (status) => {
         // "updated" means Gateway has confirmed TX AND updated DB
         if (status.state === "updated") {
-          console.log("[ProjectCredentialClaim] TX confirmed and tracked by gateway");
-
-          toast.success(hasRewards ? "Rewards Claimed!" : "Credentials Claimed!", {
+          toast.success(hasRewards ? "Rewards claimed" : "Credential earned", {
             description: hasRewards
               ? `You've left the project and claimed ${formatLovelace(pendingRewardLovelace)} + your credential`
               : projectTitle

@@ -1,11 +1,17 @@
 "use client";
 
+import { useState } from "react";
 import { useCopyFeedback } from "~/hooks/ui/use-success-notification";
-import { AndamioCard, AndamioCardContent } from "~/components/andamio/andamio-card";
-import { AndamioCardIconHeader } from "~/components/andamio/andamio-card-icon-header";
+import {
+  AndamioCard,
+  AndamioCardHeader,
+  AndamioCardTitle,
+  AndamioCardContent,
+} from "~/components/andamio/andamio-card";
 import { AndamioButton } from "~/components/andamio/andamio-button";
 import { AndamioText } from "~/components/andamio/andamio-text";
-import { WalletIcon, AccessTokenIcon, ShieldIcon, CopyIcon, CompletedIcon } from "~/components/icons";
+import { AccessTokenIcon, ShieldIcon, CopyIcon, CompletedIcon, ExpandIcon, CollapseIcon } from "~/components/icons";
+import { cn } from "~/lib/utils";
 
 interface AccountDetailsProps {
   cardanoBech32Addr: string | null | undefined;
@@ -25,12 +31,31 @@ export function AccountDetailsCard({
   jwtExpiration,
 }: AccountDetailsProps) {
   const { isCopied: addressCopied, copy: copyAddress } = useCopyFeedback();
+  const [mobileExpanded, setMobileExpanded] = useState(false);
   const hasAccessToken = !!accessTokenAlias;
 
   return (
     <AndamioCard>
-      <AndamioCardIconHeader icon={WalletIcon} title="Account Details" />
-      <AndamioCardContent className="space-y-4">
+      <AndamioCardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <AndamioCardTitle>Account Details</AndamioCardTitle>
+          <AndamioButton
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => setMobileExpanded((v) => !v)}
+            className="sm:hidden"
+            aria-expanded={mobileExpanded}
+            aria-label={mobileExpanded ? "Collapse account details" : "Expand account details"}
+          >
+            {mobileExpanded ? (
+              <CollapseIcon className="h-4 w-4" />
+            ) : (
+              <ExpandIcon className="h-4 w-4" />
+            )}
+          </AndamioButton>
+        </div>
+      </AndamioCardHeader>
+      <AndamioCardContent className={cn("space-y-4", !mobileExpanded && "hidden sm:block")}>
         {/* Wallet Address */}
         <div className="space-y-1.5">
           <AndamioText variant="overline">Wallet Address</AndamioText>

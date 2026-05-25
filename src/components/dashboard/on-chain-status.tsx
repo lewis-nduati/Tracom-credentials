@@ -5,11 +5,11 @@ import {
   AndamioCard,
   AndamioCardContent,
   AndamioCardHeader,
+  AndamioCardTitle,
 } from "~/components/andamio/andamio-card";
 import { AndamioBadge } from "~/components/andamio/andamio-badge";
 import { AndamioButton } from "~/components/andamio/andamio-button";
 import { AndamioText } from "~/components/andamio/andamio-text";
-import { AndamioCardIconHeader } from "~/components/andamio/andamio-card-icon-header";
 import {
   CourseIcon,
   ExternalLinkIcon,
@@ -43,7 +43,7 @@ export function OnChainStatus({ accessTokenAlias }: OnChainStatusProps) {
     return (
       <AndamioCard>
         <AndamioCardHeader className="pb-3">
-          <AndamioCardIconHeader icon={DatabaseIcon} title="On-Chain Data" />
+          <AndamioCardTitle>On-Chain Data</AndamioCardTitle>
         </AndamioCardHeader>
         <AndamioCardContent>
           <div className="flex flex-col items-center justify-center py-6 text-center">
@@ -67,7 +67,7 @@ export function OnChainStatus({ accessTokenAlias }: OnChainStatusProps) {
     return (
       <AndamioCard>
         <AndamioCardHeader className="pb-3">
-          <AndamioCardIconHeader icon={DatabaseIcon} title="On-Chain Data" />
+          <AndamioCardTitle>On-Chain Data</AndamioCardTitle>
         </AndamioCardHeader>
         <AndamioCardContent>
           <div className="flex flex-col items-center justify-center py-6">
@@ -87,7 +87,7 @@ export function OnChainStatus({ accessTokenAlias }: OnChainStatusProps) {
       <AndamioCard>
         <AndamioCardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <AndamioCardIconHeader icon={DatabaseIcon} title="On-Chain Data" />
+            <AndamioCardTitle>On-Chain Data</AndamioCardTitle>
             <AndamioButton variant="ghost" size="icon-sm" onClick={refetch} aria-label="Refresh on-chain data">
               <RefreshIcon className="h-4 w-4" />
             </AndamioButton>
@@ -120,7 +120,7 @@ export function OnChainStatus({ accessTokenAlias }: OnChainStatusProps) {
     <AndamioCard>
       <AndamioCardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <AndamioCardIconHeader icon={DatabaseIcon} title="On-Chain Data" />
+          <AndamioCardTitle>On-Chain Data</AndamioCardTitle>
           <div className="flex items-center gap-2">
             <AndamioBadge variant="outline" className="text-xs">
               <VerifiedIcon className="mr-1 h-3 w-3 text-primary" />
@@ -133,22 +133,15 @@ export function OnChainStatus({ accessTokenAlias }: OnChainStatusProps) {
         </div>
       </AndamioCardHeader>
       <AndamioCardContent className="space-y-4">
-        {/* Summary Stats */}
-        <div className="flex items-center gap-2 bg-muted/50 rounded-lg px-3 py-2">
-          <CourseIcon className="h-4 w-4 text-secondary" />
-          <div>
-            <AndamioText className="text-lg font-semibold">{courseCount}</AndamioText>
-            <AndamioText variant="small" className="text-xs">
-              {courseCount === 1 ? "Course" : "Courses"} enrolled on-chain
-            </AndamioText>
-          </div>
-        </div>
+        <AndamioText variant="small" className="text-muted-foreground">
+          {courseCount} {courseCount === 1 ? "course" : "courses"} enrolled on-chain
+        </AndamioText>
 
         {/* Enrolled Courses List */}
         {allCourses.length > 0 ? (
           <div className="space-y-2">
             <AndamioText variant="overline">
-              Active Enrollments
+              Active enrollments
             </AndamioText>
             <div className="space-y-1.5">
               {allCourses.slice(0, 3).map((course, index) => (

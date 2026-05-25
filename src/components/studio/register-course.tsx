@@ -68,7 +68,7 @@ export function RegisterCourse({ courseId, owner }: RegisterCourseProps) {
       await invalidateOwnerCourses();
       await invalidateTeacherCourses();
 
-      toast.success("Course registered!", {
+      toast.success("Course registered", {
         description: `"${title}" is now ready to use`,
       });
 

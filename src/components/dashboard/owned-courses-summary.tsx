@@ -6,11 +6,11 @@ import {
   AndamioCard,
   AndamioCardContent,
   AndamioCardHeader,
+  AndamioCardTitle,
 } from "~/components/andamio/andamio-card";
 import { AndamioBadge } from "~/components/andamio/andamio-badge";
 import { AndamioButton } from "~/components/andamio/andamio-button";
 import { AndamioText } from "~/components/andamio/andamio-text";
-import { AndamioCardIconHeader } from "~/components/andamio/andamio-card-icon-header";
 import { AndamioSkeleton } from "~/components/andamio/andamio-skeleton";
 import { AndamioEmptyState } from "~/components/andamio/andamio-empty-state";
 import {
@@ -52,7 +52,7 @@ export function OwnedCoursesSummary({ accessTokenAlias }: OwnedCoursesSummaryPro
     return (
       <AndamioCard>
         <AndamioCardHeader className="pb-3">
-          <AndamioCardIconHeader icon={InstructorIcon} title="My Courses" />
+          <AndamioCardTitle>My Courses</AndamioCardTitle>
         </AndamioCardHeader>
         <AndamioCardContent className="space-y-3">
           {[1, 2, 3].map((i) => (
@@ -77,7 +77,7 @@ export function OwnedCoursesSummary({ accessTokenAlias }: OwnedCoursesSummaryPro
       <AndamioCard>
         <AndamioCardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <AndamioCardIconHeader icon={InstructorIcon} title="My Courses" />
+            <AndamioCardTitle>My Courses</AndamioCardTitle>
             {!error && (
               <AndamioButton variant="ghost" size="icon-sm" onClick={refetch}>
                 <RefreshIcon className="h-4 w-4" />
@@ -88,7 +88,7 @@ export function OwnedCoursesSummary({ accessTokenAlias }: OwnedCoursesSummaryPro
         <AndamioCardContent>
           <AndamioEmptyState
             icon={CourseIcon}
-            title="No Courses Created"
+            title="No courses created"
             description="Create your first course and publish it on-chain."
             action={
               <Link href="/studio">
@@ -108,7 +108,7 @@ export function OwnedCoursesSummary({ accessTokenAlias }: OwnedCoursesSummaryPro
     <AndamioCard>
       <AndamioCardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <AndamioCardIconHeader icon={InstructorIcon} title="My Courses" />
+          <AndamioCardTitle>My Courses</AndamioCardTitle>
           <div className="flex items-center gap-2">
             <AndamioBadge variant="secondary" className="text-xs">
               {ownedCourses.length} owned
@@ -120,16 +120,9 @@ export function OwnedCoursesSummary({ accessTokenAlias }: OwnedCoursesSummaryPro
         </div>
       </AndamioCardHeader>
       <AndamioCardContent className="space-y-3">
-        {/* Summary stat */}
-        <div className="flex items-center gap-2 bg-primary/10 rounded-lg px-3 py-2">
-          <InstructorIcon className="h-4 w-4 text-primary" />
-          <div>
-            <AndamioText className="text-lg font-semibold">{ownedCourses.length}</AndamioText>
-            <AndamioText variant="small" className="text-xs">
-              {ownedCourses.length === 1 ? "Course" : "Courses"} teaching
-            </AndamioText>
-          </div>
-        </div>
+        <AndamioText variant="small" className="text-muted-foreground">
+          {ownedCourses.length} {ownedCourses.length === 1 ? "course" : "courses"} teaching
+        </AndamioText>
 
         {/* Course list */}
         <div className="space-y-1.5">

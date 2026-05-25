@@ -83,7 +83,7 @@ export function CreateCourse({ onSuccess }: CreateCourseProps) {
       onComplete: (status) => {
         if (status.state === "updated") {
           console.log("[CreateCourse] TX confirmed and DB updated by gateway");
-          toast.success("Course Created!", {
+          toast.success("Course created", {
             description: `"${title.trim()}" is now live on-chain`,
           });
 

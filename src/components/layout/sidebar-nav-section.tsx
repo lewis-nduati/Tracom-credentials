@@ -74,7 +74,7 @@ export function SidebarNavSection({
         className={cn(
           "px-2 font-medium uppercase tracking-wider mb-1",
           styles.sectionHeaderSize,
-          section.muted ? "text-muted-foreground/50" : "text-muted-foreground/70"
+          section.muted ? "text-sidebar-foreground/30" : "text-sidebar-foreground/45"
         )}
       >
         {section.title}
@@ -129,7 +129,7 @@ function SidebarNavItem({
         variant === "mobile" && "rounded-lg",
         isActive
           ? "bg-sidebar-accent text-sidebar-accent-foreground"
-          : "text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-foreground",
+          : "text-sidebar-foreground/60 hover:bg-sidebar-accent/40 hover:text-sidebar-foreground",
         muted && !isActive && "opacity-60"
       )}
     >
@@ -138,8 +138,8 @@ function SidebarNavItem({
           "flex-shrink-0",
           styles.iconSize,
           isActive
-            ? "text-primary"
-            : "text-muted-foreground group-hover:text-sidebar-foreground"
+            ? "text-sidebar-primary"
+            : "text-sidebar-foreground/50 group-hover:text-sidebar-foreground"
         )}
       />
 

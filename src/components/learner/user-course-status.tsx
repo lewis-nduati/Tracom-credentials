@@ -9,6 +9,7 @@ import { useTransaction } from "~/hooks/tx/use-transaction";
 import { useTxStream } from "~/hooks/tx/use-tx-stream";
 import { TransactionButton } from "~/components/tx/transaction-button";
 import { TransactionStatus } from "~/components/tx/transaction-status";
+import { AndamioConfirmDialog } from "~/components/andamio/andamio-confirm-dialog";
 import { AndamioBadge } from "~/components/andamio/andamio-badge";
 import { AndamioButton } from "~/components/andamio/andamio-button";
 import { AndamioCard, AndamioCardContent, AndamioCardDescription, AndamioCardHeader, AndamioCardTitle } from "~/components/andamio/andamio-card";
@@ -20,6 +21,7 @@ import {
   SuccessIcon,
   OnChainIcon,
   LoadingIcon,
+  CredentialIcon,
 } from "~/components/icons";
 
 /**
@@ -193,7 +195,7 @@ function CredentialClaimCTA({
     {
       onComplete: (status) => {
         if (status.state === "updated") {
-          toast.success("Credentials Claimed!", {
+          toast.success("Credentials claimed", {
             description: `You've earned your credentials for ${courseTitle}`,
           });
           onSuccess();
@@ -216,12 +218,6 @@ function CredentialClaimCTA({
       params: {
         alias: user.accessTokenAlias,
         course_id: courseId,
-      },
-      onSuccess: async (txResult) => {
-        console.log("[CredentialClaimCTA] TX submitted!", txResult);
-      },
-      onError: (txError) => {
-        console.error("[CredentialClaimCTA] Error:", txError);
       },
     });
   };
@@ -291,8 +287,22 @@ function CredentialClaimCTA({
         </div>
       )}
 
-      {/* Claim button — only when all modules accepted */}
-      {allAccepted && !txConfirmed && (
+      {/* Claim button — confirm dialog guards against accidental blockchain writes */}
+      {allAccepted && !txConfirmed && state === "idle" && (
+        <AndamioConfirmDialog
+          trigger={
+            <AndamioButton className="w-full" disabled={!user?.accessTokenAlias}>
+              <CredentialIcon className="h-4 w-4 mr-2" />
+              {`Claim ${accepted} ${accepted === 1 ? "Credential" : "Credentials"}`}
+            </AndamioButton>
+          }
+          title="Claim your credentials?"
+          description={`This permanently records your completion of "${courseTitle}" on the Cardano blockchain. You cannot undo this.`}
+          confirmText={`Claim ${accepted} ${accepted === 1 ? "credential" : "credentials"}`}
+          onConfirm={handleClaim}
+        />
+      )}
+      {allAccepted && !txConfirmed && state !== "idle" && (
         <TransactionButton
           txState={state}
           onClick={handleClaim}

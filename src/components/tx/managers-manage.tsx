@@ -86,7 +86,7 @@ export function ManagersManage({
     {
       onComplete: (status) => {
         if (status.state === "updated") {
-          toast.success("Team Updated!", {
+          toast.success("Team updated", {
             description: "Project managers have been updated.",
           });
           // Apply optimistic updates immediately so the UI reflects changes
@@ -145,7 +145,6 @@ export function ManagersManage({
         managers_to_remove: aliasesToRemove,
       },
       onSuccess: async (txResult) => {
-        console.log("[ManagersManage] TX submitted successfully!", txResult);
       },
       onError: (txError) => {
         console.error("[ManagersManage] Error:", txError);

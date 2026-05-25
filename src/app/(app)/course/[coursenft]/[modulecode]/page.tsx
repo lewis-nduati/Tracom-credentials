@@ -201,7 +201,7 @@ export default function ModuleLessonsPage() {
             )}
           </div>
           <AndamioText variant="muted">
-            The learning targets below define what you will learn in this module. Each target is paired with a lesson to guide your learning journey.
+            Each learning target is paired with a lesson. Complete all targets to unlock the assignment.
           </AndamioText>
           <SLTLessonTable
             data={combinedData}
@@ -300,30 +300,30 @@ function getAssignmentCTAConfig(status: string | null) {
   switch (status) {
     case "PENDING_APPROVAL":
       return {
-        heading: "Assignment Submitted",
+        heading: "Assignment submitted",
         description:
           "Your assignment is being reviewed. You can view your submission while you wait.",
         buttonLabel: "View Assignment",
       };
     case "ASSIGNMENT_ACCEPTED":
       return {
-        heading: "Assignment Accepted!",
+        heading: "Assignment accepted",
         description:
           "Your assignment has been approved. Claim your credential to record your achievement on-chain.",
         buttonLabel: "Claim Credential",
       };
     case "CREDENTIAL_CLAIMED":
       return {
-        heading: "Credential Earned",
+        heading: "Credential earned",
         description:
           "You've claimed your credential for this module. Your achievement is recorded on-chain.",
         buttonLabel: "View Assignment",
       };
     case "ASSIGNMENT_DENIED":
       return {
-        heading: "Revision Requested",
+        heading: "Revision requested",
         description:
-          "Your assignment needs some revisions. Review the feedback and resubmit when ready.",
+          "Your submission needs changes. Open the assignment to see your previous work and update it.",
         buttonLabel: "Revise Assignment",
       };
     default:

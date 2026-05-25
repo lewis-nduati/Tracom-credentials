@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import {
   OnChainIcon,
   SuccessIcon,
@@ -67,8 +68,14 @@ export function CourseCard({ course, enrollmentStatus }: CourseCardProps) {
   const showImage = imageUrl && !imageError;
 
   return (
-    <Link href={`/course/${courseId}`} className="block group" data-testid="course-card">
-      <AndamioCard className="h-full transition-all duration-200 hover:shadow-md hover:border-primary/20 group-hover:bg-accent/5">
+    <Link href={`/course/${courseId}`} className="block" data-testid="course-card">
+      <motion.div
+        className="h-full group"
+        whileHover={{ y: -3 }}
+        whileTap={{ scale: 0.98 }}
+        transition={{ type: "spring", stiffness: 380, damping: 28 }}
+      >
+      <AndamioCard className="h-full transition-shadow duration-200 hover:shadow-md hover:border-primary/20">
         {/* Image header — taller, with title overlaid */}
         <div className="relative h-40 sm:h-48 overflow-hidden rounded-t-xl -mt-6 -mx-0">
           {showImage ? (
@@ -127,6 +134,7 @@ export function CourseCard({ course, enrollmentStatus }: CourseCardProps) {
           </div>
         </AndamioCardFooter>
       </AndamioCard>
+      </motion.div>
     </Link>
   );
 }

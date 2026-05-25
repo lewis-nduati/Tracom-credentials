@@ -103,7 +103,7 @@ export function MintModuleTokens({
           console.log("[MintModuleTokens] TX confirmed and DB updated by gateway");
 
           const moduleCount = courseModules.length;
-          toast.success("Module Tokens Minted!", {
+          toast.success("Module tokens minted", {
             description: `${moduleCount} module${moduleCount > 1 ? "s" : ""} minted successfully`,
           });
 

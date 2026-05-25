@@ -71,8 +71,7 @@ export function TreasuryAddFunds({
     {
       onComplete: (status) => {
         if (status.state === "updated") {
-          console.log("[TreasuryAddFunds] TX confirmed and DB updated by gateway");
-          toast.success("Funds Added!", {
+          toast.success("Funds added", {
             description: `${adaAmount} ADA added to project treasury`,
           });
           setAdaAmount("");
@@ -109,7 +108,6 @@ export function TreasuryAddFunds({
         deposit_value: [["lovelace", lovelaceAmount]],
       },
       onSuccess: async (txResult) => {
-        console.log("[TreasuryAddFunds] TX submitted successfully!", txResult);
       },
       onError: (txError) => {
         console.error("[TreasuryAddFunds] Error:", txError);

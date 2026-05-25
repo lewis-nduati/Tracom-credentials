@@ -108,13 +108,13 @@ export function SidebarUserSection({
           <div className="flex items-center gap-1.5">
             <div
               className={cn(
-                "rounded-full bg-primary motion-safe:animate-pulse flex-shrink-0",
+                "rounded-full bg-sidebar-primary motion-safe:animate-pulse flex-shrink-0",
                 isExpanded ? "h-2 w-2" : "h-1.5 w-1.5"
               )}
             />
             <span
               className={cn(
-                "font-mono text-muted-foreground truncate",
+                "font-mono text-sidebar-foreground/50 truncate",
                 isExpanded ? "text-xs" : "text-[10px]"
               )}
             >
@@ -131,7 +131,7 @@ export function SidebarUserSection({
                 variant="ghost"
                 size="sm"
                 className={cn(
-                  "w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10",
+                  "w-full justify-start text-sidebar-foreground/60 hover:text-destructive hover:bg-destructive/10",
                   isExpanded ? "text-sm h-9 px-3" : "text-[11px] h-7 px-2"
                 )}
               >

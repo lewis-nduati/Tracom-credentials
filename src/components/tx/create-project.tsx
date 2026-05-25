@@ -151,7 +151,7 @@ export function CreateProject({ onSuccess, onConfirmed, initialTitle, onCreateCo
           void queryClient.invalidateQueries({ queryKey: projectManagerKeys.all });
           void queryClient.invalidateQueries({ queryKey: ownerProjectKeys.all });
 
-          toast.success("Project Created!", {
+          toast.success("Project created", {
             description: `"${title.trim()}" is now live on-chain`,
           });
 

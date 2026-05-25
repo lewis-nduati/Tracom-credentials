@@ -149,7 +149,7 @@ export function CreateCourseDialog({ defaultOpen = false }: CreateCourseDialogPr
           const courseId = metadata.policyId;
 
           if (registrationSucceeded) {
-            toast.success("Course Created!", {
+            toast.success("Course created", {
               description: `"${courseTitle}" is now live`,
               action: {
                 label: "Open Course",

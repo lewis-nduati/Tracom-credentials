@@ -582,7 +582,7 @@ function MyContributionsContent() {
       {commitments.length === 0 && !isContributor && (
         <AndamioEmptyState
           icon={TaskIcon}
-          title="No Contributions Yet"
+          title="No contributions yet"
           description="Browse the project tasks and commit to one to get started."
         />
       )}

@@ -117,7 +117,7 @@ export function AssignmentUpdate({
           console.log("[AssignmentUpdate] TX confirmed and DB updated by gateway");
 
           const actionText = isNewCommitment ? "committed" : "updated";
-          toast.success("Submission Recorded!", {
+          toast.success("Submission recorded", {
             description: `Your evidence has been ${actionText} on-chain`,
           });
 

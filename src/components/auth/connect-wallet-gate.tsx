@@ -40,7 +40,7 @@ export function ConnectWalletGate({
           Next, sign a message with your wallet to verify ownership.
         </AndamioText>
         <AndamioButton onClick={() => void authenticate()}>
-          Authorize
+          Sign with Wallet
         </AndamioButton>
       </div>
     );
