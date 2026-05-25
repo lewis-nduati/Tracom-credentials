@@ -13,7 +13,13 @@ import { withTimeout } from "~/lib/promise-utils";
 
 /** Budget for each wallet balance scan. Matches existing wallet-query timeouts. */
 const WALLET_SCAN_TIMEOUT_MS = 15_000;
-import { AndamioHeading } from "~/components/andamio/andamio-heading";
+import {
+  AndamioCard,
+  AndamioCardContent,
+  AndamioCardDescription,
+  AndamioCardHeader,
+  AndamioCardTitle,
+} from "~/components/andamio/andamio-card";
 import { AndamioText } from "~/components/andamio/andamio-text";
 import { LoadingIcon } from "~/components/icons";
 import { RegistrationFlow } from "~/components/auth/registration-flow";
@@ -247,16 +253,17 @@ export function AccessTokenOnboarding({
   // Authenticating (wallet signing the session nonce)
   if (isWalletConnected && isAuthenticating) {
     return (
-      <div className="flex flex-col items-center text-center gap-4">
-        <AndamioHeading level={2} size="2xl">
-          Signing In...
-        </AndamioHeading>
-        <div className="flex flex-col items-center gap-4">
-          <LoadingIcon className="h-8 w-8 animate-spin text-muted-foreground" />
-          <AndamioText variant="muted">
-            Please sign the message in your wallet
-          </AndamioText>
-        </div>
+      <div className="w-full max-w-md mx-auto">
+        <AndamioCard>
+          <AndamioCardHeader className="pb-2">
+            <AndamioText variant="overline" className="mb-1">Signing in</AndamioText>
+            <AndamioCardTitle className="text-xl">Sign the message</AndamioCardTitle>
+            <AndamioCardDescription>Check your wallet to approve</AndamioCardDescription>
+          </AndamioCardHeader>
+          <AndamioCardContent className="flex flex-col items-center py-8 gap-4">
+            <LoadingIcon className="h-8 w-8 animate-spin text-muted-foreground" />
+          </AndamioCardContent>
+        </AndamioCard>
       </div>
     );
   }
@@ -264,32 +271,37 @@ export function AccessTokenOnboarding({
   // V2 scanning in progress
   if (v2Scanning) {
     return (
-      <div className="flex flex-col items-center text-center gap-4">
-        <AndamioHeading level={2} size="2xl">
-          Checking Your Wallet...
-        </AndamioHeading>
-        <div className="flex flex-col items-center gap-4">
-          <LoadingIcon className="h-8 w-8 animate-spin text-muted-foreground" />
-          <AndamioText variant="muted">Scanning for existing access tokens</AndamioText>
-        </div>
+      <div className="w-full max-w-md mx-auto">
+        <AndamioCard>
+          <AndamioCardHeader className="pb-2">
+            <AndamioText variant="overline" className="mb-1">Checking wallet</AndamioText>
+            <AndamioCardTitle className="text-xl">Checking your wallet</AndamioCardTitle>
+            <AndamioCardDescription>Looking for your access token.</AndamioCardDescription>
+          </AndamioCardHeader>
+          <AndamioCardContent className="flex flex-col items-center py-8 gap-4">
+            <LoadingIcon className="h-8 w-8 animate-spin text-muted-foreground" />
+          </AndamioCardContent>
+        </AndamioCard>
       </div>
     );
   }
 
-  // Existing V2 token was detected. If the consumer provided a callback,
-  // they've already been notified. Otherwise hold a neutral waiting state
-  // while the auth context picks up the alias and the surrounding gate
-  // naturally unmounts this component.
+  // Existing V2 token detected. If the consumer provided a callback, they've
+  // already been notified. Otherwise hold a neutral waiting state while the
+  // auth context picks up the alias.
   if (existingV2Detected) {
     return (
-      <div className="flex flex-col items-center text-center gap-4">
-        <AndamioHeading level={2} size="2xl">
-          Almost There...
-        </AndamioHeading>
-        <div className="flex flex-col items-center gap-4">
-          <LoadingIcon className="h-8 w-8 animate-spin text-muted-foreground" />
-          <AndamioText variant="muted">Finalizing your session</AndamioText>
-        </div>
+      <div className="w-full max-w-md mx-auto">
+        <AndamioCard>
+          <AndamioCardHeader className="pb-2">
+            <AndamioText variant="overline" className="mb-1">Signing in</AndamioText>
+            <AndamioCardTitle className="text-xl">Finishing up</AndamioCardTitle>
+            <AndamioCardDescription>Signing you in...</AndamioCardDescription>
+          </AndamioCardHeader>
+          <AndamioCardContent className="flex flex-col items-center py-8 gap-4">
+            <LoadingIcon className="h-8 w-8 animate-spin text-muted-foreground" />
+          </AndamioCardContent>
+        </AndamioCard>
       </div>
     );
   }
@@ -297,14 +309,17 @@ export function AccessTokenOnboarding({
   // V1 scanning in progress
   if (v1Scanning) {
     return (
-      <div className="flex flex-col items-center text-center gap-4">
-        <AndamioHeading level={2} size="2xl">
-          Checking Your Wallet...
-        </AndamioHeading>
-        <div className="flex flex-col items-center gap-4">
-          <LoadingIcon className="h-8 w-8 animate-spin text-muted-foreground" />
-          <AndamioText variant="muted">Scanning for existing access tokens</AndamioText>
-        </div>
+      <div className="w-full max-w-md mx-auto">
+        <AndamioCard>
+          <AndamioCardHeader className="pb-2">
+            <AndamioText variant="overline" className="mb-1">Checking wallet</AndamioText>
+            <AndamioCardTitle className="text-xl">Checking your wallet</AndamioCardTitle>
+            <AndamioCardDescription>Looking for your access token.</AndamioCardDescription>
+          </AndamioCardHeader>
+          <AndamioCardContent className="flex flex-col items-center py-8 gap-4">
+            <LoadingIcon className="h-8 w-8 animate-spin text-muted-foreground" />
+          </AndamioCardContent>
+        </AndamioCard>
       </div>
     );
   }

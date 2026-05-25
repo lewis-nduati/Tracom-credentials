@@ -5,11 +5,8 @@ import { ConnectWalletButton } from "~/components/auth/connect-wallet-button";
 import { useAndamioAuth } from "~/hooks/auth/use-andamio-auth";
 import { useTxStream } from "~/hooks/tx/use-tx-stream";
 import {
-  AccessTokenIcon,
-  SuccessIcon,
   LoadingIcon,
   ExternalLinkIcon,
-  InfoIcon,
 } from "~/components/icons";
 import {
   AndamioCard,
@@ -32,24 +29,22 @@ interface FirstLoginCardProps {
    */
   onActivated: () => void;
   /**
-   * Terminal celebration description shown during the 2s delay before
-   * `onActivated` fires. Defaults to the landing copy.
+   * Terminal message shown during the 2s delay before `onActivated` fires.
    */
   terminalMessage?: string;
 }
 
 /**
- * Celebration card shown after minting an access token.
+ * Shown after minting an access token.
  *
  * Flow:
- * 1. Shows TX submitted with real-time confirmation status via SSE
- * 2. Once confirmed, shows celebration and auto-logouts after 2s
- * 3. Card shows wallet connect button for re-connection
+ * 1. Tracks TX confirmation via SSE
+ * 2. Once confirmed, auto-logouts after 2s
+ * 3. Shows wallet connect button for re-connection
  * 4. Wallet connects → auto-auth picks up the new token → onActivated fires
  *
  * `onActivated` only fires when the re-authenticated wallet carries the same
- * alias the ceremony was initiated for. This prevents a mid-ceremony identity
- * swap (different wallet reconnects) from revealing the success state.
+ * alias the ceremony was initiated for, preventing a mid-ceremony identity swap.
  */
 export function FirstLoginCard({
   alias,
@@ -68,15 +63,11 @@ export function FirstLoginCard({
   const [hasLoggedOut, setHasLoggedOut] = React.useState(false);
   const [confirmationStalled, setConfirmationStalled] = React.useState(false);
 
-  // Track on-chain confirmation via gateway SSE
   const { status: txStatus, isSuccess: txConfirmed, isFailed: txFailed } = useTxStream(
     txHash,
     {
       onComplete: (status) => {
-        // Auto-transition to reconnect flow when TX is confirmed
         if (status.state === "updated" && !hasLoggedOut) {
-          console.log("[FirstLoginCard] TX confirmed - auto-transitioning to reconnect flow");
-          // Show celebration for 2 seconds, then auto-logout
           setTimeout(() => {
             setHasLoggedOut(true);
             logout("access_token_mint");
@@ -87,9 +78,7 @@ export function FirstLoginCard({
   );
 
   // Client-side stall fallback. The gateway's tx-watcher stall timeout (~30s)
-  // is the primary signal, but a broken SSE stream or a buggy watcher could
-  // leave the user staring at "Access Token Submitted!" indefinitely. Flip
-  // to a recoverable error state after 2 minutes.
+  // is the primary signal, but a broken SSE stream could leave the user stuck.
   React.useEffect(() => {
     if (txConfirmed || txFailed || hasLoggedOut) return;
     const stallTimer = setTimeout(() => {
@@ -102,12 +91,11 @@ export function FirstLoginCard({
     ? getTransactionExplorerUrl(txHash, env.NEXT_PUBLIC_CARDANO_NETWORK)
     : null;
 
-  // Identity-bound terminal state: a mid-ceremony wallet swap will NOT
-  // satisfy this predicate, so onActivated won't fire under the wrong alias.
+  // Identity-bound terminal state: a mid-ceremony wallet swap will NOT satisfy
+  // this predicate, so onActivated won't fire under the wrong alias.
   const isActivatedWithExpectedAlias =
     hasLoggedOut && isAuthenticated && user?.accessTokenAlias === alias;
 
-  // After re-authenticating with the matching alias, fire onActivated.
   React.useEffect(() => {
     if (!isActivatedWithExpectedAlias) return;
     const timer = setTimeout(() => {
@@ -116,22 +104,20 @@ export function FirstLoginCard({
     return () => clearTimeout(timer);
   }, [isActivatedWithExpectedAlias, onActivated]);
 
-  // ── Re-authenticated with matching alias: celebration + onActivated handoff ──
+  // ── Re-authenticated with matching alias: activation handoff ──
   if (isActivatedWithExpectedAlias) {
     return (
-      <AndamioCard className="w-full max-w-lg">
-        <AndamioCardHeader className="text-center">
-          <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-            <SuccessIcon className="h-8 w-8 text-primary" />
-          </div>
-          <AndamioCardTitle className="text-2xl">Welcome to Tracom Academy!</AndamioCardTitle>
-          <AndamioCardDescription className="mx-auto max-w-sm text-center">
-            Signed in as <span className="font-mono font-semibold text-foreground">{alias}</span>. {terminalMessage}
-          </AndamioCardDescription>
+      <AndamioCard className="w-full max-w-md mx-auto">
+        <AndamioCardHeader className="pb-2">
+          <AndamioText variant="overline" className="mb-1">Welcome</AndamioText>
+          <AndamioCardTitle className="text-xl">
+            Signed in as <span className="font-mono">{alias}</span>
+          </AndamioCardTitle>
         </AndamioCardHeader>
         <AndamioCardContent>
-          <div className="flex items-center justify-center py-4">
-            <LoadingIcon className="h-6 w-6 animate-spin text-primary" />
+          <div className="flex items-center gap-2 py-4">
+            <LoadingIcon className="h-5 w-5 animate-spin text-muted-foreground" />
+            <AndamioText variant="muted" className="text-sm">{terminalMessage}</AndamioText>
           </div>
         </AndamioCardContent>
       </AndamioCard>
@@ -141,18 +127,14 @@ export function FirstLoginCard({
   // ── Logged out, wallet reconnecting / authenticating ──
   if (hasLoggedOut && isAuthenticating) {
     return (
-      <AndamioCard className="w-full max-w-lg">
-        <AndamioCardHeader className="text-center">
-          <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-            <AccessTokenIcon className="h-8 w-8 text-primary" />
-          </div>
-          <AndamioCardTitle className="text-2xl">Signing In...</AndamioCardTitle>
-          <AndamioCardDescription className="mx-auto max-w-sm text-center">
-            Authenticating with your new access token
-          </AndamioCardDescription>
+      <AndamioCard className="w-full max-w-md mx-auto">
+        <AndamioCardHeader className="pb-2">
+          <AndamioText variant="overline" className="mb-1">Signing in</AndamioText>
+          <AndamioCardTitle className="text-xl">One moment...</AndamioCardTitle>
+          <AndamioCardDescription>Authenticating with your new access token</AndamioCardDescription>
         </AndamioCardHeader>
         <AndamioCardContent>
-          <div className="flex items-center justify-center py-4">
+          <div className="flex items-center justify-center py-6">
             <LoadingIcon className="h-6 w-6 animate-spin text-muted-foreground" />
           </div>
         </AndamioCardContent>
@@ -163,14 +145,12 @@ export function FirstLoginCard({
   // ── Auth error during re-auth ──
   if (hasLoggedOut && authError) {
     return (
-      <AndamioCard className="w-full max-w-lg">
-        <AndamioCardHeader className="text-center">
-          <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-            <AccessTokenIcon className="h-8 w-8 text-primary" />
-          </div>
-          <AndamioCardTitle className="text-2xl">Almost There</AndamioCardTitle>
-          <AndamioCardDescription className="mx-auto max-w-sm text-center">
-            There was a problem signing in. Your token may still be confirming on-chain.
+      <AndamioCard className="w-full max-w-md mx-auto">
+        <AndamioCardHeader className="pb-2">
+          <AndamioText variant="overline" className="mb-1">Signing in</AndamioText>
+          <AndamioCardTitle className="text-xl">Sign-in failed</AndamioCardTitle>
+          <AndamioCardDescription>
+            Your token may still be confirming on-chain.
           </AndamioCardDescription>
         </AndamioCardHeader>
         <AndamioCardContent className="space-y-4">
@@ -178,7 +158,7 @@ export function FirstLoginCard({
             <AndamioAlertDescription>{authError}</AndamioAlertDescription>
           </AndamioAlert>
           <AndamioText variant="small" className="text-center">
-            Wait a moment for the transaction to confirm, then reconnect your wallet.
+            Wait for the transaction to confirm, then reconnect your wallet.
           </AndamioText>
           <ConnectWalletButton />
         </AndamioCardContent>
@@ -187,60 +167,50 @@ export function FirstLoginCard({
   }
 
   // ── Logged out, waiting for the correct wallet to reconnect ──
-  // Matches both "not authenticated yet" AND "authenticated but the alias
-  // doesn't match the mint". The latter catches a mid-ceremony wallet swap:
-  // if a different wallet reconnects, we keep the user on the reconnect card
-  // rather than falling through to a stale "TX submitted" render.
+  // Also catches a mid-ceremony wallet swap: if a different wallet reconnects,
+  // we keep the user on this card rather than falling through.
   if (
     hasLoggedOut &&
     (!isAuthenticated || user?.accessTokenAlias !== alias)
   ) {
     return (
-      <AndamioCard className="w-full max-w-lg">
-        <AndamioCardHeader className="text-center">
-          <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-            <AccessTokenIcon className="h-8 w-8 text-primary" />
-          </div>
-          <AndamioCardTitle className="text-2xl">
-            Almost Done!
-          </AndamioCardTitle>
-          <AndamioCardDescription className="mx-auto max-w-sm text-center">
-            Connect your wallet to activate your access token.
+      <AndamioCard className="w-full max-w-md mx-auto">
+        <AndamioCardHeader className="pb-2">
+          <AndamioText variant="overline" className="mb-1">Almost done</AndamioText>
+          <AndamioCardTitle className="text-xl">One more step</AndamioCardTitle>
+          <AndamioCardDescription>
+            Sign in as{" "}
+            <span className="font-mono font-semibold text-foreground">{alias}</span>{" "}
+            to complete setup.
           </AndamioCardDescription>
         </AndamioCardHeader>
         <AndamioCardContent className="space-y-4">
           <ConnectWalletButton />
-          <div className="flex items-start gap-2 rounded-lg bg-muted/50 p-3">
-            <InfoIcon className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-            <AndamioText variant="small" className="text-muted-foreground">
-              This creates a fresh session with your new on-chain identity as{" "}
-              <span className="font-mono font-semibold">{alias}</span>.
-            </AndamioText>
-          </div>
         </AndamioCardContent>
       </AndamioCard>
     );
   }
 
-  // ── Default: TX submitted, tracking confirmation, then ceremony ──
+  // ── Default: TX submitted, tracking confirmation ──
   return (
-    <AndamioCard className="w-full max-w-lg">
-      <AndamioCardHeader className="text-center">
-        <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-          {txConfirmed ? (
-            <SuccessIcon className="h-8 w-8 text-primary" />
-          ) : (
-            <AccessTokenIcon className="h-8 w-8 text-primary" />
-          )}
-        </div>
-        <AndamioCardTitle className="text-2xl">
-          {txConfirmed ? "Access Token Confirmed" : "Access Token Submitted!"}
+    <AndamioCard className="w-full max-w-md mx-auto">
+      <AndamioCardHeader className="pb-2">
+        <AndamioText variant="overline" className="mb-1">
+          {txConfirmed ? "Confirmed" : "Submitting"}
+        </AndamioText>
+        <AndamioCardTitle className="text-xl">
+          {txConfirmed ? "Your identity is live" : "Transaction submitted"}
         </AndamioCardTitle>
-        <AndamioCardDescription className="mx-auto max-w-sm text-center text-base">
+        <AndamioCardDescription>
           {txConfirmed ? (
-            <>Your alias <span className="font-mono font-semibold text-foreground">{alias}</span> is now live on-chain.</>
+            <>
+              <span className="font-mono font-semibold text-foreground">{alias}</span> is now on-chain.
+            </>
           ) : (
-            <>Your alias <span className="font-mono font-semibold text-foreground">{alias}</span> is being minted on-chain.</>
+            <>
+              Creating your identity as{" "}
+              <span className="font-mono font-semibold text-foreground">{alias}</span>.
+            </>
           )}
         </AndamioCardDescription>
       </AndamioCardHeader>
@@ -248,16 +218,16 @@ export function FirstLoginCard({
         {/* TX confirmation status */}
         {!txConfirmed && !txFailed && (
           <div className="rounded-sm border bg-muted/30 p-4">
-            <div className="flex items-center justify-center gap-3">
-              <LoadingIcon className="h-5 w-5 animate-spin text-secondary" />
+            <div className="flex items-center gap-3">
+              <LoadingIcon className="h-5 w-5 animate-spin text-muted-foreground flex-shrink-0" />
               <div>
-                <AndamioText className="font-medium">
-                  {txStatus?.state === "confirmed" ? "Confirmed on blockchain" : "Waiting for block confirmation"}
+                <AndamioText className="font-medium text-sm">
+                  {txStatus?.state === "confirmed" ? "Confirmed on blockchain" : "Waiting for confirmation..."}
                 </AndamioText>
-                <AndamioText variant="small" className="text-xs">
-                  {txStatus?.state === "pending" && "Transaction is in the mempool..."}
+                <AndamioText variant="small" className="text-xs text-muted-foreground">
+                  {txStatus?.state === "pending" && "Waiting for confirmation..."}
                   {txStatus?.state === "confirmed" && "Finalizing..."}
-                  {!txStatus && "Registering transaction with gateway..."}
+                  {!txStatus && "Checking in..."}
                 </AndamioText>
               </div>
             </div>
@@ -273,9 +243,7 @@ export function FirstLoginCard({
           </AndamioAlert>
         )}
 
-        {/* Client-side stall fallback — primary signal is the gateway watcher,
-            this catches SSE breakage / watcher bugs that would otherwise hang
-            the user here indefinitely. */}
+        {/* Client-side stall fallback */}
         {!txConfirmed && !txFailed && confirmationStalled && (
           <AndamioAlert variant="destructive">
             <AndamioAlertDescription>
@@ -286,7 +254,7 @@ export function FirstLoginCard({
           </AndamioAlert>
         )}
 
-        {/* TX explorer link */}
+        {/* Explorer link */}
         {explorerUrl && (
           <div className="flex items-center justify-center">
             <a
@@ -301,21 +269,20 @@ export function FirstLoginCard({
           </div>
         )}
 
-        {/* The ceremony — shown once TX is confirmed, auto-transitions after 2 seconds */}
+        {/* TX confirmed: preparing session */}
         {txConfirmed && (
-          <div className="rounded-sm border border-primary/20 bg-primary/5 p-5 text-center space-y-3">
-            <AndamioText className="font-semibold text-lg">
-              Welcome to Tracom Academy!
+          <div className="rounded-sm border border-primary/20 bg-primary/5 p-4 space-y-2">
+            <AndamioText className="font-semibold text-sm">
+              Confirmed. Signing you in...
             </AndamioText>
-            <div className="flex items-center justify-center gap-2">
+            <div className="flex items-center gap-2">
               <LoadingIcon className="h-4 w-4 animate-spin text-primary" />
-              <AndamioText variant="muted">
-                Preparing your session...
+              <AndamioText variant="muted" className="text-sm">
+                {terminalMessage}
               </AndamioText>
             </div>
           </div>
         )}
-
       </AndamioCardContent>
     </AndamioCard>
   );

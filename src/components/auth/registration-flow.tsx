@@ -16,12 +16,7 @@ import { AndamioButton } from "~/components/andamio/andamio-button";
 import { AndamioInput } from "~/components/andamio/andamio-input";
 import { AndamioLabel } from "~/components/andamio/andamio-label";
 import { AndamioText } from "~/components/andamio/andamio-text";
-import {
-  AccessTokenIcon,
-  BackIcon,
-  LoadingIcon,
-  ShieldIcon,
-} from "~/components/icons";
+import { BackIcon, LoadingIcon } from "~/components/icons";
 import { getWalletAddressBech32 } from "~/lib/wallet-address";
 
 // Alias must contain only alphanumeric characters and underscores
@@ -38,14 +33,6 @@ interface RegistrationFlowProps {
   onBack?: () => void;
 }
 
-/**
- * Registration flow for new users.
- *
- * Flow:
- * 1. Connect wallet (triggers auto-auth)
- * 2. Enter alias + click "Mint Access Token"
- * 3. Sign transaction
- */
 export function RegistrationFlow({ onMinted, onBack }: RegistrationFlowProps) {
   const [alias, setAlias] = useState("");
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
@@ -61,7 +48,6 @@ export function RegistrationFlow({ onMinted, onBack }: RegistrationFlowProps) {
   } = useAndamioAuth();
   const { state: txState, execute, reset } = useTransaction();
 
-  // Get wallet address when connected (with bech32 conversion)
   useEffect(() => {
     if (!connected || !wallet) {
       setWalletAddress(null);
@@ -123,30 +109,29 @@ export function RegistrationFlow({ onMinted, onBack }: RegistrationFlowProps) {
 
   // Transaction in progress
   if (txState === "fetching" || txState === "signing" || txState === "submitting") {
-    const stateText = {
-      fetching: "Building transaction...",
-      signing: "Please sign in your wallet...",
-      submitting: "Submitting to blockchain...",
-    }[txState];
+    const isSigning = txState === "signing";
 
     return (
       <div className="w-full max-w-md mx-auto">
         <AndamioCard>
-          <AndamioCardHeader className="text-center pb-2">
-            <div className="flex justify-center mb-2">
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
-                <AccessTokenIcon className="h-7 w-7 text-primary" />
-              </div>
-            </div>
-            <AndamioCardTitle className="text-xl">Minting Access Token</AndamioCardTitle>
-            <AndamioCardDescription>
-              Alias: <span className="font-mono font-semibold text-foreground">{alias}</span>
-            </AndamioCardDescription>
+          <AndamioCardHeader className="pb-2">
+            <AndamioText variant="overline" className="mb-1">Creating identity</AndamioText>
+            <AndamioCardTitle className="text-xl">
+              {isSigning ? "Approve in your wallet" : "One moment..."}
+            </AndamioCardTitle>
+            {isSigning && (
+              <AndamioCardDescription>
+                Sign the transaction to create your identity
+              </AndamioCardDescription>
+            )}
           </AndamioCardHeader>
-
           <AndamioCardContent className="flex flex-col items-center py-8 gap-4">
             <LoadingIcon className="h-8 w-8 animate-spin text-muted-foreground" />
-            <AndamioText variant="muted">{stateText}</AndamioText>
+            {!isSigning && (
+              <AndamioText variant="muted" className="text-sm">
+                {txState === "fetching" ? "Building transaction..." : "Submitting to Cardano..."}
+              </AndamioText>
+            )}
           </AndamioCardContent>
         </AndamioCard>
       </div>
@@ -158,26 +143,15 @@ export function RegistrationFlow({ onMinted, onBack }: RegistrationFlowProps) {
     return (
       <div className="w-full max-w-md mx-auto">
         <AndamioCard>
-          <AndamioCardHeader className="text-center pb-2">
-            <div className="flex justify-center mb-2">
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
-                <AccessTokenIcon className="h-7 w-7 text-destructive" />
-              </div>
-            </div>
-            <AndamioCardTitle className="text-xl">Transaction Cancelled</AndamioCardTitle>
+          <AndamioCardHeader className="pb-2">
+            <AndamioText variant="overline" className="mb-1">Creating identity</AndamioText>
+            <AndamioCardTitle className="text-xl">That didn&apos;t go through</AndamioCardTitle>
             <AndamioCardDescription>
-              The transaction was not completed.
+              The transaction was cancelled. Nothing was charged.
             </AndamioCardDescription>
           </AndamioCardHeader>
-
           <AndamioCardContent className="space-y-4">
-            <AndamioText variant="small" className="text-center text-muted-foreground">
-              You can try again with the same alias or go back to choose a different one.
-            </AndamioText>
-            <AndamioButton
-              onClick={() => reset()}
-              className="w-full"
-            >
+            <AndamioButton onClick={() => reset()} className="w-full">
               Try Again with &quot;{alias}&quot;
             </AndamioButton>
             <AndamioButton
@@ -202,46 +176,30 @@ export function RegistrationFlow({ onMinted, onBack }: RegistrationFlowProps) {
     );
   }
 
-  // Step 1: Not connected - show wallet connect
+  // Step 1: Not connected
   if (!isWalletConnected) {
     return (
       <div className="w-full max-w-md mx-auto">
         <AndamioCard>
-          <AndamioCardHeader className="text-center pb-2">
-            <div className="flex justify-center mb-2">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                <AccessTokenIcon className="h-6 w-6 text-primary" />
-              </div>
-            </div>
+          <AndamioCardHeader className="pb-2">
+            <AndamioText variant="overline" className="mb-1">Get started</AndamioText>
             <AndamioCardTitle className="text-xl">Connect Your Wallet</AndamioCardTitle>
             <AndamioCardDescription>
-              Connect to create your on-chain identity
+              You need a Cardano wallet to create your Tracom identity.
             </AndamioCardDescription>
           </AndamioCardHeader>
-
           <AndamioCardContent className="space-y-3">
-            {/* What you're getting */}
-            <div className="rounded-sm border bg-muted/30 p-3 space-y-1.5">
-              <div className="flex items-center gap-2">
-                <ShieldIcon className="h-4 w-4 text-primary" />
-                <AndamioText className="font-medium text-sm">Your Access Token</AndamioText>
-              </div>
+            <div className="rounded-sm border bg-muted/30 p-3 space-y-1">
+              <AndamioText className="font-medium text-sm">Your Access Token</AndamioText>
               <AndamioText variant="small" className="text-xs text-muted-foreground">
                 An NFT that proves your identity on Cardano. Use it to earn credentials, join projects, and build your on-chain reputation.
               </AndamioText>
             </div>
-
             <div className="flex justify-center">
               <ConnectWalletButton />
             </div>
-
             {onBack && (
-              <AndamioButton
-                variant="ghost"
-                onClick={onBack}
-                className="w-full"
-                size="sm"
-              >
+              <AndamioButton variant="ghost" onClick={onBack} className="w-full" size="sm">
                 <BackIcon className="mr-2 h-4 w-4" />
                 Back
               </AndamioButton>
@@ -262,30 +220,24 @@ export function RegistrationFlow({ onMinted, onBack }: RegistrationFlowProps) {
     return (
       <div className="w-full max-w-md mx-auto">
         <AndamioCard>
-          <AndamioCardHeader className="text-center pb-2">
-            <div className="flex justify-center mb-2">
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
-                <AccessTokenIcon className="h-7 w-7 text-destructive" />
-              </div>
-            </div>
-            <AndamioCardTitle className="text-xl">Sign-In Failed</AndamioCardTitle>
+          <AndamioCardHeader className="pb-2">
+            <AndamioText variant="overline" className="mb-1">Verify ownership</AndamioText>
+            <AndamioCardTitle className="text-xl">
+              {isUserDeclined ? "Signature declined" : "Sign-in failed"}
+            </AndamioCardTitle>
             <AndamioCardDescription>
               {isUserDeclined
                 ? "You declined to sign the message."
                 : "Something went wrong during sign-in."}
             </AndamioCardDescription>
           </AndamioCardHeader>
-
           <AndamioCardContent className="space-y-4">
             <AndamioText variant="small" className="text-center text-muted-foreground">
               {isUserDeclined
                 ? "You need to sign a message to verify wallet ownership. No transaction is made."
                 : authError}
             </AndamioText>
-            <AndamioButton
-              onClick={() => void authenticate()}
-              className="w-full"
-            >
+            <AndamioButton onClick={() => void authenticate()} className="w-full">
               Try Again
             </AndamioButton>
             <AndamioButton
@@ -312,26 +264,18 @@ export function RegistrationFlow({ onMinted, onBack }: RegistrationFlowProps) {
     return (
       <div className="w-full max-w-md mx-auto">
         <AndamioCard>
-          <AndamioCardHeader className="text-center pb-2">
-            <div className="flex justify-center mb-2">
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
-                <AccessTokenIcon className="h-7 w-7 text-primary" />
-              </div>
-            </div>
+          <AndamioCardHeader className="pb-2">
+            <AndamioText variant="overline" className="mb-1">Verify ownership</AndamioText>
             <AndamioCardTitle className="text-xl">Sign to Continue</AndamioCardTitle>
             <AndamioCardDescription>
-              Next, sign a message to verify your wallet.
+              Open your wallet to verify you own this address.
             </AndamioCardDescription>
           </AndamioCardHeader>
-
           <AndamioCardContent className="space-y-4">
             <AndamioText variant="small" className="text-center text-muted-foreground">
               Tap below to open your wallet and authorize.
             </AndamioText>
-            <AndamioButton
-              onClick={() => void authenticate()}
-              className="w-full"
-            >
+            <AndamioButton onClick={() => void authenticate()} className="w-full">
               Authorize
             </AndamioButton>
             {onBack && (
@@ -351,18 +295,11 @@ export function RegistrationFlow({ onMinted, onBack }: RegistrationFlowProps) {
     return (
       <div className="w-full max-w-md mx-auto">
         <AndamioCard>
-          <AndamioCardHeader className="text-center pb-2">
-            <div className="flex justify-center mb-2">
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
-                <AccessTokenIcon className="h-7 w-7 text-primary" />
-              </div>
-            </div>
-            <AndamioCardTitle className="text-xl">Signing In...</AndamioCardTitle>
-            <AndamioCardDescription>
-              Please sign the message in your wallet
-            </AndamioCardDescription>
+          <AndamioCardHeader className="pb-2">
+            <AndamioText variant="overline" className="mb-1">Verify ownership</AndamioText>
+            <AndamioCardTitle className="text-xl">Sign the message</AndamioCardTitle>
+            <AndamioCardDescription>Check your wallet to approve</AndamioCardDescription>
           </AndamioCardHeader>
-
           <AndamioCardContent className="flex flex-col items-center py-8">
             <LoadingIcon className="h-8 w-8 animate-spin text-muted-foreground" />
           </AndamioCardContent>
@@ -371,33 +308,28 @@ export function RegistrationFlow({ onMinted, onBack }: RegistrationFlowProps) {
     );
   }
 
-  // Step 3: Authenticated - show alias input + mint button
+  // Step 3: Authenticated — alias input and create identity
   return (
     <div className="w-full max-w-md mx-auto">
       <AndamioCard>
-        <AndamioCardHeader className="text-center pb-2">
-          <div className="flex justify-center mb-2">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
-              <AccessTokenIcon className="h-7 w-7 text-primary" />
-            </div>
-          </div>
-          <AndamioCardTitle className="text-xl">Create Your On-Chain Identity</AndamioCardTitle>
+        <AndamioCardHeader className="pb-2">
+          <AndamioText variant="overline" className="mb-1">Choose your alias</AndamioText>
+          <AndamioCardTitle className="text-xl">Create your identity</AndamioCardTitle>
           <AndamioCardDescription>
-            Choose an alias and mint your access token
+            Your alias appears on all your credentials and cannot be changed.
           </AndamioCardDescription>
         </AndamioCardHeader>
-
         <AndamioCardContent className="space-y-4">
-          {/* Alias input */}
           <div className="space-y-2">
-            <AndamioLabel htmlFor="alias-input">Choose Your Alias</AndamioLabel>
+            <AndamioLabel htmlFor="alias-input">Alias</AndamioLabel>
             <AndamioInput
               id="alias-input"
               type="text"
-              placeholder="my_unique_alias"
+              placeholder="e.g. LewisN or lewis_nduati"
               value={alias}
               onChange={(e) => setAlias(e.target.value)}
               className={`font-mono ${aliasError ? "border-destructive" : ""}`}
+              autoFocus
               onKeyDown={(e) => {
                 if (e.key === "Enter" && alias.trim() && !aliasError && walletAddress) {
                   void handleMint();
@@ -410,30 +342,20 @@ export function RegistrationFlow({ onMinted, onBack }: RegistrationFlowProps) {
               </AndamioText>
             ) : (
               <AndamioText variant="small" className="text-xs text-muted-foreground">
-                Letters, numbers, and underscores only. This will be your unique identifier.
+                Letters, numbers, and underscores only.
               </AndamioText>
             )}
           </div>
-
-          {/* Mint button */}
           <AndamioButton
             onClick={() => void handleMint()}
             disabled={!alias.trim() || !!aliasError || !walletAddress}
             className="w-full"
             size="lg"
           >
-            <AccessTokenIcon className="mr-2 h-5 w-5" />
-            Mint Access Token
+            Create Identity
           </AndamioButton>
-
-          {/* Back link */}
           {onBack && (
-            <AndamioButton
-              variant="ghost"
-              onClick={onBack}
-              className="w-full"
-              size="sm"
-            >
+            <AndamioButton variant="ghost" onClick={onBack} className="w-full" size="sm">
               <BackIcon className="mr-2 h-4 w-4" />
               Back
             </AndamioButton>
