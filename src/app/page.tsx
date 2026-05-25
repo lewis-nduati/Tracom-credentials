@@ -8,10 +8,10 @@ export default function Home() {
   const network = env.NEXT_PUBLIC_CARDANO_NETWORK;
 
   return (
-    <div className="h-dvh flex flex-col bg-white text-slate-900 overflow-x-hidden overflow-y-auto">
+    <div className="h-dvh flex flex-col bg-background text-foreground overflow-x-hidden overflow-y-auto">
 
       {/* Nav */}
-      <nav className="bg-[#1A3D6B] px-6 py-4">
+      <nav className="bg-brand-navy px-6 py-4">
         <div className="max-w-6xl mx-auto flex items-center">
           <Image
             src="/logos/tracom-logo.svg"
@@ -30,7 +30,7 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-[#1A3D6B] text-white/50 px-6 py-6">
+      <footer className="bg-brand-navy text-secondary-foreground/50 px-6 py-6">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
           <span>© 2026 Tracom Academy. All rights reserved.</span>
           <div className="flex items-center gap-4">

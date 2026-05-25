@@ -36,6 +36,7 @@
 }
 
 @theme inline {
+  --color-brand-navy: var(--brand-navy);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -88,6 +89,9 @@
 
 :root {
   --radius: 0.5rem;
+
+  /* Brand */
+  --brand-navy: oklch(0.282 0.09 252);
 
   /* Base */
   --background: oklch(1 0 0);
@@ -154,6 +158,8 @@
    ========================================================================== */
 
 .dark {
+  --brand-navy: oklch(0.282 0.09 252);
+
   --background: oklch(0.188 0.013 257.128);
   --foreground: oklch(0.922 0.003 106.423);
 

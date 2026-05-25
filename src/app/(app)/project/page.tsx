@@ -8,11 +8,10 @@ import { useAndamioAuth } from "~/hooks/auth/use-andamio-auth";
 import { AndamioAlert, AndamioAlertDescription, AndamioAlertTitle } from "~/components/andamio/andamio-alert";
 import { AndamioBadge } from "~/components/andamio/andamio-badge";
 import { AndamioInput } from "~/components/andamio/andamio-input";
-import { AndamioPageHeader, AndamioPageLoading, AndamioEmptyState, AndamioText } from "~/components/andamio";
+import { AndamioPageHeader, AndamioPageLoading, AndamioEmptyState, AndamioText, AndamioButton } from "~/components/andamio";
 import { AlertIcon, ProjectIcon, CredentialIcon, SearchIcon, SuccessIcon } from "~/components/icons";
 import { checkProjectEligibility, type EligibilityResult } from "~/lib/project-eligibility";
 import { ProjectCard } from "~/components/projects/project-card";
-import { Button } from "~/components/ui/button";
 
 type EligibilityFilter = "all" | "qualified" | "in-progress" | "open";
 
@@ -260,7 +259,7 @@ function ProjectCatalogContent() {
             <AndamioText variant="small" className="text-muted-foreground">
               Showing {filteredProjects.length} of {projects.length} projects
             </AndamioText>
-            <Button
+            <AndamioButton
               variant="ghost"
               size="sm"
               className="h-7 text-xs"
@@ -271,7 +270,7 @@ function ProjectCatalogContent() {
               }}
             >
               Clear filters
-            </Button>
+            </AndamioButton>
           </div>
         )}
       </div>
@@ -313,7 +312,7 @@ function FilterButton({
   onClick: () => void;
 }) {
   return (
-    <Button
+    <AndamioButton
       variant={active ? "secondary" : "outline"}
       size="sm"
       className={`h-7 text-xs ${active ? "font-medium" : ""}`}
@@ -321,6 +320,6 @@ function FilterButton({
     >
       {active && <SuccessIcon className="h-3 w-3 mr-1" />}
       {label}
-    </Button>
+    </AndamioButton>
   );
 }

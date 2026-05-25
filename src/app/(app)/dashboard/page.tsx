@@ -23,6 +23,7 @@ import {
   PostMintAuthPrompt,
   checkAndClearJustMintedFlag,
 } from "~/components/dashboard/post-mint-auth-prompt";
+import { AndamioText } from "~/components/andamio";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -103,9 +104,9 @@ export default function DashboardPage() {
 
         {/* Accomplishments & On-Chain Data */}
         <section className="space-y-4">
-          <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+          <AndamioText variant="overline" as="div">
             Accomplishments
-          </h2>
+          </AndamioText>
           <div className="grid gap-6 md:grid-cols-2">
             <StudentAccomplishments accessTokenAlias={user.accessTokenAlias} />
             <OnChainStatus accessTokenAlias={user.accessTokenAlias} />
@@ -114,9 +115,9 @@ export default function DashboardPage() {
 
         {/* Teaching & Managing */}
         <section className="space-y-4">
-          <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+          <AndamioText variant="overline" as="div">
             Teaching & Managing
-          </h2>
+          </AndamioText>
           <div className="grid gap-6 md:grid-cols-2">
             <PendingReviewsSummary accessTokenAlias={user.accessTokenAlias} />
             <PendingAssessmentsSummary accessTokenAlias={user.accessTokenAlias} />
@@ -127,9 +128,9 @@ export default function DashboardPage() {
 
         {/* Contributing */}
         <section className="space-y-4">
-          <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+          <AndamioText variant="overline" as="div">
             Contributing
-          </h2>
+          </AndamioText>
           <div className="grid gap-6 md:grid-cols-2">
             <ContributingProjectsSummary accessTokenAlias={user.accessTokenAlias} />
           </div>
@@ -137,9 +138,9 @@ export default function DashboardPage() {
 
         {/* Account */}
         <section className="space-y-4">
-          <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+          <AndamioText variant="overline" as="div">
             Account
-          </h2>
+          </AndamioText>
           <div className="grid gap-6 md:grid-cols-2">
             <AccountDetailsCard
               cardanoBech32Addr={user.cardanoBech32Addr}

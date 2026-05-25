@@ -4,12 +4,13 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { useAndamioAuth } from "~/hooks/auth/use-andamio-auth";
 import { AccessTokenOnboarding } from "~/components/auth/access-token-onboarding";
+import { AndamioHeading, AndamioText } from "~/components/andamio";
 
 const STEPS = [
   {
     step: "01",
     title: "Complete a course",
-    desc: "Finish Tracom Academy coursework and assignments at your pace.",
+    desc: "Finish Tracom Academy coursework and assignments at your own pace.",
   },
   {
     step: "02",
@@ -18,8 +19,8 @@ const STEPS = [
   },
   {
     step: "03",
-    title: "Earn credential",
-    desc: "Your certificate is issued permanently and can never be altered or revoked.",
+    title: "Earn a credential",
+    desc: "Your certificate is issued permanently to your blockchain wallet.",
   },
   {
     step: "04",
@@ -28,20 +29,75 @@ const STEPS = [
   },
 ] as const;
 
-const PROOF_CARDS = [
+const VALUES = [
   {
-    title: "100% Verifiable",
-    desc: "Issued by Tracom Academy and independently verifiable by any employer — no calls, no middlemen.",
+    label: "Verified by anyone",
+    body: "No central authority, no login required. Any employer can check your credential independently.",
   },
   {
-    title: "Forever",
-    desc: "Your credential doesn't expire, can't be lost, and doesn't depend on Tracom's systems staying online.",
+    label: "Permanent record",
+    body: "Stored on-chain. It doesn't expire, can't be lost, and doesn't depend on Tracom's systems.",
   },
   {
-    title: "Yours",
-    desc: "Your credential belongs to you. You control it, you share it, and it follows you anywhere.",
+    label: "Yours alone",
+    body: "Your credential lives in your wallet. You control it, share it, and take it with you.",
   },
 ] as const;
+
+function CredentialDocument() {
+  return (
+    <svg
+      viewBox="0 0 320 240"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-full max-w-sm opacity-[0.18]"
+      aria-hidden="true"
+    >
+      {/* Document */}
+      <rect
+        x="16" y="8" width="288" height="224" rx="4"
+        fill="white" fillOpacity="0.04"
+        stroke="white" strokeOpacity="0.2" strokeWidth="1.5"
+      />
+      {/* Header band */}
+      <rect x="16" y="8" width="288" height="48" rx="4" fill="white" fillOpacity="0.07" />
+      <line x1="16" y1="56" x2="304" y2="56" stroke="white" strokeOpacity="0.12" strokeWidth="1" />
+      {/* Logo mark */}
+      <rect x="28" y="18" width="24" height="24" rx="3" fill="white" fillOpacity="0.25" />
+      {/* Institution name */}
+      <rect x="60" y="22" width="88" height="7" rx="2" fill="white" fillOpacity="0.4" />
+      <rect x="60" y="33" width="56" height="5" rx="2" fill="white" fillOpacity="0.18" />
+      {/* Verified badge */}
+      <rect x="240" y="22" width="52" height="18" rx="9" fill="white" fillOpacity="0.12" stroke="white" strokeOpacity="0.25" strokeWidth="1" />
+      <rect x="250" y="28" width="32" height="5" rx="2" fill="white" fillOpacity="0.45" />
+      {/* Awarded to label */}
+      <rect x="28" y="72" width="52" height="4" rx="2" fill="white" fillOpacity="0.18" />
+      {/* Recipient name */}
+      <rect x="28" y="82" width="172" height="12" rx="2" fill="white" fillOpacity="0.5" />
+      {/* Credential title */}
+      <rect x="28" y="106" width="264" height="16" rx="2" fill="white" fillOpacity="0.32" />
+      {/* Meta rows */}
+      <rect x="28" y="134" width="110" height="5" rx="2" fill="white" fillOpacity="0.18" />
+      <rect x="28" y="144" width="84" height="5" rx="2" fill="white" fillOpacity="0.18" />
+      {/* Rule */}
+      <line x1="28" y1="162" x2="292" y2="162" stroke="white" strokeOpacity="0.08" strokeWidth="1" />
+      {/* Hash label */}
+      <rect x="28" y="172" width="36" height="4" rx="2" fill="white" fillOpacity="0.15" />
+      {/* Hash value lines */}
+      <rect x="28" y="181" width="216" height="4" rx="2" fill="white" fillOpacity="0.1" />
+      <rect x="28" y="189" width="176" height="4" rx="2" fill="white" fillOpacity="0.1" />
+      {/* Seal ring */}
+      <circle cx="266" cy="196" r="26" stroke="white" strokeOpacity="0.18" strokeWidth="1.5" />
+      <circle cx="266" cy="196" r="20" stroke="white" strokeOpacity="0.1" strokeWidth="1" strokeDasharray="3 2" />
+      {/* Checkmark */}
+      <path
+        d="M258 196 L264 202 L276 188"
+        stroke="white" strokeOpacity="0.45" strokeWidth="2.5"
+        strokeLinecap="round" strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 
 export function LandingHero() {
   const [showEnter, setShowEnter] = React.useState(false);
@@ -68,7 +124,7 @@ export function LandingHero() {
 
   if (showEnter || isWalletConnected) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh] px-6 py-16">
+      <div className="flex min-h-[60vh] items-center justify-center px-6 py-16">
         <AccessTokenOnboarding
           onActivated={goToDashboard}
           onExistingTokenDetected={goToDashboard}
@@ -80,66 +136,100 @@ export function LandingHero() {
   return (
     <>
       {/* Hero */}
-      <section className="bg-[#1A3D6B] text-white px-6 py-20 sm:py-28">
-        <div className="max-w-3xl mx-auto text-center space-y-6">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-tight">
-            Credentials Employers<br />Can Trust
-          </h1>
-          <p className="text-lg sm:text-xl text-white/70 max-w-xl mx-auto leading-relaxed">
-            Earn verified credentials from Tracom Academy.
-          </p>
-          <div className="pt-2">
-            <button
-              onClick={handleEnter}
-              className="bg-white text-[#1A3D6B] font-semibold px-8 py-3 rounded-md hover:bg-white/90 active:bg-white/80 transition-colors text-base cursor-pointer"
-            >
-              Connect Wallet
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* 4-Step Flow */}
-      <section className="bg-white px-6 py-16 sm:py-20 border-b border-slate-100">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-center text-2xl font-semibold text-slate-800 mb-12">
-            How it works
-          </h2>
-          <div className="flex flex-col sm:flex-row items-start justify-center">
-            {STEPS.map(({ step, title, desc }, i) => (
-              <React.Fragment key={step}>
-                <div className="flex flex-col items-center text-center flex-1 px-4 mb-8 sm:mb-0">
-                  <div className="w-12 h-12 rounded-full border-2 border-[#1A3D6B] flex items-center justify-center mb-4 shrink-0">
-                    <span className="text-sm font-bold text-[#1A3D6B]">{step}</span>
-                  </div>
-                  <h3 className="font-semibold text-slate-800 mb-2 text-sm sm:text-base">{title}</h3>
-                  <p className="text-sm text-slate-500 leading-relaxed max-w-[160px]">{desc}</p>
-                </div>
-                {i < STEPS.length - 1 && (
-                  <div className="hidden sm:flex items-start justify-center pt-5 shrink-0 text-slate-300 text-2xl">
-                    →
-                  </div>
-                )}
-              </React.Fragment>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Proof Cards */}
-      <section className="bg-slate-50 px-6 py-16 sm:py-20">
-        <div className="max-w-4xl mx-auto">
-          <div className="grid sm:grid-cols-3 gap-6">
-            {PROOF_CARDS.map(({ title, desc }) => (
-              <div
-                key={title}
-                className="bg-white border border-slate-200 rounded-md p-6"
+      <section className="bg-brand-navy px-6 py-20 text-secondary-foreground sm:py-28">
+        <div className="mx-auto max-w-6xl">
+          <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+            <div className="max-w-xl space-y-8">
+              <AndamioText
+                variant="overline"
+                as="div"
+                className="text-white/50"
               >
-                <h3 className="font-semibold text-slate-800 text-lg mb-3">{title}</h3>
-                <p className="text-sm text-slate-500 leading-relaxed">{desc}</p>
+                Tracom Academy
+              </AndamioText>
+              <AndamioHeading
+                level={1}
+                size="display"
+                className="text-pretty text-secondary-foreground"
+              >
+                Credentials employers can trust.
+              </AndamioHeading>
+              <AndamioText
+                variant="lead"
+                className="max-w-md leading-relaxed text-white/65"
+              >
+                Complete a course. Earn a credential issued permanently to your
+                blockchain wallet. Share it with any employer, anywhere.
+              </AndamioText>
+              <button
+                onClick={handleEnter}
+                className="cursor-pointer rounded-md bg-background px-8 py-3.5 text-base font-semibold text-brand-navy transition-all hover:bg-background/90 active:scale-[0.98]"
+              >
+                Connect Wallet
+              </button>
+            </div>
+            <div className="hidden items-center justify-center lg:flex">
+              <CredentialDocument />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Value strip */}
+      <section className="bg-accent px-6 py-14">
+        <div className="mx-auto grid max-w-6xl gap-10 sm:grid-cols-3 sm:gap-8">
+          {VALUES.map(({ label, body }) => (
+            <div key={label}>
+              <AndamioHeading level={3} size="xl" className="mb-2">
+                {label}
+              </AndamioHeading>
+              <AndamioText variant="small" className="leading-relaxed">
+                {body}
+              </AndamioText>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section className="bg-background px-6 py-16 sm:py-24">
+        <div className="mx-auto max-w-6xl">
+          <AndamioText variant="overline" as="div" className="mb-12">
+            How it works
+          </AndamioText>
+          <div className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+            {STEPS.map(({ step, title, desc }) => (
+              <div key={step}>
+                <span
+                  className="mb-3 block select-none text-7xl font-black leading-none text-brand-navy/[0.08]"
+                  aria-hidden="true"
+                >
+                  {step}
+                </span>
+                <h3 className="mb-2 text-base font-semibold text-foreground">
+                  {title}
+                </h3>
+                <AndamioText variant="small" className="leading-relaxed">
+                  {desc}
+                </AndamioText>
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Closing CTA */}
+      <section className="bg-brand-navy px-6 py-12 sm:py-14">
+        <div className="mx-auto flex max-w-6xl flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
+          <AndamioHeading level={2} size="2xl" className="text-secondary-foreground">
+            Ready to earn your first credential?
+          </AndamioHeading>
+          <button
+            onClick={handleEnter}
+            className="cursor-pointer whitespace-nowrap rounded-md bg-background px-7 py-3 text-base font-semibold text-brand-navy transition-all hover:bg-background/90 active:scale-[0.98] sm:shrink-0"
+          >
+            Connect Wallet
+          </button>
         </div>
       </section>
     </>

@@ -21,6 +21,7 @@ const headingVariants = cva(
   {
     variants: {
       size: {
+        display: "text-5xl sm:text-6xl lg:text-7xl leading-[1.05] tracking-[-0.03em]",
         "5xl": "text-3xl sm:text-4xl md:text-5xl mb-4",
         "4xl": "text-2xl sm:text-3xl md:text-4xl",
         "3xl": "text-3xl sm:text-4xl",
