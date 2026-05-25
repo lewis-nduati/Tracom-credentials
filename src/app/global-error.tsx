@@ -2,16 +2,8 @@
 
 import { useEffect } from "react";
 
-/**
- * Global error boundary
- *
- * Catches errors that occur in the root layout.
- * This component must render its own <html> and <body> tags
- * since it replaces the root layout when triggered.
- *
- * This is a minimal fallback UI - for route-level errors,
- * see error.tsx which provides a better UX within the existing layout.
- */
+// Global error boundary replaces the root layout when it fires, so CSS tokens
+// and Tailwind are unavailable. All styles are inline. Brand navy: #1a2748.
 export default function GlobalError({
   error,
   reset,
@@ -25,67 +17,91 @@ export default function GlobalError({
 
   return (
     <html lang="en">
-      <body>
+      <body
+        style={{
+          margin: 0,
+          fontFamily: "system-ui, -apple-system, sans-serif",
+          backgroundColor: "#1a2748",
+          color: "#ffffff",
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "1.5rem",
+        }}
+      >
         <div
           style={{
-            minHeight: "100vh",
+            maxWidth: "22rem",
+            width: "100%",
+            textAlign: "center",
             display: "flex",
             flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "1rem",
-            fontFamily: "system-ui, sans-serif",
+            gap: "1rem",
           }}
         >
+          <p
+            style={{
+              margin: 0,
+              fontSize: "0.7rem",
+              fontWeight: 600,
+              letterSpacing: "0.2em",
+              textTransform: "uppercase",
+              color: "rgba(255,255,255,0.4)",
+            }}
+          >
+            Tracom Academy
+          </p>
           <h1
             style={{
-              fontSize: "1.5rem",
-              fontWeight: "bold",
-              marginBottom: "1rem",
-              color: "#dc2626",
+              margin: 0,
+              fontSize: "2rem",
+              fontWeight: 700,
+              lineHeight: 1.2,
+              color: "#ffffff",
             }}
           >
             Something went wrong
           </h1>
-
           <p
             style={{
-              color: "#6b7280",
-              marginBottom: "1rem",
-              maxWidth: "28rem",
-              textAlign: "center",
+              margin: 0,
+              fontSize: "0.9rem",
+              lineHeight: 1.6,
+              color: "rgba(255,255,255,0.6)",
             }}
           >
             {error.message || "An unexpected error occurred. Please try again."}
           </p>
-
           {error.digest && (
             <p
               style={{
-                fontSize: "0.875rem",
-                color: "#9ca3af",
-                marginBottom: "1rem",
+                margin: 0,
+                fontFamily: "monospace",
+                fontSize: "0.7rem",
+                color: "rgba(255,255,255,0.3)",
               }}
             >
-              Error ID: {error.digest}
+              {error.digest}
             </p>
           )}
-
-          <button
-            onClick={reset}
-            style={{
-              backgroundColor: "#3b82f6",
-              color: "white",
-              padding: "0.5rem 1rem",
-              borderRadius: "0.375rem",
-              border: "none",
-              cursor: "pointer",
-              fontSize: "0.875rem",
-              fontWeight: "500",
-            }}
-          >
-            Try again
-          </button>
+          <div style={{ paddingTop: "0.5rem" }}>
+            <button
+              onClick={reset}
+              style={{
+                backgroundColor: "#ffffff",
+                color: "#1a2748",
+                padding: "0.625rem 1.5rem",
+                borderRadius: "0.375rem",
+                border: "none",
+                cursor: "pointer",
+                fontSize: "0.875rem",
+                fontWeight: 600,
+              }}
+            >
+              Try again
+            </button>
+          </div>
         </div>
       </body>
     </html>

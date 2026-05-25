@@ -1,17 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
-import { AndamioAlert, AndamioAlertDescription, AndamioAlertTitle } from "~/components/andamio/andamio-alert";
+import { AndamioText } from "~/components/andamio/andamio-text";
 import { AndamioButton } from "~/components/andamio/andamio-button";
-import { AndamioPageHeader } from "~/components/andamio";
-import { AlertIcon, RefreshIcon } from "~/components/icons";
+import { RefreshIcon } from "~/components/icons";
 
-/**
- * Error boundary for the (app) route group
- *
- * Catches unhandled errors in nested routes and displays a user-friendly error UI.
- * Users can attempt to recover by clicking the retry button.
- */
 export default function AppError({
   error,
   reset,
@@ -20,34 +13,33 @@ export default function AppError({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Log the error to an error reporting service
     console.error("App error boundary caught:", error);
   }, [error]);
 
   return (
-    <div className="space-y-6">
-      <AndamioPageHeader
-        title="Something went wrong"
-        description="An unexpected error occurred while loading this page"
-      />
-
-      <AndamioAlert variant="destructive">
-        <AlertIcon className="h-4 w-4" />
-        <AndamioAlertTitle>Error</AndamioAlertTitle>
-        <AndamioAlertDescription>
-          {error.message || "An unexpected error occurred"}
-          {error.digest && (
-            <span className="block mt-1 text-xs text-muted-foreground">
-              Error ID: {error.digest}
-            </span>
-          )}
-        </AndamioAlertDescription>
-      </AndamioAlert>
-
-      <AndamioButton onClick={reset} variant="outline">
-        <RefreshIcon className="h-4 w-4 mr-2" />
-        Try again
-      </AndamioButton>
+    <div className="flex min-h-[60vh] items-center justify-center px-6">
+      <div className="max-w-sm space-y-4">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground/60">
+          Error
+        </p>
+        <h1 className="text-3xl font-bold text-foreground">
+          Something went wrong
+        </h1>
+        <AndamioText variant="muted" className="leading-relaxed">
+          {error.message || "An unexpected error occurred while loading this page."}
+        </AndamioText>
+        {error.digest && (
+          <p className="font-mono text-xs text-muted-foreground/40">
+            {error.digest}
+          </p>
+        )}
+        <div className="pt-2">
+          <AndamioButton onClick={reset}>
+            <RefreshIcon className="mr-2 h-4 w-4" />
+            Try again
+          </AndamioButton>
+        </div>
+      </div>
     </div>
   );
 }
