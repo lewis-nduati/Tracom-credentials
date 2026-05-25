@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { AndamioHeading } from "~/components/andamio/andamio-heading";
 import { AndamioText } from "~/components/andamio/andamio-text";
 import { AndamioButton } from "~/components/andamio/andamio-button";
 import { RefreshIcon } from "~/components/icons";
@@ -19,12 +20,12 @@ export default function AppError({
   return (
     <div className="flex min-h-[60vh] items-center justify-center px-6">
       <div className="max-w-sm space-y-4">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground/60">
+        <AndamioText variant="overline" className="text-muted-foreground/60">
           Error
-        </p>
-        <h1 className="text-3xl font-bold text-foreground">
+        </AndamioText>
+        <AndamioHeading level={1} size="3xl">
           Something went wrong
-        </h1>
+        </AndamioHeading>
         <AndamioText variant="muted" className="leading-relaxed">
           {error.message || "An unexpected error occurred while loading this page."}
         </AndamioText>

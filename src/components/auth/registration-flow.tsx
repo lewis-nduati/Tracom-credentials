@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { useWallet } from "@meshsdk/react";
-import { ConnectWalletButton } from "~/components/auth/connect-wallet-button";
 import { useAndamioAuth } from "~/hooks/auth/use-andamio-auth";
 import { useTransaction } from "~/hooks/tx/use-transaction";
 import {
@@ -18,6 +17,7 @@ import { AndamioLabel } from "~/components/andamio/andamio-label";
 import { AndamioText } from "~/components/andamio/andamio-text";
 import { BackIcon, LoadingIcon } from "~/components/icons";
 import { getWalletAddressBech32 } from "~/lib/wallet-address";
+import { SignInOptions } from "~/components/auth/sign-in-options";
 
 // Alias must contain only alphanumeric characters and underscores
 const ALIAS_PATTERN = /^[a-zA-Z0-9_]+$/;
@@ -31,9 +31,11 @@ interface RegistrationFlowProps {
   onMinted?: (info: { alias: string; txHash: string }) => void;
   /** Called when user clicks back */
   onBack?: () => void;
+  /** Full-screen brand-navy layout for the not-connected state (landing page only). */
+  darkLayout?: boolean;
 }
 
-export function RegistrationFlow({ onMinted, onBack }: RegistrationFlowProps) {
+export function RegistrationFlow({ onMinted, onBack, darkLayout = false }: RegistrationFlowProps) {
   const [alias, setAlias] = useState("");
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const { wallet, connected } = useWallet();
@@ -176,28 +178,54 @@ export function RegistrationFlow({ onMinted, onBack }: RegistrationFlowProps) {
     );
   }
 
-  // Step 1: Not connected
+  // Step 1: Not connected — full-screen navy on landing, card layout elsewhere
   if (!isWalletConnected) {
+    if (darkLayout) {
+      return (
+        <div className="mx-auto w-full max-w-3xl">
+          <div className="grid items-center gap-12 md:grid-cols-2 md:gap-16">
+            {/* Left: branding */}
+            <div className="space-y-6">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/40">
+                Get started
+              </p>
+              <h2 className="text-4xl font-bold leading-tight text-white">
+                Sign in to Tracom Academy
+              </h2>
+              <p className="text-base leading-relaxed text-white/60">
+                No wallet or crypto experience needed. Connect with Google, Discord, or X to begin.
+              </p>
+              {onBack && (
+                <button
+                  onClick={onBack}
+                  className="text-sm text-white/40 transition-colors hover:text-white/70"
+                >
+                  ← Back
+                </button>
+              )}
+            </div>
+
+            {/* Right: sign-in options */}
+            <div>
+              <SignInOptions dark />
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="w-full max-w-md mx-auto">
         <AndamioCard>
           <AndamioCardHeader className="pb-2">
             <AndamioText variant="overline" className="mb-1">Get started</AndamioText>
-            <AndamioCardTitle className="text-xl">Connect Your Wallet</AndamioCardTitle>
+            <AndamioCardTitle className="text-xl">Sign in to Tracom Academy</AndamioCardTitle>
             <AndamioCardDescription>
-              You need a Cardano wallet to create your Tracom identity.
+              No wallet or crypto experience needed.
             </AndamioCardDescription>
           </AndamioCardHeader>
-          <AndamioCardContent className="space-y-3">
-            <div className="rounded-sm border bg-muted/30 p-3 space-y-1">
-              <AndamioText className="font-medium text-sm">Your Access Token</AndamioText>
-              <AndamioText variant="small" className="text-xs text-muted-foreground">
-                An NFT that proves your identity on Cardano. Use it to earn credentials, join projects, and build your on-chain reputation.
-              </AndamioText>
-            </div>
-            <div className="flex justify-center">
-              <ConnectWalletButton />
-            </div>
+          <AndamioCardContent className="space-y-4">
+            <SignInOptions />
             {onBack && (
               <AndamioButton variant="ghost" onClick={onBack} className="w-full" size="sm">
                 <BackIcon className="mr-2 h-4 w-4" />

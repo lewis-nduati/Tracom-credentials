@@ -124,10 +124,11 @@ export function LandingHero() {
 
   if (showEnter || isWalletConnected) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center px-6 py-16">
+      <div className="relative flex min-h-dvh items-center justify-center overflow-hidden bg-brand-navy px-6 py-16">
         <AccessTokenOnboarding
           onActivated={goToDashboard}
           onExistingTokenDetected={goToDashboard}
+          darkLayout
         />
       </div>
     );
@@ -165,7 +166,7 @@ export function LandingHero() {
                 onClick={handleEnter}
                 className="cursor-pointer rounded-md bg-white px-8 py-3.5 text-base font-semibold text-brand-navy transition-all hover:bg-white/90 active:scale-[0.98]"
               >
-                Connect Wallet
+                Get Started
               </button>
             </div>
             <div className="hidden items-center justify-center lg:flex">
@@ -228,7 +229,7 @@ export function LandingHero() {
             onClick={handleEnter}
             className="cursor-pointer whitespace-nowrap rounded-md bg-white px-7 py-3 text-base font-semibold text-brand-navy transition-all hover:bg-white/90 active:scale-[0.98] sm:shrink-0"
           >
-            Connect Wallet
+            Get Started
           </button>
         </div>
       </section>

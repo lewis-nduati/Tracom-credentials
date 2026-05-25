@@ -225,9 +225,9 @@ export function FirstLoginCard({
                   {txStatus?.state === "confirmed" ? "Confirmed on blockchain" : "Waiting for confirmation..."}
                 </AndamioText>
                 <AndamioText variant="small" className="text-xs text-muted-foreground">
-                  {txStatus?.state === "pending" && "Waiting for confirmation..."}
+                  {txStatus?.state === "pending" && "Usually takes 1-2 minutes."}
                   {txStatus?.state === "confirmed" && "Finalizing..."}
-                  {!txStatus && "Checking in..."}
+                  {!txStatus && "Checking status..."}
                 </AndamioText>
               </div>
             </div>

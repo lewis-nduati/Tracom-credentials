@@ -148,18 +148,13 @@ export default function CredentialsPage() {
       <AndamioCard>
         <AndamioCardContent className="py-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/20">
-                <CredentialIcon className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <AndamioText className="text-2xl font-bold">
-                  {completedCourses.length}
-                </AndamioText>
-                <AndamioText variant="muted">
-                  {completedCourses.length === 1 ? "Credential Earned" : "Credentials Earned"}
-                </AndamioText>
-              </div>
+            <div>
+              <AndamioText className="text-2xl font-bold tabular-nums">
+                {completedCourses.length}
+              </AndamioText>
+              <AndamioText variant="muted">
+                {completedCourses.length === 1 ? "Credential earned" : "Credentials earned"}
+              </AndamioText>
             </div>
             <div className="flex items-center gap-2 text-muted-foreground">
               <OnChainIcon className="h-4 w-4" />

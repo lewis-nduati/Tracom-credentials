@@ -56,6 +56,8 @@ export interface AccessTokenOnboardingProps {
    * the landing copy; override on non-landing surfaces.
    */
   terminalMessage?: string;
+  /** Full-screen brand-navy layout for the not-connected state (landing page only). */
+  darkLayout?: boolean;
 }
 
 /**
@@ -79,6 +81,7 @@ export function AccessTokenOnboarding({
   onActivated,
   onExistingTokenDetected,
   terminalMessage,
+  darkLayout = false,
 }: AccessTokenOnboardingProps) {
   const [mintedInfo, setMintedInfo] = React.useState<MintedInfo | null>(null);
   const [v1Alias, setV1Alias] = React.useState<string | null>(null);
@@ -336,5 +339,5 @@ export function AccessTokenOnboarding({
   }
 
   // Default: registration flow (connect/authenticate/alias/mint)
-  return <RegistrationFlow onMinted={handleMinted} />;
+  return <RegistrationFlow onMinted={handleMinted} darkLayout={darkLayout} />;
 }

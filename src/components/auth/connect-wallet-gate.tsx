@@ -51,7 +51,7 @@ export function ConnectWalletGate({
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
         <SecurityAlertIcon className="h-12 w-12 text-destructive/50 mb-4" />
-        <AndamioText className="text-lg font-medium">Sign-In Failed</AndamioText>
+        <AndamioText className="text-lg font-medium">Sign-in failed</AndamioText>
         <AndamioText variant="small" className="mt-1 mb-6 max-w-sm">
           {authError}
         </AndamioText>
@@ -67,7 +67,7 @@ export function ConnectWalletGate({
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
         <OnChainIcon className="h-12 w-12 text-muted-foreground/50 mb-4" />
-        <AndamioText className="text-lg font-medium">Signing In...</AndamioText>
+        <AndamioText className="text-lg font-medium">Signing in...</AndamioText>
         <AndamioText variant="small" className="mt-1 mb-6">
           Please sign the message in your wallet
         </AndamioText>
