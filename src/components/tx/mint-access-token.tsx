@@ -211,32 +211,34 @@ export function MintAccessToken({ onSuccess, onSubmitted, skipCeremony = false }
     })();
   }, [connected, wallet]);
 
+  // Track if we've already handled the success to prevent double-triggering.
+  // Shared between the onComplete callback and the confirmed-state watcher below.
+  const hasHandledSuccessRef = React.useRef(false);
+
   // Watch for gateway confirmation after TX submission
   // Tracks on-chain confirmation via SSE (pending → confirmed → updated)
   const { status: txStatus, isSuccess: txConfirmed, isFailed: txFailed } = useTxStream(
     (result?.requiresDBUpdate || result?.requiresOnChainConfirmation) ? result.txHash : null,
     {
       onComplete: (status) => {
-        // "updated" means Gateway has confirmed TX AND updated DB
-        if (status.state === "updated") {
+        // "updated" = gateway confirmed TX AND updated DB.
+        // "confirmed" = on-chain confirmed; may arrive here as the stall-timeout
+        // terminal for no-DB-update TXs (requiresDBUpdate: false) where the
+        // gateway never transitions past "confirmed".
+        if (status.state === "updated" || status.state === "confirmed") {
+          if (hasHandledSuccessRef.current) return;
+          hasHandledSuccessRef.current = true;
+
           if (skipCeremony) {
-            // Parent handles ceremony - just refresh and callback
             refreshAuth();
             toast.success("Access token created", {
               description: `Your alias ${alias} is now live on Cardano.`,
             });
             void onSuccess?.();
           } else {
-            // CRITICAL: Force re-authentication before allowing dashboard access
-            // The old JWT doesn't have accessTokenAlias, so any operations
-            // (course_create, project_create) would use the wrong owner alias.
-            // We show celebration first, then auto-transition to reconnect flow.
             setCeremonyState("celebration");
-
-            // Auto-transition to reconnect flow after 2 seconds
-            // This gives users a moment to celebrate before we clear the session
             setTimeout(() => {
-              logout("access_token_mint"); // Clears JWT AND disconnects wallet
+              logout("access_token_mint");
               setCeremonyState("reconnecting");
             }, 2000);
           }
@@ -253,23 +255,16 @@ export function MintAccessToken({ onSuccess, onSubmitted, skipCeremony = false }
   // TXs with requiresOnChainConfirmation wait for gateway confirmation instead
   const isPureOnChainSuccess = state === "success" && result && !result.requiresDBUpdate && !result.requiresOnChainConfirmation;
 
-  // Track if we've already handled the success to prevent infinite loop
-  const hasHandledSuccessRef = React.useRef(false);
-
   // Handle pure on-chain TX success (e.g., Access Token Mint)
   useEffect(() => {
     if (isPureOnChainSuccess && !hasHandledSuccessRef.current) {
       hasHandledSuccessRef.current = true;
 
       if (skipCeremony) {
-        // Parent handles ceremony
         refreshAuth();
         void onSuccess?.();
       } else {
-        // Transition to celebration state
         setCeremonyState("celebration");
-
-        // Auto-transition to reconnect flow after 2 seconds
         setTimeout(() => {
           logout("access_token_mint");
           setCeremonyState("reconnecting");
@@ -277,6 +272,44 @@ export function MintAccessToken({ onSuccess, onSubmitted, skipCeremony = false }
       }
     }
   }, [isPureOnChainSuccess, refreshAuth, onSuccess, skipCeremony, logout]);
+
+  // Immediate ceremony trigger when gateway says "confirmed".
+  // For access token mints (requiresDBUpdate: false) the gateway may never
+  // transition to "updated" — "confirmed" is the success signal.
+  // This avoids waiting for the 30s stall timeout before the ceremony starts.
+  useEffect(() => {
+    if (
+      txStatus?.state === "confirmed" &&
+      result?.requiresOnChainConfirmation &&
+      !result?.requiresDBUpdate &&
+      !hasHandledSuccessRef.current
+    ) {
+      hasHandledSuccessRef.current = true;
+
+      if (skipCeremony) {
+        refreshAuth();
+        toast.success("Access token created", {
+          description: `Your alias ${alias} is now live on Cardano.`,
+        });
+        void onSuccess?.();
+      } else {
+        setCeremonyState("celebration");
+        setTimeout(() => {
+          logout("access_token_mint");
+          setCeremonyState("reconnecting");
+        }, 2000);
+      }
+    }
+  }, [
+    txStatus?.state,
+    result?.requiresOnChainConfirmation,
+    result?.requiresDBUpdate,
+    skipCeremony,
+    refreshAuth,
+    alias,
+    onSuccess,
+    logout,
+  ]);
 
   // Reset the ref when state goes back to idle (for subsequent mints)
   useEffect(() => {
