@@ -53,9 +53,12 @@ function CredentialBadge() {
   const beadRadius = 132;
   const beads = Array.from({ length: beadCount }, (_, i) => {
     const angle = (i / beadCount) * Math.PI * 2;
+    // Round to a fixed precision so the server- and client-rendered SVG emit
+    // identical coordinate strings (raw floats can differ in their last digit
+    // and trip React's hydration check).
     return {
-      x: cx + beadRadius * Math.cos(angle),
-      y: cy + beadRadius * Math.sin(angle),
+      x: (cx + beadRadius * Math.cos(angle)).toFixed(3),
+      y: (cy + beadRadius * Math.sin(angle)).toFixed(3),
     };
   });
 
