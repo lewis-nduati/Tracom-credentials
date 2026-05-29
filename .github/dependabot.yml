@@ -41,6 +41,9 @@ updates:
       # Ignore zod v4+ until trpc-openapi supports it
       - dependency-name: "zod"
         update-types: ["version-update:semver-major"]
+      # Ignore TypeScript major bumps (6.0 broke the build; handle manually)
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
 
   # GitHub Actions
   - package-ecosystem: "github-actions"

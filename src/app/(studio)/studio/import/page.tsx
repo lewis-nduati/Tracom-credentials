@@ -122,70 +122,14 @@ export default function ImportModulePage() {
         <div>
           <AndamioHeading level={1} size="2xl" className="mb-1">Import module</AndamioHeading>
           <AndamioText variant="muted">
-            Select a course, then upload a compiled module folder to import its content.
+            Upload a compiled module folder, then choose which course to import it into.
           </AndamioText>
         </div>
 
-        {/* Step 1 — Course */}
-        <section className="space-y-3">
-          <p className="text-sm font-medium">1. Choose a course</p>
-
-          {coursesLoading && (
-            <div className="flex items-center gap-2 text-muted-foreground text-sm">
-              <LoadingIcon className="h-4 w-4 animate-spin" />
-              Loading courses...
-            </div>
-          )}
-
-          {!coursesLoading && courses.length === 0 && (
-            <AndamioAlert>
-              <AlertIcon className="h-4 w-4" />
-              <AndamioAlertDescription>
-                No courses found. Create a course first before importing a module.
-              </AndamioAlertDescription>
-            </AndamioAlert>
-          )}
-
-          <div className="space-y-1.5">
-            {courses.map((course) => (
-              <button
-                key={course.courseId}
-                type="button"
-                onClick={() => {
-                  setSelectedCourseId(course.courseId);
-                  reset();
-                }}
-                className={cn(
-                  "w-full flex items-center gap-3 px-3 py-3 rounded-lg border text-left transition-all",
-                  selectedCourseId === course.courseId
-                    ? "border-primary bg-primary/5"
-                    : "border-border hover:border-primary/40 hover:bg-muted/30"
-                )}
-              >
-                <div className={cn(
-                  "flex h-8 w-8 items-center justify-center rounded-md flex-shrink-0",
-                  selectedCourseId === course.courseId ? "bg-primary/10" : "bg-muted"
-                )}>
-                  <CourseIcon className={cn(
-                    "h-4 w-4",
-                    selectedCourseId === course.courseId ? "text-primary" : "text-muted-foreground"
-                  )} />
-                </div>
-                <span className="text-sm font-medium flex-1 truncate">
-                  {course.title ?? "Untitled Course"}
-                </span>
-                {selectedCourseId === course.courseId && (
-                  <NextIcon className="h-4 w-4 text-primary flex-shrink-0" />
-                )}
-              </button>
-            ))}
-          </div>
-        </section>
-
-        {/* Step 2 — Folder */}
-        {selectedCourseId && (
+        {/* Step 1 — Upload folder */}
+        {(state.type === "idle" || state.type === "parsing") && (
           <section className="space-y-3">
-            <p className="text-sm font-medium">2. Select module folder</p>
+            <p className="text-sm font-medium">1. Upload module folder</p>
 
             {state.type === "idle" && (
               <>
@@ -218,158 +162,219 @@ export default function ImportModulePage() {
                 <AndamioText variant="small">Reading files...</AndamioText>
               </div>
             )}
+          </section>
+        )}
 
-            {state.type === "preview" && (
-              <div className="space-y-4">
-                <div className="rounded-xl border p-4 space-y-3">
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <p className="font-semibold text-sm">{state.parsed.outline.title}</p>
-                      <code className="text-xs text-muted-foreground font-mono">
-                        {state.parsed.outline.code}
-                      </code>
-                    </div>
-                    <AndamioBadge
-                      variant={state.validation.valid ? "default" : "destructive"}
-                      className="text-[10px] flex-shrink-0"
-                    >
-                      {state.validation.valid ? "Ready" : "Has errors"}
-                    </AndamioBadge>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div className={cn(
-                      "flex items-center gap-1.5",
-                      state.parsed.outline.slts.length > 0 ? "text-foreground" : "text-muted-foreground"
-                    )}>
-                      <SLTIcon className="h-3.5 w-3.5" />
-                      {state.parsed.outline.slts.length} learning targets
-                    </div>
-                    <div className={cn(
-                      "flex items-center gap-1.5",
-                      state.parsed.lessons.length > 0 ? "text-foreground" : "text-muted-foreground"
-                    )}>
-                      <LessonIcon className="h-3.5 w-3.5" />
-                      {state.parsed.lessons.length} lessons
-                    </div>
-                    <div className={cn(
-                      "flex items-center gap-1.5",
-                      state.parsed.introduction ? "text-foreground" : "text-muted-foreground"
-                    )}>
-                      <IntroductionIcon className="h-3.5 w-3.5" />
-                      {state.parsed.introduction ? "Introduction" : "No introduction"}
-                    </div>
-                    <div className={cn(
-                      "flex items-center gap-1.5",
-                      state.parsed.assignment ? "text-foreground" : "text-muted-foreground"
-                    )}>
-                      <AssignmentIcon className="h-3.5 w-3.5" />
-                      {state.parsed.assignment ? "Assignment" : "No assignment"}
-                    </div>
-                  </div>
-                </div>
-
-                {state.validation.errors.length > 0 && (
-                  <AndamioAlert variant="destructive">
-                    <AlertIcon className="h-4 w-4" />
-                    <AndamioAlertDescription>
-                      <ul className="text-xs space-y-1">
-                        {state.validation.errors.map((e, i) => (
-                          <li key={i}>{e}</li>
-                        ))}
-                      </ul>
-                    </AndamioAlertDescription>
-                  </AndamioAlert>
-                )}
-
-                {state.validation.warnings.length > 0 && (
-                  <AndamioAlert>
-                    <AlertIcon className="h-4 w-4" />
-                    <AndamioAlertDescription>
-                      <ul className="text-xs space-y-1">
-                        {state.validation.warnings.map((w, i) => (
-                          <li key={i}>{w}</li>
-                        ))}
-                      </ul>
-                    </AndamioAlertDescription>
-                  </AndamioAlert>
-                )}
-
-                <div className="flex items-center gap-3">
-                  <AndamioButton
-                    onClick={() => void handleImport()}
-                    disabled={!state.validation.valid}
-                  >
-                    <UploadIcon className="h-4 w-4 mr-2" />
-                    Import into {selectedCourse?.title ?? "course"}
-                  </AndamioButton>
-                  <button
-                    type="button"
-                    onClick={reset}
-                    className="text-xs text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2"
-                  >
-                    Choose a different folder
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {state.type === "importing" && (
-              <div className="flex flex-col items-center py-8 gap-3">
-                <LoadingIcon className="h-8 w-8 text-primary animate-spin" />
-                <AndamioText variant="small">Importing module...</AndamioText>
-                <AndamioText variant="small" className="text-muted-foreground text-xs">
-                  Converting content and saving to database
-                </AndamioText>
-              </div>
-            )}
-
-            {state.type === "success" && (
-              <div className="rounded-xl border p-6 space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 flex-shrink-0">
-                    <SuccessIcon className="h-5 w-5 text-primary" />
-                  </div>
+        {/* Step 2 — Preview, choose course, import */}
+        {state.type === "preview" && (
+          <section className="space-y-6">
+            {/* Module preview */}
+            <div className="space-y-3">
+              <p className="text-sm font-medium">Module preview</p>
+              <div className="rounded-xl border p-4 space-y-3">
+                <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="font-semibold text-sm">
-                      Module {state.wasUpdate ? "updated" : "imported"}
-                    </p>
-                    <AndamioText variant="small" className="text-muted-foreground">
-                      {state.moduleCode} is ready to edit
-                    </AndamioText>
+                    <p className="font-semibold text-sm">{state.parsed.outline.title}</p>
+                    <code className="text-xs text-muted-foreground font-mono">
+                      {state.parsed.outline.code}
+                    </code>
+                  </div>
+                  <AndamioBadge
+                    variant={state.validation.valid ? "default" : "destructive"}
+                    className="text-[10px] flex-shrink-0"
+                  >
+                    {state.validation.valid ? "Ready" : "Has errors"}
+                  </AndamioBadge>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className={cn(
+                    "flex items-center gap-1.5",
+                    state.parsed.outline.slts.length > 0 ? "text-foreground" : "text-muted-foreground"
+                  )}>
+                    <SLTIcon className="h-3.5 w-3.5" />
+                    {state.parsed.outline.slts.length} learning targets
+                  </div>
+                  <div className={cn(
+                    "flex items-center gap-1.5",
+                    state.parsed.lessons.length > 0 ? "text-foreground" : "text-muted-foreground"
+                  )}>
+                    <LessonIcon className="h-3.5 w-3.5" />
+                    {state.parsed.lessons.length} lessons
+                  </div>
+                  <div className={cn(
+                    "flex items-center gap-1.5",
+                    state.parsed.introduction ? "text-foreground" : "text-muted-foreground"
+                  )}>
+                    <IntroductionIcon className="h-3.5 w-3.5" />
+                    {state.parsed.introduction ? "Introduction" : "No introduction"}
+                  </div>
+                  <div className={cn(
+                    "flex items-center gap-1.5",
+                    state.parsed.assignment ? "text-foreground" : "text-muted-foreground"
+                  )}>
+                    <AssignmentIcon className="h-3.5 w-3.5" />
+                    {state.parsed.assignment ? "Assignment" : "No assignment"}
                   </div>
                 </div>
-                <div className="flex gap-2">
-                  <AndamioButton
-                    onClick={() => router.push(`/studio/course/${state.courseId}/${state.moduleCode}`)}
-                  >
-                    Open module
-                  </AndamioButton>
-                  <AndamioButton variant="ghost" onClick={reset}>
-                    Import another
-                  </AndamioButton>
-                </div>
               </div>
-            )}
 
-            {state.type === "error" && (
-              <div className="space-y-3">
+              {state.validation.errors.length > 0 && (
                 <AndamioAlert variant="destructive">
                   <AlertIcon className="h-4 w-4" />
-                  <AndamioAlertDescription className="text-xs">
-                    {state.message}
+                  <AndamioAlertDescription>
+                    <ul className="text-xs space-y-1">
+                      {state.validation.errors.map((e, i) => (
+                        <li key={i}>{e}</li>
+                      ))}
+                    </ul>
                   </AndamioAlertDescription>
                 </AndamioAlert>
-                <button
-                  type="button"
-                  onClick={reset}
-                  className="text-xs text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2"
-                >
-                  Try again
-                </button>
+              )}
+
+              {state.validation.warnings.length > 0 && (
+                <AndamioAlert>
+                  <AlertIcon className="h-4 w-4" />
+                  <AndamioAlertDescription>
+                    <ul className="text-xs space-y-1">
+                      {state.validation.warnings.map((w, i) => (
+                        <li key={i}>{w}</li>
+                      ))}
+                    </ul>
+                  </AndamioAlertDescription>
+                </AndamioAlert>
+              )}
+            </div>
+
+            {/* Choose destination course */}
+            <div className="space-y-3">
+              <p className="text-sm font-medium">2. Choose destination course</p>
+
+              {coursesLoading && (
+                <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                  <LoadingIcon className="h-4 w-4 animate-spin" />
+                  Loading courses...
+                </div>
+              )}
+
+              {!coursesLoading && courses.length === 0 && (
+                <AndamioAlert>
+                  <AlertIcon className="h-4 w-4" />
+                  <AndamioAlertDescription>
+                    No courses found. Create a course first, then import this module into it.
+                  </AndamioAlertDescription>
+                </AndamioAlert>
+              )}
+
+              <div className="space-y-1.5">
+                {courses.map((course) => (
+                  <button
+                    key={course.courseId}
+                    type="button"
+                    onClick={() => setSelectedCourseId(course.courseId)}
+                    className={cn(
+                      "w-full flex items-center gap-3 px-3 py-3 rounded-lg border text-left transition-all",
+                      selectedCourseId === course.courseId
+                        ? "border-primary bg-primary/5"
+                        : "border-border hover:border-primary/40 hover:bg-muted/30"
+                    )}
+                  >
+                    <div className={cn(
+                      "flex h-8 w-8 items-center justify-center rounded-md flex-shrink-0",
+                      selectedCourseId === course.courseId ? "bg-primary/10" : "bg-muted"
+                    )}>
+                      <CourseIcon className={cn(
+                        "h-4 w-4",
+                        selectedCourseId === course.courseId ? "text-primary" : "text-muted-foreground"
+                      )} />
+                    </div>
+                    <span className="text-sm font-medium flex-1 truncate">
+                      {course.title ?? "Untitled Course"}
+                    </span>
+                    {selectedCourseId === course.courseId && (
+                      <NextIcon className="h-4 w-4 text-primary flex-shrink-0" />
+                    )}
+                  </button>
+                ))}
               </div>
-            )}
+            </div>
+
+            {/* Import controls */}
+            <div className="flex items-center gap-3">
+              <AndamioButton
+                onClick={() => void handleImport()}
+                disabled={!state.validation.valid || !selectedCourseId}
+              >
+                <UploadIcon className="h-4 w-4 mr-2" />
+                {selectedCourseId
+                  ? `Import into ${selectedCourse?.title ?? "course"}`
+                  : "Choose a course above"}
+              </AndamioButton>
+              <button
+                type="button"
+                onClick={reset}
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2"
+              >
+                Choose a different folder
+              </button>
+            </div>
           </section>
+        )}
+
+        {state.type === "importing" && (
+          <div className="flex flex-col items-center py-8 gap-3">
+            <LoadingIcon className="h-8 w-8 text-primary animate-spin" />
+            <AndamioText variant="small">Importing module...</AndamioText>
+            <AndamioText variant="small" className="text-muted-foreground text-xs">
+              Converting content and saving to database
+            </AndamioText>
+          </div>
+        )}
+
+        {state.type === "success" && (
+          <div className="rounded-xl border p-6 space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 flex-shrink-0">
+                <SuccessIcon className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="font-semibold text-sm">
+                  Module {state.wasUpdate ? "updated" : "imported"}
+                </p>
+                <AndamioText variant="small" className="text-muted-foreground">
+                  {state.moduleCode} is ready to edit
+                </AndamioText>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <AndamioButton
+                onClick={() => router.push(`/studio/course/${state.courseId}/${state.moduleCode}`)}
+              >
+                Open module
+              </AndamioButton>
+              <AndamioButton variant="ghost" onClick={reset}>
+                Import another
+              </AndamioButton>
+            </div>
+          </div>
+        )}
+
+        {state.type === "error" && (
+          <div className="space-y-3">
+            <AndamioAlert variant="destructive">
+              <AlertIcon className="h-4 w-4" />
+              <AndamioAlertDescription className="text-xs">
+                {state.message}
+              </AndamioAlertDescription>
+            </AndamioAlert>
+            <button
+              type="button"
+              onClick={reset}
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2"
+            >
+              Try again
+            </button>
+          </div>
         )}
 
       </div>

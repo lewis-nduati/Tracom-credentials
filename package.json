@@ -2,6 +2,7 @@
   "name": "andamio-app-template",
   "version": "2.2.0",
   "private": true,
+  "license": "UNLICENSED",
   "type": "module",
   "scripts": {
     "build": "next build",
