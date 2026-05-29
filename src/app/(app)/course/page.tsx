@@ -1,41 +1,44 @@
 "use client";
 
 import React, { useMemo } from "react";
-import Link from "next/link";
 import {
   AndamioPageHeader,
   AndamioPageLoading,
   AndamioNotFoundCard,
   AndamioEmptyState,
 } from "~/components/andamio";
-import {
-  CourseIcon,
-  SuccessIcon,
-  OnChainIcon,
-  NextIcon,
-} from "~/components/icons";
+import { CourseIcon, SuccessIcon, PendingIcon, InfoIcon } from "~/components/icons";
 import { useActiveCourses, useStudentCourses } from "~/hooks/api";
 import { useAndamioAuth } from "~/hooks/auth/use-andamio-auth";
+import { CourseCard } from "~/components/courses/course-card";
 import { AndamioBadge } from "~/components/andamio/andamio-badge";
 
 /**
- * Public catalog of active courses.
+ * Public page displaying all active courses
  *
- * A clean numbered list: number, title, one line of description, and a status
- * or enrollment indicator. Matches the module list on the course page so the
- * whole course experience reads as one simple system.
+ * Uses the merged V2 API endpoint that returns both on-chain and off-chain data.
+ * API Endpoint: GET /api/v2/course/user/courses/list
  *
- * API: GET /api/v2/course/user/courses/list (merged on-chain + off-chain).
+ * Features:
+ * - Responsive grid layout (1-3 columns based on screen size)
+ * - Beautiful course cards with images/gradients
+ * - Status badges (Active/Draft/Unregistered)
+ * - Automatic caching via React Query
  */
 export default function CoursePage() {
   const { isAuthenticated } = useAndamioAuth();
-  const { data: courses = [], isLoading, error: coursesError } = useActiveCourses();
+  const {
+    data: courses = [],
+    isLoading,
+    error: coursesError,
+  } = useActiveCourses();
+
   const { data: studentCourses } = useStudentCourses();
 
-  // Map courseId → enrollment status for authenticated students.
+  // Build a map of courseId → enrollmentStatus for authenticated users
   const enrollmentMap = useMemo(() => {
+    if (!isAuthenticated || !studentCourses) return new Map<string, "enrolled" | "completed">();
     const map = new Map<string, "enrolled" | "completed">();
-    if (!isAuthenticated || !studentCourses) return map;
     for (const sc of studentCourses) {
       if (sc.courseId && sc.enrollmentStatus) {
         map.set(sc.courseId, sc.enrollmentStatus);
@@ -44,19 +47,29 @@ export default function CoursePage() {
     return map;
   }, [isAuthenticated, studentCourses]);
 
+  const error = coursesError?.message ?? null;
+
+  // Stats for header
+  const activeCourses = courses.filter((c) => c.status === "active").length;
+  const draftCourses = courses.filter((c) => c.status === "draft").length;
+  const unregisteredCourses = courses.filter((c) => c.status === "unregistered").length;
+
+  // Loading state
   if (isLoading) {
     return <AndamioPageLoading variant="cards" />;
   }
 
-  if (coursesError) {
+  // Error state
+  if (error) {
     return (
       <AndamioNotFoundCard
         title="Unable to load courses"
-        message={coursesError.message}
+        message={error}
       />
     );
   }
 
+  // Empty state
   if (courses.length === 0) {
     return (
       <div className="space-y-6">
@@ -73,58 +86,50 @@ export default function CoursePage() {
     );
   }
 
+  // Courses list with cards
   return (
     <div className="space-y-8">
+      {/* Header with stats */}
       <AndamioPageHeader
         title="Courses"
         description="Browse available courses and start building your skills"
       />
 
-      <div className="space-y-3">
-        {courses.map((course, i) => {
-          const status = enrollmentMap.get(course.courseId);
-          return (
-            <Link
-              key={course.courseId}
-              href={`/course/${course.courseId}`}
-              className="group block"
-              data-testid="course-card"
-            >
-              <div className="flex items-center gap-4 rounded-lg border border-border/60 bg-card px-4 py-4 transition-colors hover:border-primary/40 hover:bg-muted/30 sm:gap-5 sm:px-5">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-navy font-mono text-xs font-semibold text-white ring-1 ring-brand-gold/40">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate font-semibold text-foreground">
-                    {course.title || "Untitled course"}
-                  </p>
-                  {course.description && (
-                    <p className="truncate text-sm text-muted-foreground">
-                      {course.description}
-                    </p>
-                  )}
-                </div>
-                {status === "completed" ? (
-                  <AndamioBadge status="success" className="shrink-0 text-xs">
-                    <SuccessIcon className="mr-1 h-3 w-3" />
-                    Completed
-                  </AndamioBadge>
-                ) : status === "enrolled" ? (
-                  <AndamioBadge status="pending" className="shrink-0 text-xs">
-                    <OnChainIcon className="mr-1 h-3 w-3" />
-                    Enrolled
-                  </AndamioBadge>
-                ) : course.status === "unregistered" ? (
-                  <span className="shrink-0 text-xs text-muted-foreground">Coming soon</span>
-                ) : course.status === "draft" ? (
-                  <span className="shrink-0 text-xs text-muted-foreground">Draft</span>
-                ) : (
-                  <NextIcon className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-foreground" />
-                )}
-              </div>
-            </Link>
-          );
-        })}
+      {/* Stats bar */}
+      <div className="flex flex-wrap gap-3">
+        <AndamioBadge variant="secondary" className="text-sm px-3 py-1.5">
+          <CourseIcon className="h-4 w-4 mr-1.5" />
+          {courses.length} {courses.length === 1 ? "course" : "courses"}
+        </AndamioBadge>
+        {activeCourses > 0 && (
+          <AndamioBadge variant="outline" className="text-sm px-3 py-1.5 text-primary border-primary/30">
+            <SuccessIcon className="h-4 w-4 mr-1.5" />
+            {activeCourses} active
+          </AndamioBadge>
+        )}
+        {draftCourses > 0 && (
+          <AndamioBadge variant="outline" className="text-sm px-3 py-1.5 text-muted-foreground border-muted-foreground/30">
+            <PendingIcon className="h-4 w-4 mr-1.5" />
+            {draftCourses} draft
+          </AndamioBadge>
+        )}
+        {unregisteredCourses > 0 && (
+          <AndamioBadge variant="outline" className="text-sm px-3 py-1.5 text-secondary border-secondary/30">
+            <InfoIcon className="h-4 w-4 mr-1.5" />
+            {unregisteredCourses} coming soon
+          </AndamioBadge>
+        )}
+      </div>
+
+      {/* Course cards grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {courses.map((course) => (
+          <CourseCard
+            key={course.courseId}
+            course={course}
+            enrollmentStatus={enrollmentMap.get(course.courseId)}
+          />
+        ))}
       </div>
     </div>
   );
