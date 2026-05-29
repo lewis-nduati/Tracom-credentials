@@ -24,6 +24,7 @@ import {
 import {
   AlertIcon,
   AddIcon,
+  FolderIcon,
   SettingsIcon,
   CourseIcon,
   OnChainIcon,
@@ -63,6 +64,7 @@ import { cn } from "~/lib/utils";
 import { RESOLVED_COMMITMENT_STATUSES } from "~/config/ui-constants";
 import { toast } from "sonner";
 import { RegisterCourse } from "~/components/studio/register-course";
+import { ImportModuleDialog } from "~/components/studio/import-module-dialog";
 import { SetCoursePrerequisites } from "~/components/tx/set-course-prerequisites";
 import { COURSE_PREREQUISITES } from "~/config/course-prerequisites";
 // Note: computeSltHashDefinite removed - no longer needed with hook-based data
@@ -310,6 +312,9 @@ function CourseEditorContent({ courseId }: { courseId: string }) {
   // Registration state for unregistered modules
   const [registeringHash, setRegisteringHash] = useState<string | null>(null);
   const [registerModuleCode, setRegisterModuleCode] = useState("");
+
+  // Import dialog
+  const [showImportDialog, setShowImportDialog] = useState(false);
 
   // Get modules selected for burn with full details
   // Active modules are on-chain, use sltHash as the on-chain identifier
@@ -709,14 +714,21 @@ function CourseEditorContent({ courseId }: { courseId: string }) {
                     ))}
                   </div>
 
-                  {/* Add Credential Button - Centered at bottom */}
-                  <div className="flex justify-center pt-4">
+                  {/* Add Credential / Import Module - Centered at bottom */}
+                  <div className="flex justify-center gap-2 pt-4">
                     <AndamioButton
                       variant="outline"
                       onClick={() => router.push(`/studio/course/${courseId}/new?step=credential`)}
                     >
                       <AddIcon className="h-4 w-4 mr-2" />
                       Add Credential
+                    </AndamioButton>
+                    <AndamioButton
+                      variant="ghost"
+                      onClick={() => setShowImportDialog(true)}
+                    >
+                      <FolderIcon className="h-4 w-4 mr-2" />
+                      Import module
                     </AndamioButton>
                   </div>
 
@@ -1427,8 +1439,8 @@ function CourseEditorContent({ courseId }: { courseId: string }) {
                     <SetCoursePrerequisites
                       courseId={courseId}
                       moduleHashes={modules.map((m) => m.sltHash)}
-                      prerequisiteStateId={COURSE_PREREQUISITES[courseId]!.studentStateId}
-                      prerequisiteCourseName={COURSE_PREREQUISITES[courseId]!.courseName}
+                      prerequisiteStateId={COURSE_PREREQUISITES[courseId].studentStateId}
+                      prerequisiteCourseName={COURSE_PREREQUISITES[courseId].courseName}
                       onSuccess={() => void refetchCourse()}
                     />
                   </StudioFormSection>
@@ -1475,6 +1487,11 @@ function CourseEditorContent({ courseId }: { courseId: string }) {
         </div>
       </div>
 
+      <ImportModuleDialog
+        open={showImportDialog}
+        onOpenChange={setShowImportDialog}
+        courseId={courseId}
+      />
     </AndamioScrollArea>
   );
 }
