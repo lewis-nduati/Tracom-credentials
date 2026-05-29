@@ -45,165 +45,115 @@ const VALUES = [
   },
 ] as const;
 
-function CredentialCard() {
+function CredentialBadge() {
+  const cx = 170;
+  const cy = 168;
+  // Beaded ring: evenly spaced dots around the medallion edge.
+  const beadCount = 48;
+  const beadRadius = 132;
+  const beads = Array.from({ length: beadCount }, (_, i) => {
+    const angle = (i / beadCount) * Math.PI * 2;
+    return {
+      x: cx + beadRadius * Math.cos(angle),
+      y: cy + beadRadius * Math.sin(angle),
+    };
+  });
+
   return (
     <svg
-      viewBox="0 0 420 290"
+      viewBox="0 0 340 420"
       xmlns="http://www.w3.org/2000/svg"
-      className="w-full max-w-md"
-      aria-hidden="true"
+      className="w-full max-w-sm"
+      role="img"
+      aria-label="Tracom Academy on-chain credential badge"
     >
       <defs>
-        <linearGradient id="headerGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#0c1e3d" />
-          <stop offset="100%" stopColor="#1a3568" />
+        <radialGradient id="badgeFace" cx="38%" cy="32%" r="75%">
+          <stop offset="0%" stopColor="#F6DE8E" />
+          <stop offset="45%" stopColor="#D4AF37" />
+          <stop offset="100%" stopColor="#9C7C12" />
+        </radialGradient>
+        <linearGradient id="badgeRing" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#F0CE6B" />
+          <stop offset="100%" stopColor="#9C7C12" />
         </linearGradient>
-        <linearGradient id="goldVert" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#D4AF37" />
-          <stop offset="100%" stopColor="#A8860A" />
+        <linearGradient id="ribbonGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#C9A227" />
+          <stop offset="100%" stopColor="#8A6D0E" />
         </linearGradient>
-        <clipPath id="cardClip">
-          <rect x="20" y="10" width="374" height="262" rx="14" />
-        </clipPath>
+        {/* Arc paths for curved lettering (concentric with the medallion). */}
+        <path id="arcTop" d={`M ${cx - 96} ${cy} A 96 96 0 0 1 ${cx + 96} ${cy}`} fill="none" />
+        <path id="arcBottom" d={`M ${cx - 92} ${cy + 6} A 92 92 0 0 0 ${cx + 92} ${cy + 6}`} fill="none" />
       </defs>
 
-      {/* Shadow */}
-      <rect x="28" y="20" width="374" height="262" rx="14" fill="rgba(0,0,0,0.32)" />
+      {/* Ribbon tails behind the medallion */}
+      <polygon points="150,250 120,250 96,400 132,372 150,400" fill="url(#ribbonGrad)" />
+      <polygon points="190,250 220,250 244,400 208,372 190,400" fill="url(#ribbonGrad)" />
+      <polygon points="150,250 190,250 190,330 150,330" fill="#7A5F0B" opacity="0.5" />
 
-      {/* All card content clipped to rounded rect */}
-      <g clipPath="url(#cardClip)">
-        {/* White card background */}
-        <rect x="20" y="10" width="374" height="262" fill="white" />
+      {/* Outer ring + beaded edge */}
+      <circle cx={cx} cy={cy} r="139" fill="none" stroke="url(#badgeRing)" strokeWidth="3" />
+      {beads.map((b, i) => (
+        <circle key={i} cx={b.x} cy={b.y} r="2.4" fill="#E7C766" />
+      ))}
 
-        {/* Gold left accent strip */}
-        <rect x="20" y="10" width="7" height="262" fill="url(#goldVert)" />
+      {/* Medallion face */}
+      <circle cx={cx} cy={cy} r="118" fill="url(#badgeFace)" stroke="#7A5F0B" strokeWidth="1.5" />
+      {/* Inner engraved rings */}
+      <circle cx={cx} cy={cy} r="104" fill="none" stroke="#0F2545" strokeOpacity="0.28" strokeWidth="1" />
+      <circle cx={cx} cy={cy} r="100" fill="none" stroke="#0F2545" strokeOpacity="0.2" strokeWidth="0.75" strokeDasharray="1.5 4" />
 
-        {/* Navy header band */}
-        <rect x="27" y="10" width="367" height="72" fill="url(#headerGrad)" />
-
-        {/* TRACOM ACADEMY */}
-        <text
-          x="48" y="42"
-          fontFamily="Georgia, 'Times New Roman', serif"
-          fontSize="12" fontWeight="bold" letterSpacing="4"
-          fill="white"
-        >
+      {/* Curved lettering */}
+      <text
+        fill="#0F2545"
+        fontFamily="Georgia, 'Times New Roman', serif"
+        fontSize="15"
+        fontWeight="bold"
+        letterSpacing="3"
+      >
+        <textPath href="#arcTop" startOffset="50%" textAnchor="middle">
           TRACOM ACADEMY
-        </text>
-        <text
-          x="48" y="60"
-          fontFamily="Arial, Helvetica, sans-serif"
-          fontSize="9" letterSpacing="2.5"
-          fill="rgba(255,255,255,0.45)"
-        >
-          NAIROBI, KENYA
-        </text>
+        </textPath>
+      </text>
+      <text
+        fill="#0F2545"
+        fillOpacity="0.7"
+        fontFamily="Arial, Helvetica, sans-serif"
+        fontSize="10"
+        letterSpacing="3.5"
+      >
+        <textPath href="#arcBottom" startOffset="50%" textAnchor="middle">
+          ON-CHAIN · CARDANO
+        </textPath>
+      </text>
 
-        {/* Verified pill */}
-        <rect x="274" y="28" width="100" height="22" rx="11"
-          fill="rgba(212,175,55,0.15)" stroke="#D4AF37" strokeWidth="1" />
-        <path d="M287 39 L291 43 L300 34"
-          stroke="#D4AF37" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        <text x="334" y="44"
-          fontFamily="Arial, Helvetica, sans-serif"
-          fontSize="9" fontWeight="bold" letterSpacing="1"
-          fill="#D4AF37" textAnchor="middle"
-        >
-          VERIFIED
-        </text>
+      {/* Star separators flanking the center */}
+      <text x={cx - 78} y={cy + 5} fill="#0F2545" fillOpacity="0.45" fontSize="12" textAnchor="middle">★</text>
+      <text x={cx + 78} y={cy + 5} fill="#0F2545" fillOpacity="0.45" fontSize="12" textAnchor="middle">★</text>
 
-        {/* CERTIFICATE OF COMPLETION label */}
-        <text x="48" y="108"
-          fontFamily="Arial, Helvetica, sans-serif"
-          fontSize="8" letterSpacing="3"
-          fill="rgba(15,37,69,0.4)"
-        >
-          CERTIFICATE OF COMPLETION
-        </text>
-
-        {/* Credential title */}
-        <text x="48" y="137"
-          fontFamily="Georgia, 'Times New Roman', serif"
-          fontSize="21" fontWeight="bold"
-          fill="#0F2545"
-        >
-          POS Systems &amp;
-        </text>
-        <text x="48" y="163"
-          fontFamily="Georgia, 'Times New Roman', serif"
-          fontSize="21" fontWeight="bold"
-          fill="#0F2545"
-        >
-          Retail Technology
-        </text>
-
-        {/* Divider */}
-        <line x1="48" y1="180" x2="260" y2="180"
-          stroke="#0F2545" strokeOpacity="0.1" strokeWidth="1" />
-
-        {/* Awarded to */}
-        <text x="48" y="200"
-          fontFamily="Arial, Helvetica, sans-serif"
-          fontSize="8" letterSpacing="2"
-          fill="rgba(15,37,69,0.4)"
-        >
-          AWARDED TO
-        </text>
-        <text x="48" y="220"
-          fontFamily="Georgia, 'Times New Roman', serif"
-          fontSize="16" fontWeight="bold"
-          fill="#0F2545"
-        >
-          Grace W. Mwangi
-        </text>
-
-        {/* Bottom meta */}
-        <text x="48" y="256"
-          fontFamily="'Courier New', Courier, monospace"
-          fontSize="8"
-          fill="rgba(15,37,69,0.28)"
-        >
-          4f2a3b8c...c1e9  ·  Cardano  ·  Mar 2026
-        </text>
-
-        {/* Seal outer ring */}
-        <circle cx="348" cy="210" r="42"
-          fill="rgba(212,175,55,0.07)"
-          stroke="rgba(212,175,55,0.4)" strokeWidth="1.5" />
-        {/* Seal inner dashed ring */}
-        <circle cx="348" cy="210" r="34"
-          fill="none"
-          stroke="rgba(212,175,55,0.25)" strokeWidth="0.75" strokeDasharray="2 4" />
-
-        {/* TRACOM 2026 text in seal */}
-        <text x="348" y="204"
-          fontFamily="Arial, Helvetica, sans-serif"
-          fontSize="8" fontWeight="bold" letterSpacing="1.5"
-          fill="#C9A227" textAnchor="middle"
-        >
-          TRACOM
-        </text>
-        <text x="348" y="216"
-          fontFamily="Arial, Helvetica, sans-serif"
-          fontSize="10" fontWeight="bold" letterSpacing="1"
-          fill="#C9A227" textAnchor="middle"
-        >
-          2026
-        </text>
-
-        {/* ON-CHAIN label below seal */}
-        <text x="348" y="265"
-          fontFamily="Arial, Helvetica, sans-serif"
-          fontSize="7" letterSpacing="2"
-          fill="rgba(201,162,39,0.65)" textAnchor="middle"
-        >
-          ON-CHAIN
-        </text>
-      </g>
-
-      {/* Card border */}
-      <rect x="20" y="10" width="374" height="262" rx="14"
-        fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
+      {/* Center verified emblem */}
+      <circle cx={cx} cy={cy - 6} r="40" fill="#0F2545" />
+      <circle cx={cx} cy={cy - 6} r="40" fill="none" stroke="#E7C766" strokeWidth="1.5" />
+      <path
+        d={`M ${cx - 17} ${cy - 6} l 11 12 l 22 -24`}
+        fill="none"
+        stroke="#E7C766"
+        strokeWidth="5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <text
+        x={cx}
+        y={cy + 52}
+        fill="#0F2545"
+        fontFamily="Arial, Helvetica, sans-serif"
+        fontSize="9"
+        fontWeight="bold"
+        letterSpacing="2.5"
+        textAnchor="middle"
+      >
+        VERIFIED
+      </text>
     </svg>
   );
 }
@@ -287,7 +237,7 @@ export function LandingHero() {
               </div>
             </div>
             <div className="hidden items-center justify-center lg:flex">
-              <CredentialCard />
+              <CredentialBadge />
             </div>
           </div>
         </div>
