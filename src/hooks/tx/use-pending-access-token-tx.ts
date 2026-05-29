@@ -41,13 +41,28 @@ const ACCESS_TOKEN_TX_TYPES = new Set([
   "GLOBAL_USER_ACCESS_TOKEN_CLAIM",
 ]);
 
-function getSnapshot(): boolean {
-  for (const tx of txWatcherStore.getState().transactions.values()) {
+/**
+ * Pure predicate: does the given set of watched transactions contain a
+ * non-terminal access-token acquisition (mint or v1→v2 claim)?
+ *
+ * Extracted from the hook so the gating logic can be unit-tested without
+ * rendering React or booting the store's SSE loop.
+ */
+export function selectHasPendingAccessTokenTx(
+  transactions: Iterable<{ txType: string; isTerminal: boolean }>,
+): boolean {
+  for (const tx of transactions) {
     if (ACCESS_TOKEN_TX_TYPES.has(tx.txType) && !tx.isTerminal) {
       return true;
     }
   }
   return false;
+}
+
+function getSnapshot(): boolean {
+  return selectHasPendingAccessTokenTx(
+    txWatcherStore.getState().transactions.values(),
+  );
 }
 
 /** Server snapshot: no transactions are ever in flight during SSR. */
