@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { env } from "~/env";
-import { LandingHero } from "~/components/landing/landing-hero";
+import { LandingHero, GuillocheBackdrop } from "~/components/landing/landing-hero";
 
 export default function Home() {
   const network = env.NEXT_PUBLIC_CARDANO_NETWORK;
@@ -45,8 +45,9 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-brand-navy text-secondary-foreground/50 px-6 py-6">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+      <footer className="relative overflow-hidden bg-brand-navy text-secondary-foreground/50 px-6 py-6">
+        <GuillocheBackdrop opacity={0.07} />
+        <div className="relative z-10 max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
           <span>© 2026 Tracom Academy. All rights reserved.</span>
           <div className="flex items-center gap-4">
             <a

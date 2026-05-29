@@ -44,6 +44,34 @@ function buildGuillochePaths(): string[] {
 }
 const GUILLOCHE_PATHS = buildGuillochePaths();
 
+/**
+ * Faint guilloché engraving that fills its positioned parent. Shared by the
+ * hero and the footer so the navy surfaces carry one consistent texture.
+ */
+export function GuillocheBackdrop({
+  className,
+  opacity = 0.12,
+}: {
+  className?: string;
+  opacity?: number;
+}) {
+  return (
+    <svg
+      className={`pointer-events-none absolute inset-0 h-full w-full text-brand-gold ${className ?? ""}`}
+      viewBox="0 0 400 400"
+      preserveAspectRatio="xMidYMid slice"
+      fill="none"
+      aria-hidden="true"
+    >
+      <g stroke="currentColor" strokeWidth="0.3" opacity={opacity}>
+        {GUILLOCHE_PATHS.map((d, i) => (
+          <path key={i} d={d} />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
 // Staggered entrance for the hero copy: each block fades and lifts in sequence
 // on load. ease-out-quint, no bounce. Skipped entirely under reduced motion.
 const revealContainer: Variants = {
@@ -243,19 +271,7 @@ function HeroSection({ onEnter }: { onEnter: () => void }) {
             "radial-gradient(110% 120% at 82% 0%, color-mix(in oklch, var(--brand-gold) 18%, transparent) 0%, transparent 58%)",
         }}
       />
-      <svg
-        className="pointer-events-none absolute inset-0 h-full w-full text-brand-gold"
-        viewBox="0 0 400 400"
-        preserveAspectRatio="xMidYMid slice"
-        fill="none"
-        aria-hidden="true"
-      >
-        <g stroke="currentColor" strokeWidth="0.3" opacity="0.12">
-          {GUILLOCHE_PATHS.map((d, i) => (
-            <path key={i} d={d} />
-          ))}
-        </g>
-      </svg>
+      <GuillocheBackdrop />
 
       <div className="relative z-10 mx-auto max-w-6xl">
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
@@ -325,8 +341,27 @@ function HeroSection({ onEnter }: { onEnter: () => void }) {
               </Link>
             </motion.div>
           </motion.div>
-          <div className="hidden items-center justify-center lg:flex">
-            <CredentialBadge />
+          <div className="relative hidden items-center justify-center lg:flex">
+            {/* Soft gold glow behind the seal for depth. */}
+            <div
+              className="absolute h-72 w-72 rounded-full blur-3xl"
+              aria-hidden="true"
+              style={{
+                backgroundImage:
+                  "radial-gradient(circle, color-mix(in oklch, var(--brand-gold) 28%, transparent), transparent 70%)",
+              }}
+            />
+            <motion.div
+              className="relative"
+              animate={reducedMotion ? undefined : { y: [0, -8, 0] }}
+              transition={
+                reducedMotion
+                  ? undefined
+                  : { duration: 5.5, ease: "easeInOut", repeat: Infinity }
+              }
+            >
+              <CredentialBadge />
+            </motion.div>
           </div>
         </div>
       </div>
@@ -387,11 +422,13 @@ function HowItWorks() {
           />
           <ol className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
             {STEPS.map(({ step, title, desc }, i) => (
-              <Reveal key={step} delay={i * 0.1} className="relative">
-                <span className="relative z-10 mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-brand-navy font-mono text-sm font-semibold text-white ring-1 ring-brand-gold/50">
+              <Reveal key={step} delay={i * 0.1} className="group relative">
+                <span className="relative z-10 mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-brand-navy font-mono text-sm font-semibold text-white ring-1 ring-brand-gold/50 transition-all duration-300 group-hover:scale-110 group-hover:ring-2 group-hover:ring-brand-gold">
                   {step}
                 </span>
-                <h3 className="mb-2 text-base font-semibold text-foreground">{title}</h3>
+                <h3 className="mb-2 text-base font-semibold text-foreground transition-colors duration-300 group-hover:text-brand-navy">
+                  {title}
+                </h3>
                 <AndamioText variant="small" className="leading-relaxed">
                   {desc}
                 </AndamioText>
