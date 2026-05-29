@@ -34,7 +34,7 @@ import { ConnectWalletButton } from "~/components/auth/connect-wallet-button";
 import { useAndamioAuth } from "~/hooks/auth/use-andamio-auth";
 import { useTransaction } from "~/hooks/tx/use-transaction";
 import { useTxStream } from "~/hooks/tx/use-tx-stream";
-import { useHasPendingAccessTokenMint } from "~/hooks/tx/use-pending-access-token-mint";
+import { useHasPendingAccessTokenTx } from "~/hooks/tx/use-pending-access-token-tx";
 import { TransactionButton } from "./transaction-button";
 import { TransactionStatus } from "./transaction-status";
 import { parseTxErrorMessage } from "~/lib/tx-error-messages";
@@ -48,7 +48,6 @@ import {
 import { AndamioInput } from "~/components/andamio/andamio-input";
 import { AndamioLabel } from "~/components/andamio/andamio-label";
 import { AndamioText } from "~/components/andamio/andamio-text";
-import { AndamioButton } from "~/components/andamio/andamio-button";
 import {
   AccessTokenIcon,
   ShieldIcon,
@@ -134,13 +133,15 @@ export function MintAccessToken({ onSuccess, onSubmitted, skipCeremony = false }
   const [confirmedAlias, setConfirmedAlias] = useState<string>("");
   const [confirmedTxHash, setConfirmedTxHash] = useState<string | null>(null);
 
-  // Detect existing access token in wallet — prevents duplicate mints
-  const [walletTokenAlias, setWalletTokenAlias] = useState<string | null | "checking">("checking");
+  // Detect existing access token in wallet — prevents duplicate mints.
+  // "checking" is the initial sentinel (scan not yet complete); null means no
+  // token found; a string is the existing alias.
+  const [walletTokenAlias, setWalletTokenAlias] = useState<string | null>("checking");
 
-  // True when an access-token mint is already in flight (this session). The
+  // True when an access-token tx is already in flight (this session). The
   // wallet check above only sees *confirmed* tokens, so this guards the
   // 20–90s on-chain confirmation window against a second mint.
-  const hasPendingMint = useHasPendingAccessTokenMint();
+  const hasPendingMint = useHasPendingAccessTokenTx();
 
   useEffect(() => {
     if (!connected || !wallet) {

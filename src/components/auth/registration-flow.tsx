@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useWallet } from "@meshsdk/react";
 import { useAndamioAuth } from "~/hooks/auth/use-andamio-auth";
 import { useTransaction } from "~/hooks/tx/use-transaction";
-import { useHasPendingAccessTokenMint } from "~/hooks/tx/use-pending-access-token-mint";
+import { useHasPendingAccessTokenTx } from "~/hooks/tx/use-pending-access-token-tx";
 import {
   AndamioCard,
   AndamioCardContent,
@@ -53,10 +53,10 @@ export function RegistrationFlow({ onMinted, onBack, darkLayout = false }: Regis
     logout,
   } = useAndamioAuth();
   const { state: txState, error: txError, execute, reset } = useTransaction();
-  // True when an access-token mint is already in flight (this session). Guards
+  // True when an access-token tx is already in flight (this session). Guards
   // against minting a second token during the on-chain confirmation window,
   // which the wallet-balance check above cannot see yet.
-  const hasPendingMint = useHasPendingAccessTokenMint();
+  const hasPendingMint = useHasPendingAccessTokenTx();
 
   useEffect(() => {
     if (!connected || !wallet) {

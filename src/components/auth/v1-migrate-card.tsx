@@ -3,6 +3,7 @@
 import React from "react";
 import { useTransaction } from "~/hooks/tx/use-transaction";
 import { useTxStream } from "~/hooks/tx/use-tx-stream";
+import { useHasPendingAccessTokenTx } from "~/hooks/tx/use-pending-access-token-tx";
 import { TransactionButton } from "~/components/tx/transaction-button";
 import { TransactionStatus } from "~/components/tx/transaction-status";
 import { parseTxErrorMessage } from "~/lib/tx-error-messages";
@@ -38,6 +39,11 @@ interface V1MigrateCardProps {
 export function V1MigrateCard({ detectedAlias, onMinted, onBack }: V1MigrateCardProps) {
   const { execute, state: txState, result, error, reset } = useTransaction();
   const { isSuccess: streamSuccess } = useTxStream(result?.txHash ?? null);
+  // True when an access-token tx (mint or claim) is already in flight this
+  // session. The wallet scan that surfaces this card only sees confirmed
+  // tokens, so this guards the on-chain confirmation window against a second
+  // claim if the card remounts before the claimed v2 token confirms.
+  const hasPendingTokenTx = useHasPendingAccessTokenTx();
 
   const [claimComplete, setClaimComplete] = React.useState(false);
 
@@ -49,6 +55,9 @@ export function V1MigrateCard({ detectedAlias, onMinted, onBack }: V1MigrateCard
   }, [txState]);
 
   const handleClaim = async () => {
+    // Block a second claim while an access-token tx is still confirming.
+    if (hasPendingTokenTx) return;
+
     await execute({
       txType: "GLOBAL_USER_ACCESS_TOKEN_CLAIM",
       params: { alias: detectedAlias },
@@ -110,6 +119,26 @@ export function V1MigrateCard({ detectedAlias, onMinted, onBack }: V1MigrateCard
             </AndamioButton>
           </AndamioCardContent>
         </AndamioCard>
+      </div>
+    );
+  }
+
+  // Guard: a claim is already in flight this session but this instance is idle
+  // (e.g. a fresh remount). The wallet scan can't see the unconfirmed v2 token
+  // yet, so block re-claiming until the in-flight tx reaches a terminal state.
+  if (!claimComplete && txState === "idle" && hasPendingTokenTx) {
+    return (
+      <div className="flex flex-col items-center text-center max-w-lg mx-auto">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+          <AccessTokenIcon className="h-6 w-6 text-primary" />
+        </div>
+        <AndamioHeading level={1} size="2xl" className="mt-4">
+          Claiming your token
+        </AndamioHeading>
+        <AndamioText variant="muted" className="mt-2">
+          Your v2 access token is being claimed on Cardano. This usually takes 20–60 seconds.
+          You don&apos;t need to claim again — we&apos;ll sign you in once it confirms.
+        </AndamioText>
       </div>
     );
   }
