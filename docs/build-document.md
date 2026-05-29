@@ -115,10 +115,9 @@ This project puts the credential on-chain instead. A native asset is minted on C
 
 ## 9. Dependencies
 
-- **Live demo depends on** the access token multi-mint bug being fixed.
+- **Live demo depends on** the access token multi-mint bug being fixed. (Done — fixed and gated in May 2026.)
 - **Mainnet launch depends on:**
-  - Completing missing Course and Course Module endpoint coverage.
-  - Implementing missing Assignment Commitment endpoints.
+  - Endpoint coverage: no functional gap (see §10). The unused endpoints are off-chain mirrors of on-chain actions the app already performs via the `/tx/` endpoints.
   - A separate Andamio instance configured for mainnet.
   - Switching `NEXT_PUBLIC_ACCESS_TOKEN_POLICY_ID` to the mainnet policy ID.
   - Creating the remaining courses in Studio (POS Developer Fundamentals, Secure Payments and Cybersecurity).
@@ -133,11 +132,9 @@ See `docs/andamio-integration.md` for the API proxy setup, authentication flow, 
 
 ### Identified Risks
 
-- **Access token multi-mint bug (critical).** A wallet can mint more than one access token in the same session. Likely cause is the unimplemented third endpoint in the Access Token group — probably a pre-mint check for whether a wallet already holds an active token. Without it, the frontend cannot gate the minting flow.
-  - **Mitigation:** Compare the three Access Token endpoints in the Andamio API docs (`https://mainnet.api.andamio.io/api/v1/docs/doc.json`) against the codebase to identify the missing endpoint, implement it, and gate the mint flow. Must be done before any live presentation or mainnet launch.
+- **Access token multi-mint bug — RESOLVED (May 2026).** A wallet could mint more than one access token in the same session. The cause was not a missing endpoint: the wallet-balance guards only saw *confirmed* tokens, so during the 20–90s confirmation window a second mint could be submitted. Fixed with an in-flight gate (`useHasPendingAccessTokenTx`) that blocks a second mint/claim until the first reaches a terminal state, applied to both mint surfaces and the v1→v2 migration. Verified by typecheck + unit tests; on-chain behaviour to be confirmed in the final mainnet QA pass.
 
-- **Incomplete API coverage.** 16 of 74 endpoints remain (Course, Course Module, Assignment Commitment gaps in current scope).
-  - **Mitigation:** Prioritize Course, Course Module, and Assignment Commitment endpoints before mainnet; defer task commitments, contributor, and prerequisites to the pioneer programme.
+- **API coverage — not a functional gap (reviewed May 2026).** An earlier tally counted "missing" endpoints, but checking the preprod gateway spec (123 paths) against the implemented hooks shows the 8 unused course endpoints are off-chain data mirrors of actions the app already performs on-chain via the `/tx/` endpoints (teacher management → `tx/.../teachers/manage`; module publish → `update-status`; commitment create/claim/leave → the `/tx/` commit and credential-claim flows). The core student and teacher flows are fully covered. The only open question is whether any *optional* feature behind an unused endpoint is wanted (e.g. a student "withdraw from commitment" / `commitment/leave`); none are required for launch.
 
 - **Mainnet configuration drift.** Mainnet requires a separate Andamio instance, wallet parameters, and policy ID.
   - **Mitigation:** Treat mainnet config as an explicit checklist item with a dedicated QA pass before launch.
@@ -236,7 +233,7 @@ Current state is light: lint, typecheck, and a small `test:unit` script (Node's 
 
 ## Appendix: Andamio API Coverage Snapshot
 
-58 of 74 endpoints implemented (78% overall).
+58 of 74 endpoints implemented (78% overall). Note: the unimplemented count is not a functional gap — see §10. The unused endpoints are off-chain mirrors of on-chain actions the app already performs via the `/tx/` endpoints, plus optional features not required for launch.
 
 | Area | Implemented | Total | Notes |
 |---|---|---|---|
