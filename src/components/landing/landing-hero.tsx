@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAndamioAuth } from "~/hooks/auth/use-andamio-auth";
 import { AccessTokenOnboarding } from "~/components/auth/access-token-onboarding";
@@ -44,57 +45,165 @@ const VALUES = [
   },
 ] as const;
 
-function CredentialDocument() {
+function CredentialCard() {
   return (
     <svg
-      viewBox="0 0 320 240"
-      fill="none"
+      viewBox="0 0 420 290"
       xmlns="http://www.w3.org/2000/svg"
-      className="w-full max-w-sm opacity-[0.18]"
+      className="w-full max-w-md"
       aria-hidden="true"
     >
-      {/* Document */}
-      <rect
-        x="16" y="8" width="288" height="224" rx="4"
-        fill="white" fillOpacity="0.04"
-        stroke="white" strokeOpacity="0.2" strokeWidth="1.5"
-      />
-      {/* Header band */}
-      <rect x="16" y="8" width="288" height="48" rx="4" fill="white" fillOpacity="0.07" />
-      <line x1="16" y1="56" x2="304" y2="56" stroke="white" strokeOpacity="0.12" strokeWidth="1" />
-      {/* Logo mark */}
-      <rect x="28" y="18" width="24" height="24" rx="3" fill="white" fillOpacity="0.25" />
-      {/* Institution name */}
-      <rect x="60" y="22" width="88" height="7" rx="2" fill="white" fillOpacity="0.4" />
-      <rect x="60" y="33" width="56" height="5" rx="2" fill="white" fillOpacity="0.18" />
-      {/* Verified badge */}
-      <rect x="240" y="22" width="52" height="18" rx="9" fill="white" fillOpacity="0.12" stroke="white" strokeOpacity="0.25" strokeWidth="1" />
-      <rect x="250" y="28" width="32" height="5" rx="2" fill="white" fillOpacity="0.45" />
-      {/* Awarded to label */}
-      <rect x="28" y="72" width="52" height="4" rx="2" fill="white" fillOpacity="0.18" />
-      {/* Recipient name */}
-      <rect x="28" y="82" width="172" height="12" rx="2" fill="white" fillOpacity="0.5" />
-      {/* Credential title */}
-      <rect x="28" y="106" width="264" height="16" rx="2" fill="white" fillOpacity="0.32" />
-      {/* Meta rows */}
-      <rect x="28" y="134" width="110" height="5" rx="2" fill="white" fillOpacity="0.18" />
-      <rect x="28" y="144" width="84" height="5" rx="2" fill="white" fillOpacity="0.18" />
-      {/* Rule */}
-      <line x1="28" y1="162" x2="292" y2="162" stroke="white" strokeOpacity="0.08" strokeWidth="1" />
-      {/* Hash label */}
-      <rect x="28" y="172" width="36" height="4" rx="2" fill="white" fillOpacity="0.15" />
-      {/* Hash value lines */}
-      <rect x="28" y="181" width="216" height="4" rx="2" fill="white" fillOpacity="0.1" />
-      <rect x="28" y="189" width="176" height="4" rx="2" fill="white" fillOpacity="0.1" />
-      {/* Seal ring */}
-      <circle cx="266" cy="196" r="26" stroke="white" strokeOpacity="0.18" strokeWidth="1.5" />
-      <circle cx="266" cy="196" r="20" stroke="white" strokeOpacity="0.1" strokeWidth="1" strokeDasharray="3 2" />
-      {/* Checkmark */}
-      <path
-        d="M258 196 L264 202 L276 188"
-        stroke="white" strokeOpacity="0.45" strokeWidth="2.5"
-        strokeLinecap="round" strokeLinejoin="round"
-      />
+      <defs>
+        <linearGradient id="headerGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#0c1e3d" />
+          <stop offset="100%" stopColor="#1a3568" />
+        </linearGradient>
+        <linearGradient id="goldVert" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#D4AF37" />
+          <stop offset="100%" stopColor="#A8860A" />
+        </linearGradient>
+        <clipPath id="cardClip">
+          <rect x="20" y="10" width="374" height="262" rx="14" />
+        </clipPath>
+      </defs>
+
+      {/* Shadow */}
+      <rect x="28" y="20" width="374" height="262" rx="14" fill="rgba(0,0,0,0.32)" />
+
+      {/* All card content clipped to rounded rect */}
+      <g clipPath="url(#cardClip)">
+        {/* White card background */}
+        <rect x="20" y="10" width="374" height="262" fill="white" />
+
+        {/* Gold left accent strip */}
+        <rect x="20" y="10" width="7" height="262" fill="url(#goldVert)" />
+
+        {/* Navy header band */}
+        <rect x="27" y="10" width="367" height="72" fill="url(#headerGrad)" />
+
+        {/* TRACOM ACADEMY */}
+        <text
+          x="48" y="42"
+          fontFamily="Georgia, 'Times New Roman', serif"
+          fontSize="12" fontWeight="bold" letterSpacing="4"
+          fill="white"
+        >
+          TRACOM ACADEMY
+        </text>
+        <text
+          x="48" y="60"
+          fontFamily="Arial, Helvetica, sans-serif"
+          fontSize="9" letterSpacing="2.5"
+          fill="rgba(255,255,255,0.45)"
+        >
+          NAIROBI, KENYA
+        </text>
+
+        {/* Verified pill */}
+        <rect x="274" y="28" width="100" height="22" rx="11"
+          fill="rgba(212,175,55,0.15)" stroke="#D4AF37" strokeWidth="1" />
+        <path d="M287 39 L291 43 L300 34"
+          stroke="#D4AF37" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        <text x="334" y="44"
+          fontFamily="Arial, Helvetica, sans-serif"
+          fontSize="9" fontWeight="bold" letterSpacing="1"
+          fill="#D4AF37" textAnchor="middle"
+        >
+          VERIFIED
+        </text>
+
+        {/* CERTIFICATE OF COMPLETION label */}
+        <text x="48" y="108"
+          fontFamily="Arial, Helvetica, sans-serif"
+          fontSize="8" letterSpacing="3"
+          fill="rgba(15,37,69,0.4)"
+        >
+          CERTIFICATE OF COMPLETION
+        </text>
+
+        {/* Credential title */}
+        <text x="48" y="137"
+          fontFamily="Georgia, 'Times New Roman', serif"
+          fontSize="21" fontWeight="bold"
+          fill="#0F2545"
+        >
+          POS Systems &amp;
+        </text>
+        <text x="48" y="163"
+          fontFamily="Georgia, 'Times New Roman', serif"
+          fontSize="21" fontWeight="bold"
+          fill="#0F2545"
+        >
+          Retail Technology
+        </text>
+
+        {/* Divider */}
+        <line x1="48" y1="180" x2="260" y2="180"
+          stroke="#0F2545" strokeOpacity="0.1" strokeWidth="1" />
+
+        {/* Awarded to */}
+        <text x="48" y="200"
+          fontFamily="Arial, Helvetica, sans-serif"
+          fontSize="8" letterSpacing="2"
+          fill="rgba(15,37,69,0.4)"
+        >
+          AWARDED TO
+        </text>
+        <text x="48" y="220"
+          fontFamily="Georgia, 'Times New Roman', serif"
+          fontSize="16" fontWeight="bold"
+          fill="#0F2545"
+        >
+          Grace W. Mwangi
+        </text>
+
+        {/* Bottom meta */}
+        <text x="48" y="256"
+          fontFamily="'Courier New', Courier, monospace"
+          fontSize="8"
+          fill="rgba(15,37,69,0.28)"
+        >
+          4f2a3b8c...c1e9  ·  Cardano  ·  Mar 2026
+        </text>
+
+        {/* Seal outer ring */}
+        <circle cx="348" cy="210" r="42"
+          fill="rgba(212,175,55,0.07)"
+          stroke="rgba(212,175,55,0.4)" strokeWidth="1.5" />
+        {/* Seal inner dashed ring */}
+        <circle cx="348" cy="210" r="34"
+          fill="none"
+          stroke="rgba(212,175,55,0.25)" strokeWidth="0.75" strokeDasharray="2 4" />
+
+        {/* TRACOM 2026 text in seal */}
+        <text x="348" y="204"
+          fontFamily="Arial, Helvetica, sans-serif"
+          fontSize="8" fontWeight="bold" letterSpacing="1.5"
+          fill="#C9A227" textAnchor="middle"
+        >
+          TRACOM
+        </text>
+        <text x="348" y="216"
+          fontFamily="Arial, Helvetica, sans-serif"
+          fontSize="10" fontWeight="bold" letterSpacing="1"
+          fill="#C9A227" textAnchor="middle"
+        >
+          2026
+        </text>
+
+        {/* ON-CHAIN label below seal */}
+        <text x="348" y="265"
+          fontFamily="Arial, Helvetica, sans-serif"
+          fontSize="7" letterSpacing="2"
+          fill="rgba(201,162,39,0.65)" textAnchor="middle"
+        >
+          ON-CHAIN
+        </text>
+      </g>
+
+      {/* Card border */}
+      <rect x="20" y="10" width="374" height="262" rx="14"
+        fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
     </svg>
   );
 }
@@ -162,15 +271,23 @@ export function LandingHero() {
                 Finish a course and Tracom issues your credential to your
                 wallet. Any employer can check it on-chain themselves.
               </AndamioText>
-              <button
-                onClick={handleEnter}
-                className="cursor-pointer rounded-md bg-white px-8 py-3.5 text-base font-semibold text-brand-navy transition-all hover:bg-white/90 active:scale-[0.98]"
-              >
-                Get Started
-              </button>
+              <div className="flex flex-wrap items-center gap-3">
+                <button
+                  onClick={handleEnter}
+                  className="cursor-pointer rounded-md bg-white px-8 py-3.5 text-base font-semibold text-brand-navy transition-all hover:bg-white/90 active:scale-[0.98]"
+                >
+                  Get Started
+                </button>
+                <Link
+                  href="/course"
+                  className="rounded-md border border-white/30 px-8 py-3.5 text-base font-semibold text-white transition-all hover:border-white/60 hover:bg-white/10 active:scale-[0.98]"
+                >
+                  View Courses
+                </Link>
+              </div>
             </div>
             <div className="hidden items-center justify-center lg:flex">
-              <CredentialDocument />
+              <CredentialCard />
             </div>
           </div>
         </div>
