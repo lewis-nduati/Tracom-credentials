@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useWallet } from "@meshsdk/react";
 import { useAndamioAuth } from "~/hooks/auth/use-andamio-auth";
 import { useTransaction } from "~/hooks/tx/use-transaction";
+import { useHasPendingAccessTokenMint } from "~/hooks/tx/use-pending-access-token-mint";
 import {
   AndamioCard,
   AndamioCardContent,
@@ -18,6 +19,8 @@ import { AndamioText } from "~/components/andamio/andamio-text";
 import { BackIcon, LoadingIcon } from "~/components/icons";
 import { getWalletAddressBech32 } from "~/lib/wallet-address";
 import { SignInOptions } from "~/components/auth/sign-in-options";
+import { env } from "~/env";
+import { extractAliasFromUnit } from "~/lib/access-token-utils";
 
 // Alias must contain only alphanumeric characters and underscores
 const ALIAS_PATTERN = /^[a-zA-Z0-9_]+$/;
@@ -38,6 +41,7 @@ interface RegistrationFlowProps {
 export function RegistrationFlow({ onMinted, onBack, darkLayout = false }: RegistrationFlowProps) {
   const [alias, setAlias] = useState("");
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
+  const [walletTokenAlias, setWalletTokenAlias] = useState<string | null>(null);
   const { wallet, connected } = useWallet();
   const {
     isAuthenticated,
@@ -48,7 +52,11 @@ export function RegistrationFlow({ onMinted, onBack, darkLayout = false }: Regis
     authenticate,
     logout,
   } = useAndamioAuth();
-  const { state: txState, execute, reset } = useTransaction();
+  const { state: txState, error: txError, execute, reset } = useTransaction();
+  // True when an access-token mint is already in flight (this session). Guards
+  // against minting a second token during the on-chain confirmation window,
+  // which the wallet-balance check above cannot see yet.
+  const hasPendingMint = useHasPendingAccessTokenMint();
 
   useEffect(() => {
     if (!connected || !wallet) {
@@ -86,6 +94,23 @@ export function RegistrationFlow({ onMinted, onBack, darkLayout = false }: Regis
     })();
   }, [connected, wallet]);
 
+  useEffect(() => {
+    if (!connected || !wallet) {
+      setWalletTokenAlias(null);
+      return;
+    }
+    void (async () => {
+      try {
+        const assets = await wallet.getBalanceMesh();
+        const policyId = env.NEXT_PUBLIC_ACCESS_TOKEN_POLICY_ID;
+        const token = assets.find((a) => a.unit.startsWith(policyId));
+        setWalletTokenAlias(token ? (extractAliasFromUnit(token.unit, policyId) ?? null) : null);
+      } catch {
+        setWalletTokenAlias(null);
+      }
+    })();
+  }, [connected, wallet]);
+
   const aliasError =
     alias.trim() && !isValidAlias(alias.trim())
       ? "Alias can only contain letters, numbers, and underscores"
@@ -93,6 +118,8 @@ export function RegistrationFlow({ onMinted, onBack, darkLayout = false }: Regis
 
   const handleMint = async () => {
     if (!walletAddress || !alias.trim() || aliasError) return;
+    // Block a second mint while one is still confirming on-chain.
+    if (hasPendingMint) return;
 
     await execute({
       txType: "GLOBAL_GENERAL_ACCESS_TOKEN_MINT",
@@ -142,22 +169,30 @@ export function RegistrationFlow({ onMinted, onBack, darkLayout = false }: Regis
 
   // Transaction error (user declined or network issue)
   if (txState === "error") {
+    const isAliasTaken = txError?.message.toLowerCase().includes("alias already in use");
+
     return (
       <div className="w-full max-w-md mx-auto">
         <AndamioCard>
           <AndamioCardHeader className="pb-2">
             <AndamioText variant="overline" className="mb-1">Creating identity</AndamioText>
-            <AndamioCardTitle className="text-xl">That didn&apos;t go through</AndamioCardTitle>
+            <AndamioCardTitle className="text-xl">
+              {isAliasTaken ? "Alias already taken" : "That didn’t go through"}
+            </AndamioCardTitle>
             <AndamioCardDescription>
-              The transaction was cancelled. Nothing was charged.
+              {isAliasTaken
+                ? "Choose a different alias to continue. Nothing was charged."
+                : "The transaction was cancelled. Nothing was charged."}
             </AndamioCardDescription>
           </AndamioCardHeader>
           <AndamioCardContent className="space-y-4">
-            <AndamioButton onClick={() => reset()} className="w-full">
-              Try Again with &quot;{alias}&quot;
-            </AndamioButton>
+            {!isAliasTaken && (
+              <AndamioButton onClick={() => reset()} className="w-full">
+                Try Again with &quot;{alias}&quot;
+              </AndamioButton>
+            )}
             <AndamioButton
-              variant="outline"
+              variant={isAliasTaken ? "default" : "outline"}
               onClick={() => {
                 reset();
                 setAlias("");
@@ -336,6 +371,62 @@ export function RegistrationFlow({ onMinted, onBack, darkLayout = false }: Regis
     );
   }
 
+  // Step 3 guard: wallet already has an access token — sign in instead of re-minting
+  if (walletTokenAlias) {
+    return (
+      <div className="w-full max-w-md mx-auto">
+        <AndamioCard>
+          <AndamioCardHeader className="pb-2">
+            <AndamioText variant="overline" className="mb-1">Access token found</AndamioText>
+            <AndamioCardTitle className="text-xl">You already have an identity</AndamioCardTitle>
+            <AndamioCardDescription>
+              Your wallet has an access token for{" "}
+              <span className="font-mono font-semibold text-foreground">{walletTokenAlias}</span>.
+              Sign out and sign back in to activate it.
+            </AndamioCardDescription>
+          </AndamioCardHeader>
+          <AndamioCardContent className="space-y-3">
+            <AndamioText variant="small" className="text-muted-foreground">
+              You do not need to mint again. Signing in will detect your existing token automatically.
+            </AndamioText>
+            {onBack && (
+              <AndamioButton variant="outline" onClick={onBack} className="w-full">
+                <BackIcon className="mr-2 h-4 w-4" />
+                Back
+              </AndamioButton>
+            )}
+          </AndamioCardContent>
+        </AndamioCard>
+      </div>
+    );
+  }
+
+  // Guard: a mint is already in flight this session (submitted, not yet
+  // confirmed on-chain). The wallet-balance check can't see it yet, so gate
+  // the form here to prevent minting a second access token. Covers a fresh
+  // remount where local txState has reset to idle.
+  if (hasPendingMint) {
+    return (
+      <div className="w-full max-w-md mx-auto">
+        <AndamioCard>
+          <AndamioCardHeader className="pb-2">
+            <AndamioText variant="overline" className="mb-1">Creating identity</AndamioText>
+            <AndamioCardTitle className="text-xl">Almost there</AndamioCardTitle>
+            <AndamioCardDescription>
+              Your access token is being created on Cardano. This usually takes 20–60 seconds.
+            </AndamioCardDescription>
+          </AndamioCardHeader>
+          <AndamioCardContent className="flex flex-col items-center py-8 gap-4">
+            <LoadingIcon className="h-8 w-8 animate-spin text-muted-foreground" />
+            <AndamioText variant="muted" className="text-sm text-center">
+              No need to create another — we&apos;ll sign you in automatically once it confirms.
+            </AndamioText>
+          </AndamioCardContent>
+        </AndamioCard>
+      </div>
+    );
+  }
+
   // Step 3: Authenticated — alias input and create identity
   return (
     <div className="w-full max-w-md mx-auto">
@@ -353,7 +444,7 @@ export function RegistrationFlow({ onMinted, onBack, darkLayout = false }: Regis
             <AndamioInput
               id="alias-input"
               type="text"
-              placeholder="e.g. LewisN or lewis_nduati"
+              placeholder="e.g. Alice99 or john_doe"
               value={alias}
               onChange={(e) => setAlias(e.target.value)}
               className={`font-mono ${aliasError ? "border-destructive" : ""}`}

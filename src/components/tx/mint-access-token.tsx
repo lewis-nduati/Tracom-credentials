@@ -34,6 +34,7 @@ import { ConnectWalletButton } from "~/components/auth/connect-wallet-button";
 import { useAndamioAuth } from "~/hooks/auth/use-andamio-auth";
 import { useTransaction } from "~/hooks/tx/use-transaction";
 import { useTxStream } from "~/hooks/tx/use-tx-stream";
+import { useHasPendingAccessTokenMint } from "~/hooks/tx/use-pending-access-token-mint";
 import { TransactionButton } from "./transaction-button";
 import { TransactionStatus } from "./transaction-status";
 import { parseTxErrorMessage } from "~/lib/tx-error-messages";
@@ -132,6 +133,36 @@ export function MintAccessToken({ onSuccess, onSubmitted, skipCeremony = false }
   const [ceremonyState, setCeremonyState] = useState<CeremonyState>("minting");
   const [confirmedAlias, setConfirmedAlias] = useState<string>("");
   const [confirmedTxHash, setConfirmedTxHash] = useState<string | null>(null);
+
+  // Detect existing access token in wallet — prevents duplicate mints
+  const [walletTokenAlias, setWalletTokenAlias] = useState<string | null | "checking">("checking");
+
+  // True when an access-token mint is already in flight (this session). The
+  // wallet check above only sees *confirmed* tokens, so this guards the
+  // 20–90s on-chain confirmation window against a second mint.
+  const hasPendingMint = useHasPendingAccessTokenMint();
+
+  useEffect(() => {
+    if (!connected || !wallet) {
+      setWalletTokenAlias(null);
+      return;
+    }
+    void (async () => {
+      try {
+        const assets = await wallet.getBalanceMesh();
+        const ACCESS_TOKEN_POLICY_ID = env.NEXT_PUBLIC_ACCESS_TOKEN_POLICY_ID;
+        const token = assets.find((a) => a.unit.startsWith(ACCESS_TOKEN_POLICY_ID));
+        if (token) {
+          const { extractAliasFromUnit } = await import("~/lib/access-token-utils");
+          setWalletTokenAlias(extractAliasFromUnit(token.unit, ACCESS_TOKEN_POLICY_ID) ?? "unknown");
+        } else {
+          setWalletTokenAlias(null);
+        }
+      } catch {
+        setWalletTokenAlias(null);
+      }
+    })();
+  }, [connected, wallet]);
 
   // Alias availability check (debounced)
   const [aliasAvailability, setAliasAvailability] = useState<
@@ -365,6 +396,10 @@ export function MintAccessToken({ onSuccess, onSubmitted, skipCeremony = false }
       // Early return - wallet or alias not ready
       return;
     }
+    // Block a second mint while one is still confirming on-chain.
+    if (hasPendingMint) {
+      return;
+    }
 
     // Store the alias for the ceremony
     const mintingAlias = alias.trim();
@@ -558,6 +593,63 @@ export function MintAccessToken({ onSuccess, onSubmitted, skipCeremony = false }
 
   if (!isAuthenticated || !user) {
     return null;
+  }
+
+  // Guard: wallet already has an access token — block duplicate mints
+  if (walletTokenAlias && walletTokenAlias !== "checking") {
+    return (
+      <AndamioCard>
+        <AndamioCardHeader className="pb-2">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+              <AccessTokenIcon className="h-5 w-5 text-primary" />
+            </div>
+            <div className="flex-1">
+              <AndamioCardTitle>Access token detected</AndamioCardTitle>
+              <AndamioCardDescription>
+                Your wallet already has an access token for{" "}
+                <span className="font-mono font-semibold text-foreground">{walletTokenAlias}</span>.
+              </AndamioCardDescription>
+            </div>
+          </div>
+        </AndamioCardHeader>
+        <AndamioCardContent className="space-y-3">
+          <AndamioText variant="small" className="text-muted-foreground">
+            Sign out and sign back in to activate your existing identity. You do not need to mint again.
+          </AndamioText>
+        </AndamioCardContent>
+      </AndamioCard>
+    );
+  }
+
+  // Guard: an access-token mint is already in flight this session but this
+  // instance hasn't started its own ceremony (e.g. a fresh remount). The
+  // wallet check can't see the unconfirmed token yet, so block the form to
+  // prevent a second mint. Scoped to "minting" so it never overrides this
+  // instance's own confirming/celebration UI.
+  if (ceremonyState === "minting" && hasPendingMint) {
+    return (
+      <AndamioCard>
+        <AndamioCardHeader className="pb-2">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+              <LoadingIcon className="h-5 w-5 animate-spin text-primary" />
+            </div>
+            <div className="flex-1">
+              <AndamioCardTitle>Creating your access token</AndamioCardTitle>
+              <AndamioCardDescription>
+                This usually takes 20–60 seconds to confirm on Cardano.
+              </AndamioCardDescription>
+            </div>
+          </div>
+        </AndamioCardHeader>
+        <AndamioCardContent>
+          <AndamioText variant="small" className="text-muted-foreground">
+            No need to mint again — you&apos;ll be signed in automatically once it confirms.
+          </AndamioText>
+        </AndamioCardContent>
+      </AndamioCard>
+    );
   }
 
   return (
