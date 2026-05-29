@@ -2,8 +2,7 @@
 
 import React from "react";
 import { useCourseParams } from "~/hooks/use-course-params";
-import { AndamioBadge } from "~/components/andamio/andamio-badge";
-import { AndamioCard, AndamioCardContent, AndamioCardDescription, AndamioCardHeader, AndamioCardTitle } from "~/components/andamio/andamio-card";
+import { AndamioCard, AndamioCardContent } from "~/components/andamio/andamio-card";
 import {
   AndamioPageLoading,
   AndamioNotFoundCard,
@@ -103,9 +102,12 @@ export default function LessonDetailPage() {
   }
 
   // Lesson display
+  const lessonTitle = typeof lesson.title === "string" ? lesson.title : `Lesson ${moduleIndex}`;
+  const lessonDescription = typeof lesson.description === "string" ? lesson.description : "";
+
   return (
-    <div className="space-y-6">
-      {/* Breadcrumb Navigation */}
+    // Comfortable reading column: title, then content, with room to breathe.
+    <div className="mx-auto max-w-2xl space-y-8">
       {course && courseModule && (
         <CourseBreadcrumb
           mode="public"
@@ -116,70 +118,53 @@ export default function LessonDetailPage() {
         />
       )}
 
-      {/* Student Learning Target */}
-      <AndamioCard>
-        <AndamioCardHeader>
-          <div className="flex items-start justify-between">
-            <div className="space-y-1">
-              <AndamioCardDescription>Learning Target #{moduleIndex}</AndamioCardDescription>
-              <AndamioCardTitle>Learning Target {moduleIndex}</AndamioCardTitle>
-            </div>
-          </div>
-        </AndamioCardHeader>
-      </AndamioCard>
-
-      {/* Lesson Title and Description */}
-      <div className="space-y-4">
-        <div>
-          <AndamioHeading level={1} size="3xl">
-            {typeof lesson.title === "string" ? lesson.title : `Lesson ${moduleIndex}`}
+      <article className="space-y-8">
+        <header className="space-y-3">
+          <AndamioText variant="overline" as="div" className="text-muted-foreground">
+            Learning target {moduleIndex}
+          </AndamioText>
+          <AndamioHeading level={1} size="3xl" className="text-pretty">
+            {lessonTitle}
           </AndamioHeading>
-          {typeof lesson.description === "string" && lesson.description && (
-            <AndamioText variant="lead" className="mt-2">
-              {lesson.description}
+          {lessonDescription && (
+            <AndamioText variant="lead" className="text-muted-foreground">
+              {lessonDescription}
             </AndamioText>
           )}
-        </div>
-      </div>
+        </header>
 
-      {/* Media Section */}
-      <LessonMediaSection
-        videoUrl={typeof lesson.videoUrl === "string" ? lesson.videoUrl : undefined}
-        imageUrl={typeof lesson.imageUrl === "string" ? lesson.imageUrl : undefined}
-        imageAlt={typeof lesson.title === "string" ? lesson.title : "Lesson image"}
-      />
-
-      {/* Lesson Content */}
-      {!!lesson.contentJson && (
-        <ContentViewer
-          content={lesson.contentJson}
-          emptyContent={
-            <AndamioText variant="muted" className="italic">
-              Unable to parse lesson content
-            </AndamioText>
-          }
+        <LessonMediaSection
+          videoUrl={typeof lesson.videoUrl === "string" ? lesson.videoUrl : undefined}
+          imageUrl={typeof lesson.imageUrl === "string" ? lesson.imageUrl : undefined}
+          imageAlt={lessonTitle}
         />
-      )}
 
-      {/* Empty content state */}
-      {!lesson.contentJson && !lesson.imageUrl && !lesson.videoUrl && (
-        <AndamioCard>
-          <AndamioCardContent>
-            <AndamioEmptyState
-              icon={CourseIcon}
-              title="No content has been added to this lesson yet"
-            />
-          </AndamioCardContent>
-        </AndamioCard>
-      )}
+        {!!lesson.contentJson && (
+          <ContentViewer
+            content={lesson.contentJson}
+            emptyContent={
+              <AndamioText variant="muted" className="italic">
+                Unable to parse lesson content
+              </AndamioText>
+            }
+          />
+        )}
 
-      {/* Prev/Next Lesson Navigation */}
-      <LessonNavigation
-        currentIndex={moduleIndex}
-        lessonsWithNav={lessonsWithNav}
-        courseId={courseId}
-        moduleCode={moduleCode}
-      />
+        {!lesson.contentJson && !lesson.imageUrl && !lesson.videoUrl && (
+          <AndamioEmptyState
+            icon={CourseIcon}
+            title="No content has been added to this lesson yet"
+            className="rounded-lg border"
+          />
+        )}
+
+        <LessonNavigation
+          currentIndex={moduleIndex}
+          lessonsWithNav={lessonsWithNav}
+          courseId={courseId}
+          moduleCode={moduleCode}
+        />
+      </article>
     </div>
   );
 }
