@@ -68,7 +68,7 @@ This project puts the credential on-chain instead. A native asset is minted on C
 
 ## 6. Timeline
 
-- **Start Date:** [Enter the project start date]
+- **Start Date:** September 2025
 - **End Date (mainnet launch target):** September 2026
 
 ---
@@ -163,13 +163,22 @@ How we know the launch worked, not just that it shipped.
 
 Every mint on mainnet costs ADA in transaction fees, and that money has to come from somewhere.
 
-**Decision (May 2026): Tracom sponsors the fees.** Students don't hold ADA, and asking them to fund a wallet would lose most of them before they ever finish a course. Tracom pays the fees from a treasury wallet instead. The app already has a server-side sponsored-transaction path (`WEB3_SDK_PRIVATE_KEY`, `use-sponsored-transaction.ts`), so the mechanism is mostly built.
+**Decision (May 2026): Tracom sponsors the fees.** Students don't hold ADA, and asking them to fund a wallet would lose most of them before they ever finish a course. Tracom pays the fees from a sponsor wallet instead.
+
+**How sponsorship works.** Andamio's gateway has a built-in sponsorship path. Most transaction types — including the access-token mint and credential claim — accept a `sponsor_data` block as an alternative to the self-funded `initiator_data`. The sponsor wallet (a prefunded "tank") pays the fee while the token or credential still goes to the student, who signs as the owner but spends no ADA. The sponsor wallet and its UTxOs are managed through the utxos.dev SDK (`@utxos/sdk`); the gateway enforces a sponsorship quota, so the tank can run dry and must be topped up.
+
+**Current state — this is not yet wired.** The app currently mints on the self-funded path: it sends `initiator_data: walletAddress`, so today the student would pay. There is unused scaffolding (`getWeb3Sdk()` in `utxos-sdk.ts`, the `useSponsoredTransaction` hook), but `getWeb3Sdk` has no callers, the hook is unused, and the `/api/sponsor-migrate` route it calls does not exist. So sponsorship is supported by the gateway but not integrated here. (This corrects an earlier note that called it "mostly built" — the wiring is the work, not a flip of a switch.)
 
 Still to do:
 
-- Fund and secure the production treasury wallet (key storage and signing covered in §13).
+- Provision a utxos.dev project and a sponsor wallet (the tank); set `WEB3_SDK_API_KEY`, `WEB3_SDK_PRIVATE_KEY`, `NEXT_PUBLIC_WEB3_SDK_PROJECT_ID`, `NEXT_PUBLIC_WEB3_SDK_NETWORK`, `NEXT_PUBLIC_BLOCKFROST_PROJECT_ID`. Fund it with ADA.
+- Add a server route/action that calls the SDK's `getStaticInfo()` to get `sponsor_address`, `static_utxo_ref`, and `collateral_utxo_ref`.
+- Switch the mint and credential-claim flows to send `sponsor_data` (with `access_token_receiver` = the student's address) instead of `initiator_data`.
+- Handle the "sponsorship quota exhausted" / tank-empty error so students see a clear message instead of a raw failure.
 - Estimate per-student cost (access token mint + credential mint per completed course) so the budget reflects it.
-- Confirm the sponsored-transaction path is wired into the access-token mint and credential-claim flows on mainnet, not just available.
+- Test the full sponsored flow on a funded preprod tank before mainnet.
+
+See §13 for treasury key custody and the build-out is tracked as its own task.
 
 ---
 
@@ -179,7 +188,7 @@ A credentialing platform holds student records, so this is not optional. Tracom 
 
 - **Student data:** reviewed (see `docs/data-protection-review.md`). The student identity is minimal and mostly pseudonymous — wallet address, chosen alias, and a gateway id. No student names or emails are collected today. The main watch items are assignment free-text and the fact that on-chain data can't be deleted. Open items there: a privacy notice + consent step, a documented position on deletion of on-chain data, and confirming where the gateway is hosted.
 - **Wallet custody:** confirmed. Students hold their own keys through their wallet over MeshJS/CIP-30; the app only ever receives addresses and signatures, never private keys. Keep it that way and state it plainly to users.
-- **Treasury keys:** if Tracom sponsors minting (see §12), the treasury key is a high-value secret. The app already has a server-side sponsored-transaction path (`WEB3_SDK_PRIVATE_KEY`, `use-sponsored-transaction.ts`), so that is the likely vehicle. Still to decide: where the production key lives and who can sign. Blocked on the §12 fee decision.
+- **Treasury keys:** Tracom sponsors minting (see §12), so the sponsor wallet's key is a high-value secret. With the utxos.dev path that key is `WEB3_SDK_PRIVATE_KEY`, held server-only in the deploy environment (Vercel) and never shipped to the client. Decide who can rotate it and how the tank is funded and monitored. The sponsor wallet only funds fees — it should hold no more ADA than the tank needs, to cap the blast radius if the key leaks.
 - **Secrets:** audited May 2026 and clean. No env files are tracked or appear anywhere in git history, `.env`/`.env.local` are gitignored, `.env.example` holds only placeholders, and the real secrets (`ANDAMIO_API_KEY`, `WEB3_SDK_API_KEY`, `WEB3_SDK_PRIVATE_KEY`) are all server-only in the env schema, never shipped to the client. Keep mainnet values separate from preprod.
 
 ---
