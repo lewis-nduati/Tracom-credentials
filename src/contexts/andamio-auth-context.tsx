@@ -8,6 +8,8 @@ import {
   getStoredJWT,
   clearStoredJWT,
   isJWTExpired,
+  isAwaitingMintedToken,
+  clearAwaitingMintedToken,
   type AuthUser,
 } from "~/lib/andamio-auth";
 import { withTimeout } from "~/lib/promise-utils";
@@ -18,6 +20,12 @@ import { env } from "~/env";
 import { GATEWAY_API_BASE } from "~/lib/api-utils";
 import { getWalletAddressBech32 } from "~/lib/wallet-address";
 import { pendingProject } from "~/lib/pending-project";
+
+// How long to keep polling the wallet for a freshly minted access token before
+// giving up, and how often to poll. Only applies right after a mint (see
+// isAwaitingMintedToken); a normal sign-in scans once.
+const POST_MINT_TOKEN_WAIT_MS = 45_000;
+const POST_MINT_TOKEN_POLL_MS = 3_000;
 
 /**
  * Detect and sync access token from wallet to database
@@ -43,17 +51,32 @@ async function syncAccessTokenFromWallet(
   // If user already has this alias (from gateway auth), skip entirely
   if (currentUser.accessTokenAlias) {
     authLogger.info("Access token already set (gateway auth):", currentUser.accessTokenAlias);
+    clearAwaitingMintedToken();
     return;
   }
 
-  // First, detect the access token in wallet (outside try-catch for API call)
+  // Detect the access token in wallet (outside try-catch for API call).
+  // Right after a mint the wallet/indexer can lag behind on-chain confirmation,
+  // so when the mint ceremony has flagged that we're awaiting a freshly minted
+  // token we poll for it (bounded by POST_MINT_TOKEN_WAIT_MS) instead of giving
+  // up on the first miss. A normal sign-in does a single scan (deadline = 0).
   let alias: string | undefined;
   try {
-    const assets = await wallet.getBalanceMesh();
     const ACCESS_TOKEN_POLICY_ID = env.NEXT_PUBLIC_ACCESS_TOKEN_POLICY_ID;
+    const deadline = isAwaitingMintedToken() ? Date.now() + POST_MINT_TOKEN_WAIT_MS : 0;
 
-    // Find access token in wallet
-    const accessToken = assets.find((asset) => asset.unit.startsWith(ACCESS_TOKEN_POLICY_ID));
+    let accessToken: { unit: string; quantity: string } | undefined;
+    for (;;) {
+      const assets = await wallet.getBalanceMesh();
+      accessToken = assets.find((asset) => asset.unit.startsWith(ACCESS_TOKEN_POLICY_ID));
+      if (accessToken || Date.now() >= deadline) break;
+      authLogger.info("Awaiting freshly minted access token, retrying wallet scan...");
+      await new Promise((resolve) => setTimeout(resolve, POST_MINT_TOKEN_POLL_MS));
+    }
+
+    // Found it or stopped waiting: drop the flag so later reconnects in this tab
+    // don't inherit the long wait.
+    clearAwaitingMintedToken();
 
     if (!accessToken) {
       authLogger.info("No access token found in wallet");
@@ -65,6 +88,7 @@ async function syncAccessTokenFromWallet(
     authLogger.info("Detected access token in wallet:", { unit: accessToken.unit, alias });
   } catch (error) {
     authLogger.warn("Failed to detect access token in wallet:", error);
+    clearAwaitingMintedToken();
     return;
   }
 

@@ -895,6 +895,42 @@ export const JWT_STORAGE_KEY = "andamio_jwt";
 export const DEV_JWT_STORAGE_KEY = "andamio_dev_jwt";
 export const DEV_REFRESH_TOKEN_STORAGE_KEY = "andamio_dev_refresh_token";
 
+// Set by the access-token mint ceremony just before it re-authenticates, to tell
+// the auth layer that a freshly minted token is expected in the wallet. The
+// wallet/indexer can lag a few seconds behind on-chain confirmation, so when this
+// flag is present the token scan polls instead of giving up on the first miss.
+// sessionStorage (not localStorage): scoped to the tab, gone when it closes.
+export const AWAITING_TOKEN_KEY = "andamio_awaiting_token";
+
+export function markAwaitingMintedToken(): void {
+  if (typeof window !== "undefined") {
+    try {
+      window.sessionStorage.setItem(AWAITING_TOKEN_KEY, "1");
+    } catch {
+      authLogger.warn("Failed to set awaiting-token flag");
+    }
+  }
+}
+
+export function isAwaitingMintedToken(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.sessionStorage.getItem(AWAITING_TOKEN_KEY) !== null;
+  } catch {
+    return false;
+  }
+}
+
+export function clearAwaitingMintedToken(): void {
+  if (typeof window !== "undefined") {
+    try {
+      window.sessionStorage.removeItem(AWAITING_TOKEN_KEY);
+    } catch {
+      // sessionStorage may be unavailable, nothing to clear
+    }
+  }
+}
+
 // User JWT helpers (for app features, requires wallet signing)
 export function storeJWT(jwt: string): void {
   if (typeof window !== "undefined") {

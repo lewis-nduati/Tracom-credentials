@@ -58,7 +58,7 @@ import {
   ExternalLinkIcon,
   ErrorIcon,
 } from "~/components/icons";
-import { storeJWT } from "~/lib/andamio-auth";
+import { storeJWT, markAwaitingMintedToken, clearAwaitingMintedToken } from "~/lib/andamio-auth";
 import { toast } from "sonner";
 import { TRANSACTION_UI } from "~/config/transaction-ui";
 import { useUpdateAccessTokenAlias } from "~/hooks/api/use-user";
@@ -261,6 +261,10 @@ export function MintAccessToken({ onSuccess, onSubmitted, skipCeremony = false }
           if (hasHandledSuccessRef.current) return;
           hasHandledSuccessRef.current = true;
 
+          // Tell the auth layer to wait for the freshly minted token to show up
+          // in the wallet (indexer can lag behind on-chain confirmation).
+          markAwaitingMintedToken();
+
           if (skipCeremony) {
             refreshAuth();
             toast.success("Access token created", {
@@ -291,6 +295,7 @@ export function MintAccessToken({ onSuccess, onSubmitted, skipCeremony = false }
   useEffect(() => {
     if (isPureOnChainSuccess && !hasHandledSuccessRef.current) {
       hasHandledSuccessRef.current = true;
+      markAwaitingMintedToken();
 
       if (skipCeremony) {
         refreshAuth();
@@ -317,6 +322,7 @@ export function MintAccessToken({ onSuccess, onSubmitted, skipCeremony = false }
       !hasHandledSuccessRef.current
     ) {
       hasHandledSuccessRef.current = true;
+      markAwaitingMintedToken();
 
       if (skipCeremony) {
         refreshAuth();
@@ -361,8 +367,11 @@ export function MintAccessToken({ onSuccess, onSubmitted, skipCeremony = false }
     } else if (ceremonyState === "authenticating") {
       if (isAuthenticated && user?.accessTokenAlias) {
         setCeremonyState("welcome");
-      } else if (!isAuthenticating && authError) {
-        // Auth failed - stay in reconnecting state to retry
+      } else if (!isAuthenticating && (authError || isAuthenticated)) {
+        // Either auth failed, or it succeeded but the freshly minted token still
+        // wasn't in the wallet after the bounded wait. Drop back to reconnecting
+        // so the user can retry connecting (the token is on-chain; it shows up
+        // shortly). This screen is user-gated, so it won't loop on its own.
         setCeremonyState("reconnecting");
       }
     }
@@ -371,6 +380,7 @@ export function MintAccessToken({ onSuccess, onSubmitted, skipCeremony = false }
   // After welcome state, redirect to dashboard after a delay
   useEffect(() => {
     if (ceremonyState === "welcome") {
+      clearAwaitingMintedToken();
       const timer = setTimeout(() => {
         void onSuccess?.();
         router.push("/dashboard");
