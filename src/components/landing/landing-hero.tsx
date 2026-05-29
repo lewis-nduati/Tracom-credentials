@@ -1,11 +1,25 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useAndamioAuth } from "~/hooks/auth/use-andamio-auth";
 import { AccessTokenOnboarding } from "~/components/auth/access-token-onboarding";
 import { AndamioHeading, AndamioText } from "~/components/andamio";
+
+// The hero headline rotates through these audiences. `accent` is the word's
+// colour on the navy hero (brand tokens, defined in globals.css). `tint` is the
+// hue of a subtle glow behind it: a restrained stand-in for the eventual
+// background photo (swap each for a <next/image fill>: a person in a suit, a
+// teacher at a board, then a crowd of bankers, farmers, scientists). Timing is
+// tunable via ROTATE_MS.
+const AUDIENCES = [
+  { word: "employers", accent: "var(--brand-gold)", tint: "var(--brand-gold)" },
+  { word: "teachers", accent: "var(--brand-steel)", tint: "var(--brand-steel)" },
+  { word: "everyone", accent: "var(--brand-clay)", tint: "var(--brand-clay)" },
+] as const;
+const ROTATE_MS = 3600;
 
 const STEPS = [
   {
@@ -161,6 +175,111 @@ function CredentialBadge() {
   );
 }
 
+/**
+ * Hero section with the rotating-audience headline and crossfading backdrop.
+ * Single font, rotating accent colour per word; the background photo (placeholder
+ * gradient for now) crossfades in sync. Respects prefers-reduced-motion: pins to
+ * "everyone" and skips all motion.
+ */
+function HeroSection({ onEnter }: { onEnter: () => void }) {
+  const reducedMotion = useReducedMotion();
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    if (reducedMotion) return; // no rotation; the derived `active` pins to "everyone"
+    const id = setInterval(() => {
+      setIndex((i) => (i + 1) % AUDIENCES.length);
+    }, ROTATE_MS);
+    return () => clearInterval(id);
+  }, [reducedMotion]);
+
+  // When motion is reduced, show the final "everyone" frame and never animate.
+  const active = reducedMotion ? AUDIENCES[AUDIENCES.length - 1]! : AUDIENCES[index]!;
+
+  return (
+    <section className="relative overflow-hidden bg-brand-navy px-6 py-20 text-secondary-foreground sm:py-28">
+      {/* Crossfading backdrop: a restrained accent glow over the navy that
+          shifts per audience. Stands in for the eventual background photo, but
+          stays institutional rather than reading as a gradient panel. */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        {AUDIENCES.map((a, i) => (
+          <div
+            key={a.word}
+            className="absolute inset-0 transition-opacity duration-1000 ease-out"
+            style={{
+              opacity: i === index ? 1 : 0,
+              backgroundImage: `radial-gradient(110% 120% at 82% 0%, color-mix(in oklch, ${a.tint} 22%, transparent) 0%, transparent 58%)`,
+            }}
+          />
+        ))}
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-6xl">
+        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+          <div className="max-w-xl space-y-8">
+            <AndamioText variant="overline" as="div" className="text-white/50">
+              Tracom Academy
+            </AndamioText>
+            <AndamioHeading
+              level={1}
+              size="display"
+              className="text-pretty text-secondary-foreground"
+            >
+              Credentials{" "}
+              {/* Stacked invisible sizers reserve the widest word's width so
+                  "can trust." never shifts as the word rotates. */}
+              <span className="relative inline-grid align-baseline">
+                {AUDIENCES.map((a) => (
+                  <span key={a.word} aria-hidden className="invisible [grid-area:1/1]">
+                    {a.word}
+                  </span>
+                ))}
+                <span className="[grid-area:1/1]">
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.span
+                      key={active.word}
+                      className="inline-block"
+                      style={{ color: active.accent }}
+                      initial={{ opacity: 0, y: "0.3em" }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: "-0.3em" }}
+                      transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                    >
+                      {active.word}
+                    </motion.span>
+                  </AnimatePresence>
+                </span>
+              </span>{" "}
+              can trust.
+            </AndamioHeading>
+            <AndamioText variant="lead" className="max-w-md leading-relaxed text-white/65">
+              Finish a course and Tracom issues your credential to your wallet.
+              Any employer can check it on-chain themselves.
+            </AndamioText>
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                onClick={onEnter}
+                className="cursor-pointer rounded-md bg-white px-8 py-3.5 text-base font-semibold text-brand-navy transition-all hover:bg-white/90 active:scale-[0.98]"
+              >
+                Get Started
+              </button>
+              <Link
+                href="/course"
+                className="rounded-md border border-white/30 px-8 py-3.5 text-base font-semibold text-white transition-all hover:border-white/60 hover:bg-white/10 active:scale-[0.98]"
+              >
+                View Courses
+              </Link>
+            </div>
+          </div>
+          <div className="hidden items-center justify-center lg:flex">
+            <CredentialBadge />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function LandingHero() {
   const [showEnter, setShowEnter] = React.useState(false);
   const router = useRouter();
@@ -199,52 +318,7 @@ export function LandingHero() {
   return (
     <>
       {/* Hero */}
-      <section className="bg-brand-navy px-6 py-20 text-secondary-foreground sm:py-28">
-        <div className="mx-auto max-w-6xl">
-          <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
-            <div className="max-w-xl space-y-8">
-              <AndamioText
-                variant="overline"
-                as="div"
-                className="text-white/50"
-              >
-                Tracom Academy
-              </AndamioText>
-              <AndamioHeading
-                level={1}
-                size="display"
-                className="text-pretty text-secondary-foreground"
-              >
-                Credentials employers can trust.
-              </AndamioHeading>
-              <AndamioText
-                variant="lead"
-                className="max-w-md leading-relaxed text-white/65"
-              >
-                Finish a course and Tracom issues your credential to your
-                wallet. Any employer can check it on-chain themselves.
-              </AndamioText>
-              <div className="flex flex-wrap items-center gap-3">
-                <button
-                  onClick={handleEnter}
-                  className="cursor-pointer rounded-md bg-white px-8 py-3.5 text-base font-semibold text-brand-navy transition-all hover:bg-white/90 active:scale-[0.98]"
-                >
-                  Get Started
-                </button>
-                <Link
-                  href="/course"
-                  className="rounded-md border border-white/30 px-8 py-3.5 text-base font-semibold text-white transition-all hover:border-white/60 hover:bg-white/10 active:scale-[0.98]"
-                >
-                  View Courses
-                </Link>
-              </div>
-            </div>
-            <div className="hidden items-center justify-center lg:flex">
-              <CredentialBadge />
-            </div>
-          </div>
-        </div>
-      </section>
+      <HeroSection onEnter={handleEnter} />
 
       {/* Value strip */}
       <section className="bg-accent px-6 py-14">

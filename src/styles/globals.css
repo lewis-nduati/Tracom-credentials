@@ -37,6 +37,9 @@
 
 @theme inline {
   --color-brand-navy: var(--brand-navy);
+  --color-brand-gold: var(--brand-gold);
+  --color-brand-steel: var(--brand-steel);
+  --color-brand-clay: var(--brand-clay);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -92,6 +95,10 @@
 
   /* Brand */
   --brand-navy: oklch(0.282 0.09 252);
+  /* Hero accent trio: muted, institutional. Reads on the navy hero in any theme. */
+  --brand-gold: oklch(0.71 0.105 88);
+  --brand-steel: oklch(0.7 0.06 245);
+  --brand-clay: oklch(0.67 0.085 50);
 
   /* Base */
   --background: oklch(1 0 0);
@@ -159,6 +166,9 @@
 
 .dark {
   --brand-navy: oklch(0.282 0.09 252);
+  --brand-gold: oklch(0.71 0.105 88);
+  --brand-steel: oklch(0.7 0.06 245);
+  --brand-clay: oklch(0.67 0.085 50);
 
   --background: oklch(0.188 0.013 257.128);
   --foreground: oklch(0.922 0.003 106.423);
