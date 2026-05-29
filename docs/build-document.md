@@ -226,6 +226,30 @@ Current state is light: lint, typecheck, and a small `test:unit` script (Node's 
 
 ---
 
+## 17. Roadmap and future features
+
+Ideas captured for after the core launch, roughly ordered by effort. None are committed scope yet; they're recorded so we don't lose them.
+
+### Near-term
+
+- **Post-mint wait (reliability).** After minting an access token, wait for the wallet to actually reflect the new token before re-authenticating, instead of racing a fixed timer. Doubles as the fix for the "token not picked up" issue some new users hit (see `docs/` notes on the register/confirmation race). *In progress.*
+- **Richer lesson content.** Move beyond markdown: embedded video (demo recordings, lecture clips), slide-style decks, and image sequences within a lesson. The editor already handles images; video embeds and a slideshow block are the additions. Content is off-chain, so no minting cost.
+
+### Medium-term
+
+- **Employer credential search.** Let employers browse the site the way you browse courses: search by skill or expertise, and find people who have completed specific courses, with one-click verification of each credential. Requires learner **opt-in** to be listed publicly (Kenya DPA, see `docs/data-protection-review.md`).
+
+### Longer-term
+
+- **Lab sessions / interactive environments.** Hands-on exercises inside the platform: give a student or team a task and an environment to do it in (e.g. an embedded editor or sandboxed workspace), not just reading. Significant build.
+- **Live sessions inside the app.** Embedded video conferencing (Zoom SDK, or alternatives like Daily/LiveKit) so cohorts can meet without leaving the platform. Third-party integration with its own cost and maintenance.
+
+### Open protocol question (tracked separately)
+
+- **Private script address for Tracom.** Today Tracom runs on Andamio's shared protocol: identities and courses live in Andamio's contracts, which is why Tracom courses appear on andamio.io. A Tracom-only namespace would mean either an Andamio-provided private instance or forking the contracts (losing interop, taking on audit/maintenance). Put this to the Andamio team before deciding.
+
+---
+
 ## Related Documents
 
 - `PRODUCT.md` — product purpose, users, brand voice, and design principles
