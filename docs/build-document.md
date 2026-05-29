@@ -161,11 +161,15 @@ How we know the launch worked, not just that it shipped.
 
 ## 12. Minting Fees and Treasury
 
-Every mint on mainnet costs ADA in transaction fees, and that money has to come from somewhere. This needs a decision before launch.
+Every mint on mainnet costs ADA in transaction fees, and that money has to come from somewhere.
 
-- **Open question:** who pays the fee for minting an access token and a credential — Tracom (from a funded treasury wallet), or the student?
-- Students are unlikely to hold ADA, so making them pay adds a wallet-funding step that will lose people. The likely answer is Tracom sponsors the fees.
-- **To decide / do:** confirm the model, fund and secure a treasury wallet if Tracom sponsors, and estimate per-student cost (access token mint + credential mint) so the budget reflects it.
+**Decision (May 2026): Tracom sponsors the fees.** Students don't hold ADA, and asking them to fund a wallet would lose most of them before they ever finish a course. Tracom pays the fees from a treasury wallet instead. The app already has a server-side sponsored-transaction path (`WEB3_SDK_PRIVATE_KEY`, `use-sponsored-transaction.ts`), so the mechanism is mostly built.
+
+Still to do:
+
+- Fund and secure the production treasury wallet (key storage and signing covered in §13).
+- Estimate per-student cost (access token mint + credential mint per completed course) so the budget reflects it.
+- Confirm the sponsored-transaction path is wired into the access-token mint and credential-claim flows on mainnet, not just available.
 
 ---
 
@@ -182,9 +186,14 @@ A credentialing platform holds student records, so this is not optional. Tracom 
 
 ## 14. Hosting, Deployment, and Rollback
 
-- **Hosting:** not yet decided/committed (no deploy config in the repo). Pick a host and add the config before launch.
-- **Build:** `npm run compile` generates Andamio types then builds; `npm run check` runs lint and typecheck.
-- **Environments:** keep preprod and mainnet fully separate — different Andamio instance, gateway, and `NEXT_PUBLIC_ACCESS_TOKEN_POLICY_ID`. A wrong env var here means minting against the wrong network.
+- **Hosting (decided May 2026): Vercel.** Native fit for Next.js 14 App Router and auto-detected, so no `vercel.json` is needed — the framework, build, and routing are inferred. Deploy config that matters lives in the Vercel project (env vars and which branch is production), not in the repo.
+- **Build:** the committed generated types (`src/types/generated/`) mean Vercel's default `next build` works without a type-generation step. `npm run check` (lint + typecheck) is the gate to run in CI before a production deploy.
+- **Environments:** map Vercel's Production environment to mainnet and Preview to preprod, and set these per-environment so a preview never points at mainnet:
+  - `NEXT_PUBLIC_CARDANO_NETWORK` — `mainnet` vs `preprod`
+  - `NEXT_PUBLIC_ACCESS_TOKEN_POLICY_ID` — mainnet vs preprod policy id
+  - `NEXT_PUBLIC_ANDAMIO_GATEWAY_URL` — mainnet vs preprod gateway
+  - `ANDAMIO_API_KEY`, `WEB3_SDK_API_KEY`, `WEB3_SDK_PRIVATE_KEY` — server-only, separate keys per environment
+  - A wrong value here means minting against the wrong network, so treat the mainnet env set as a pre-launch checklist item.
 - **Rollback:** decide the plan for reverting a bad mainnet deploy. On-chain mints can't be undone, so the priority is catching problems before a transaction is signed, not after.
 
 ---
