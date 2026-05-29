@@ -173,10 +173,10 @@ Every mint on mainnet costs ADA in transaction fees, and that money has to come 
 
 A credentialing platform holds student records, so this is not optional. Tracom operates in Kenya, which means the Data Protection Act 2019 applies.
 
-- **Student data:** identify what personal data is stored (names, emails, wallet addresses), where it lives, and who can access it. Map it against the Data Protection Act 2019.
-- **Wallet custody:** students hold their own keys through their wallet (MeshJS). The app never takes custody — make sure that stays true and is stated clearly to users.
-- **Treasury keys:** if Tracom sponsors minting, the treasury wallet's keys are a high-value secret. Decide how they're stored and who can sign.
-- **Secrets:** API keys and policy IDs come from environment variables (`.env.example` documents them). Confirm no secrets are committed and mainnet values are kept separate from preprod.
+- **Student data:** reviewed (see `docs/data-protection-review.md`). The student identity is minimal and mostly pseudonymous — wallet address, chosen alias, and a gateway id. No student names or emails are collected today. The main watch items are assignment free-text and the fact that on-chain data can't be deleted. Open items there: a privacy notice + consent step, a documented position on deletion of on-chain data, and confirming where the gateway is hosted.
+- **Wallet custody:** confirmed. Students hold their own keys through their wallet over MeshJS/CIP-30; the app only ever receives addresses and signatures, never private keys. Keep it that way and state it plainly to users.
+- **Treasury keys:** if Tracom sponsors minting (see §12), the treasury key is a high-value secret. The app already has a server-side sponsored-transaction path (`WEB3_SDK_PRIVATE_KEY`, `use-sponsored-transaction.ts`), so that is the likely vehicle. Still to decide: where the production key lives and who can sign. Blocked on the §12 fee decision.
+- **Secrets:** audited May 2026 and clean. No env files are tracked or appear anywhere in git history, `.env`/`.env.local` are gitignored, `.env.example` holds only placeholders, and the real secrets (`ANDAMIO_API_KEY`, `WEB3_SDK_API_KEY`, `WEB3_SDK_PRIVATE_KEY`) are all server-only in the env schema, never shipped to the client. Keep mainnet values separate from preprod.
 
 ---
 
