@@ -171,19 +171,19 @@ function CourseDetailContent() {
       {/* Progress — only renders for enrolled/completed users */}
       <UserCourseStatus courseId={courseId} />
 
-      {/* Course Outline + Course Team — 2-column layout on desktop */}
+      {/* Modules + Course Team: 2-column layout on desktop */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6 lg:gap-8">
         {/* Main column: Course Outline */}
         <div className="space-y-6">
           <div>
-            <AndamioSectionHeader title="Course Outline" />
+            <AndamioSectionHeader title="Modules" />
             <AndamioText variant="muted" className="mt-2">
               Each module covers a set of learning goals. Complete modules to earn credentials toward project access.
             </AndamioText>
           </div>
 
-          {/* Module Cards with SLTs */}
-          <div className="space-y-4">
+          {/* Module list: clean numbered rows */}
+          <div className="space-y-3">
             {resolvedModules.map((courseModule, moduleIndex) => {
               // DB SLTs (if populated from content.slts)
               const dbSlts = (courseModule.slts ?? [])
@@ -195,12 +195,8 @@ function CourseDetailContent() {
               const chainSlts = (courseModule.onChainSlts ?? [])
                 .map((text) => ({ sltText: text }));
 
-              // Prefer DB SLTs, fall back to on-chain SLTs
+              // Prefer DB SLTs, fall back to on-chain SLTs (used for the count)
               const displaySlts = dbSlts.length > 0 ? dbSlts : chainSlts;
-
-              // Module is on-chain if it has onChainSlts data
-              const hasOnChain = (courseModule.onChainSlts ?? []).length > 0;
-              const onChainSltsSet = new Set(courseModule.onChainSlts ?? []);
 
               // Derive per-module commitment status
               const moduleCommitments = commitmentsByModule.get(courseModule.moduleCode ?? "") ?? [];
@@ -214,8 +210,6 @@ function CourseDetailContent() {
                   index={moduleIndex + 1}
                   sltHash={courseModule.sltHash}
                   slts={displaySlts}
-                  onChainSlts={onChainSltsSet}
-                  isOnChain={hasOnChain}
                   courseId={courseId}
                   commitmentStatus={moduleCommitmentStatus}
                 />
