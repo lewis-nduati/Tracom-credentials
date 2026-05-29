@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# tool artifacts (local only)
+.graphify_*
+graphify-out/
+src/graphify-out/
+.impeccable/
