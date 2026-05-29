@@ -31,9 +31,9 @@ export function SetCoursePrerequisites({
   const { state, result, error, execute, reset } = useTransaction();
 
   useTxStream(result?.txHash ?? null, {
-    onComplete: async () => {
+    onComplete: () => {
       toast.success("Prerequisites set on-chain.");
-      await onSuccess?.();
+      void onSuccess?.();
     },
   });
 
