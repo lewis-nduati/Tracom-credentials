@@ -1,0 +1,60 @@
+name: CI
+
+# Quality + security gate. Runs on every push to main and on every PR.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Lint, typecheck, tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - run: npm run test:unit
+
+  audit:
+    name: Dependency audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      # Hard gate: fail the build on a CRITICAL vulnerability in a production
+      # dependency (something that ships to users).
+      - name: Audit production dependencies (fail on critical)
+        run: npm audit --omit=dev --audit-level=critical
+      # Informational: full advisory list, including dev tooling. Never fails
+      # the build — it's there so the report shows up in the logs.
+      - name: Full audit report (informational)
+        if: always()
+        run: npm audit || true
+
+  secrets:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # full history so the scan sees every commit
+      - name: Scan for committed secrets
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
