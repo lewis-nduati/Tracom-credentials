@@ -164,7 +164,11 @@ Every mint on mainnet costs ADA in transaction fees, and that money has to come 
 
 **How sponsorship works.** Andamio's gateway has a built-in sponsorship path. Most transaction types — including the access-token mint and credential claim — accept a `sponsor_data` block as an alternative to the self-funded `initiator_data`. The sponsor wallet (a prefunded "tank") pays the fee while the token or credential still goes to the student, who signs as the owner but spends no ADA. The sponsor wallet and its UTxOs are managed through the utxos.dev SDK (`@utxos/sdk`); the gateway enforces a sponsorship quota, so the tank can run dry and must be topped up.
 
-**Current state — this is not yet wired.** The app currently mints on the self-funded path: it sends `initiator_data: walletAddress`, so today the student would pay. There is unused scaffolding (`getWeb3Sdk()` in `utxos-sdk.ts`, the `useSponsoredTransaction` hook), but `getWeb3Sdk` has no callers, the hook is unused, and the `/api/sponsor-migrate` route it calls does not exist. So sponsorship is supported by the gateway but not integrated here. (This corrects an earlier note that called it "mostly built" — the wiring is the work, not a flip of a switch.)
+**Current state — not wired, and gated on a paid plan.** The app currently mints on the self-funded path: it sends `initiator_data: walletAddress`, so today the user pays their own fee. There is unused scaffolding (`getWeb3Sdk()` in `utxos-sdk.ts`, the `useSponsoredTransaction` hook), but `getWeb3Sdk` has no callers, the hook is unused, and the `/api/sponsor-migrate` route it calls does not exist.
+
+**Sponsorship is a utxos.dev Pro (paid) feature** — the free plan doesn't include it. So sponsoring fees carries a recurring utxos.dev subscription cost on top of the ADA in the tank, and that's a real budget line (§8). Until that's paid for, the app stays self-funded.
+
+On **preprod this is a non-issue**: test ADA (tADA) is free from the faucet, so the self-funded path costs nothing and all testing happens there. The sponsorship decision only bites at mainnet, where the choice is: pay for utxos.dev Pro and sponsor, or have students self-fund (poor UX), or use another sponsorship route. Decision still stands (Tracom sponsors) but now with a known cost; revisit before mainnet.
 
 Still to do:
 
