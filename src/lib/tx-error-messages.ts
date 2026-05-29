@@ -30,6 +30,7 @@ export function isTxError(message: string): boolean {
 }
 
 export const TX_ERROR_MAP: Record<string, string> = {
+  ALIAS_NOT_AVAILABLE: "Alias already in use. Choose a different one.",
   ACCESS_TOKEN_ERROR:
     "One or more aliases could not be found on-chain. Verify each alias has an active Andamio access token.",
   INSUFFICIENT_FUNDS: "Insufficient funds in your wallet to complete this transaction.",
