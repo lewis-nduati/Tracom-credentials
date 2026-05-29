@@ -3,23 +3,57 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion, type Variants } from "framer-motion";
 import { useAndamioAuth } from "~/hooks/auth/use-andamio-auth";
 import { AccessTokenOnboarding } from "~/components/auth/access-token-onboarding";
 import { AndamioHeading, AndamioText } from "~/components/andamio";
 
-// The hero headline rotates through these audiences. `accent` is the word's
-// colour on the navy hero (brand tokens, defined in globals.css). `tint` is the
-// hue of a subtle glow behind it: a restrained stand-in for the eventual
-// background photo (swap each for a <next/image fill>: a person in a suit, a
-// teacher at a board, then a crowd of bankers, farmers, scientists). Timing is
-// tunable via ROTATE_MS.
-const AUDIENCES = [
-  { word: "employers", accent: "var(--brand-gold)", tint: "var(--brand-gold)" },
-  { word: "teachers", accent: "var(--brand-steel)", tint: "var(--brand-steel)" },
-  { word: "everyone", accent: "var(--brand-clay)", tint: "var(--brand-clay)" },
-] as const;
+// The hero headline rotates through these audiences. Every word is rendered in
+// the same credential gold (the seal colour); the rotation itself carries the
+// meaning, so the background stays one constant treatment. Timing via ROTATE_MS.
+const AUDIENCES = ["employers", "teachers", "everyone"] as const;
 const ROTATE_MS = 3600;
+
+// Guilloché: the fine interwoven line pattern engraved on banknotes,
+// passports, and certificates. Generated as concentric wavy rings so the hero
+// reads as an official document rather than a plain panel. Coordinates are
+// rounded so server and client render byte-identical strings (no hydration
+// mismatch, same lesson as the badge beads).
+function buildGuillochePaths(): string[] {
+  const cx = 200;
+  const cy = 200;
+  const rings = 14;
+  const steps = 220;
+  const paths: string[] = [];
+  for (let ring = 0; ring < rings; ring++) {
+    const baseR = 36 + ring * 11;
+    const amp = 9 + (ring % 3) * 4;
+    const freq = 6 + (ring % 4);
+    const phase = ring * 0.6;
+    let d = "";
+    for (let s = 0; s <= steps; s++) {
+      const a = (s / steps) * Math.PI * 2;
+      const r = baseR + amp * Math.sin(freq * a + phase);
+      const x = (cx + r * Math.cos(a)).toFixed(2);
+      const y = (cy + r * Math.sin(a)).toFixed(2);
+      d += `${s === 0 ? "M" : "L"}${x} ${y} `;
+    }
+    paths.push(`${d.trim()} Z`);
+  }
+  return paths;
+}
+const GUILLOCHE_PATHS = buildGuillochePaths();
+
+// Staggered entrance for the hero copy: each block fades and lifts in sequence
+// on load. ease-out-quint, no bounce. Skipped entirely under reduced motion.
+const revealContainer: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.09, delayChildren: 0.12 } },
+};
+const revealItem: Variants = {
+  hidden: { opacity: 0, y: 14 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+};
 
 const STEPS = [
   {
@@ -176,10 +210,10 @@ function CredentialBadge() {
 }
 
 /**
- * Hero section with the rotating-audience headline and crossfading backdrop.
- * Single font, rotating accent colour per word; the background photo (placeholder
- * gradient for now) crossfades in sync. Respects prefers-reduced-motion: pins to
- * "everyone" and skips all motion.
+ * Hero section with the rotating-audience headline over a navy field. Every word
+ * is rendered in credential gold; the copy reveals on load with a staggered
+ * entrance, and a faint guilloché pattern sits behind the navy. Respects
+ * prefers-reduced-motion: no word rotation, no entrance, no jank.
  */
 function HeroSection({ onEnter }: { onEnter: () => void }) {
   const reducedMotion = useReducedMotion();
@@ -198,28 +232,45 @@ function HeroSection({ onEnter }: { onEnter: () => void }) {
 
   return (
     <section className="relative overflow-hidden bg-brand-navy px-6 py-20 text-secondary-foreground sm:py-28">
-      {/* Crossfading backdrop: a restrained accent glow over the navy that
-          shifts per audience. Stands in for the eventual background photo, but
-          stays institutional rather than reading as a gradient panel. */}
-      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-        {AUDIENCES.map((a, i) => (
-          <div
-            key={a.word}
-            className="absolute inset-0 transition-opacity duration-1000 ease-out"
-            style={{
-              opacity: i === index ? 1 : 0,
-              backgroundImage: `radial-gradient(110% 120% at 82% 0%, color-mix(in oklch, ${a.tint} 22%, transparent) 0%, transparent 58%)`,
-            }}
-          />
-        ))}
-      </div>
+      {/* Quiet, constant backdrop: a faint guilloché engraving plus a soft gold
+          glow over the navy. No photo needed; tune opacity/position here, or swap
+          the SVG for a single <next/image fill> photo once one is sourced. */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        aria-hidden="true"
+        style={{
+          backgroundImage:
+            "radial-gradient(110% 120% at 82% 0%, color-mix(in oklch, var(--brand-gold) 18%, transparent) 0%, transparent 58%)",
+        }}
+      />
+      <svg
+        className="pointer-events-none absolute inset-0 h-full w-full text-brand-gold"
+        viewBox="0 0 400 400"
+        preserveAspectRatio="xMidYMid slice"
+        fill="none"
+        aria-hidden="true"
+      >
+        <g stroke="currentColor" strokeWidth="0.3" opacity="0.12">
+          {GUILLOCHE_PATHS.map((d, i) => (
+            <path key={i} d={d} />
+          ))}
+        </g>
+      </svg>
 
       <div className="relative z-10 mx-auto max-w-6xl">
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
-          <div className="max-w-xl space-y-8">
-            <AndamioText variant="overline" as="div" className="text-white/50">
-              Tracom Academy
-            </AndamioText>
+          <motion.div
+            className="max-w-xl space-y-8"
+            variants={revealContainer}
+            initial={reducedMotion ? false : "hidden"}
+            animate="show"
+          >
+            <motion.div variants={revealItem}>
+              <AndamioText variant="overline" as="div" className="text-white/50">
+                Tracom Academy
+              </AndamioText>
+            </motion.div>
+            <motion.div variants={revealItem}>
             <AndamioHeading
               level={1}
               size="display"
@@ -230,33 +281,36 @@ function HeroSection({ onEnter }: { onEnter: () => void }) {
                   "can trust." never shifts as the word rotates. */}
               <span className="relative inline-grid align-baseline">
                 {AUDIENCES.map((a) => (
-                  <span key={a.word} aria-hidden className="invisible [grid-area:1/1]">
-                    {a.word}
+                  <span key={a} aria-hidden className="invisible [grid-area:1/1]">
+                    {a}
                   </span>
                 ))}
                 <span className="[grid-area:1/1]">
                   <AnimatePresence mode="wait" initial={false}>
                     <motion.span
-                      key={active.word}
+                      key={active}
                       className="inline-block"
-                      style={{ color: active.accent }}
+                      style={{ color: "var(--brand-gold)" }}
                       initial={{ opacity: 0, y: "0.3em" }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: "-0.3em" }}
                       transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
                     >
-                      {active.word}
+                      {active}
                     </motion.span>
                   </AnimatePresence>
                 </span>
               </span>{" "}
               can trust.
             </AndamioHeading>
-            <AndamioText variant="lead" className="max-w-md leading-relaxed text-white/65">
-              Finish a course and Tracom issues your credential to your wallet.
-              Any employer can check it on-chain themselves.
-            </AndamioText>
-            <div className="flex flex-wrap items-center gap-3">
+            </motion.div>
+            <motion.div variants={revealItem}>
+              <AndamioText variant="lead" className="max-w-md leading-relaxed text-white/65">
+                Finish a course and Tracom issues your credential to your wallet.
+                Any employer can check it on-chain themselves.
+              </AndamioText>
+            </motion.div>
+            <motion.div variants={revealItem} className="flex flex-wrap items-center gap-3">
               <button
                 onClick={onEnter}
                 className="cursor-pointer rounded-md bg-white px-8 py-3.5 text-base font-semibold text-brand-navy transition-all hover:bg-white/90 active:scale-[0.98]"
@@ -269,11 +323,81 @@ function HeroSection({ onEnter }: { onEnter: () => void }) {
               >
                 View Courses
               </Link>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
           <div className="hidden items-center justify-center lg:flex">
             <CredentialBadge />
           </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/**
+ * Scroll-reveal wrapper: fades and lifts its children in as they enter the
+ * viewport, once. Renders a plain div under reduced motion (no animation).
+ */
+function Reveal({
+  children,
+  delay = 0,
+  className,
+}: {
+  children: React.ReactNode;
+  delay?: number;
+  className?: string;
+}) {
+  const reducedMotion = useReducedMotion();
+  if (reducedMotion) return <div className={className}>{children}</div>;
+  return (
+    <motion.div
+      className={className}
+      initial={{ opacity: 0, y: 18 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/**
+ * "How it works" as a connected four-step process: gold-ringed navy nodes on a
+ * faint connecting line, each step revealing on scroll. Replaces the flat grid.
+ */
+function HowItWorks() {
+  return (
+    <section id="how-it-works" className="bg-background px-6 py-20 sm:py-28">
+      <div className="mx-auto max-w-6xl">
+        <Reveal className="mb-14 max-w-xl">
+          <AndamioText variant="overline" as="div" className="mb-3 text-brand-navy">
+            How it works
+          </AndamioText>
+          <AndamioHeading level={2} size="2xl" className="text-pretty">
+            From your first course to a credential an employer can trust.
+          </AndamioHeading>
+        </Reveal>
+
+        <div className="relative">
+          {/* Connecting line behind the nodes (desktop only). */}
+          <div
+            className="absolute inset-x-0 top-6 hidden h-px bg-gradient-to-r from-transparent via-brand-navy/20 to-transparent lg:block"
+            aria-hidden="true"
+          />
+          <ol className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+            {STEPS.map(({ step, title, desc }, i) => (
+              <Reveal key={step} delay={i * 0.1} className="relative">
+                <span className="relative z-10 mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-brand-navy font-mono text-sm font-semibold text-white ring-1 ring-brand-gold/50">
+                  {step}
+                </span>
+                <h3 className="mb-2 text-base font-semibold text-foreground">{title}</h3>
+                <AndamioText variant="small" className="leading-relaxed">
+                  {desc}
+                </AndamioText>
+              </Reveal>
+            ))}
+          </ol>
         </div>
       </div>
     </section>
@@ -323,49 +447,25 @@ export function LandingHero() {
       {/* Value strip */}
       <section className="bg-accent px-6 py-14">
         <div className="mx-auto grid max-w-6xl gap-10 sm:grid-cols-3 sm:gap-8">
-          {VALUES.map(({ label, body }) => (
-            <div key={label}>
+          {VALUES.map(({ label, body }, i) => (
+            <Reveal key={label} delay={i * 0.08}>
               <AndamioHeading level={3} size="xl" className="mb-2">
                 {label}
               </AndamioHeading>
               <AndamioText variant="small" className="leading-relaxed text-accent-foreground/70">
                 {body}
               </AndamioText>
-            </div>
+            </Reveal>
           ))}
         </div>
       </section>
 
       {/* How it works */}
-      <section className="bg-background px-6 py-16 sm:py-24">
-        <div className="mx-auto max-w-6xl">
-          <AndamioText variant="overline" as="div" className="mb-12">
-            How it works
-          </AndamioText>
-          <div className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
-            {STEPS.map(({ step, title, desc }) => (
-              <div key={step}>
-                <span
-                  className="mb-3 block select-none text-7xl font-black leading-none text-foreground/[0.08]"
-                  aria-hidden="true"
-                >
-                  {step}
-                </span>
-                <h3 className="mb-2 text-base font-semibold text-foreground">
-                  {title}
-                </h3>
-                <AndamioText variant="small" className="leading-relaxed">
-                  {desc}
-                </AndamioText>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <HowItWorks />
 
       {/* Closing CTA */}
       <section className="bg-brand-navy px-6 py-12 sm:py-14">
-        <div className="mx-auto flex max-w-6xl flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
+        <Reveal className="mx-auto flex max-w-6xl flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
           <AndamioHeading level={2} size="2xl" className="text-secondary-foreground">
             Ready to earn your first credential?
           </AndamioHeading>
@@ -375,7 +475,7 @@ export function LandingHero() {
           >
             Get Started
           </button>
-        </div>
+        </Reveal>
       </section>
     </>
   );

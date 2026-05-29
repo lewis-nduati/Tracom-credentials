@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { env } from "~/env";
 import { LandingHero } from "~/components/landing/landing-hero";
 
@@ -12,7 +13,7 @@ export default function Home() {
 
       {/* Nav */}
       <nav className="bg-brand-navy px-6 py-4">
-        <div className="max-w-6xl mx-auto flex items-center">
+        <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
           <Image
             src="/logos/tracom-logo.svg"
             alt="Tracom Academy"
@@ -21,6 +22,20 @@ export default function Home() {
             className="h-8 w-auto"
             priority
           />
+          <div className="flex items-center gap-6 sm:gap-8">
+            <a
+              href="#how-it-works"
+              className="hidden text-sm font-medium text-white/70 transition-colors hover:text-white sm:inline"
+            >
+              How it works
+            </a>
+            <Link
+              href="/course"
+              className="rounded-md border border-white/30 px-5 py-2 text-sm font-semibold text-white transition-all hover:border-white/60 hover:bg-white/10 active:scale-[0.98]"
+            >
+              Browse courses
+            </Link>
+          </div>
         </div>
       </nav>
 
