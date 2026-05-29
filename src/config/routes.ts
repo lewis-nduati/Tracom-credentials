@@ -84,8 +84,6 @@ export const STUDIO_ROUTES = {
 export const API_ROUTES = {
   /** Gateway proxy */
   gateway: "/api/gateway",
-  /** tRPC handler */
-  trpc: "/api/trpc",
 } as const;
 
 /**

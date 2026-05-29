@@ -4,7 +4,7 @@ import { type Metadata, type Viewport } from "next";
 import { Inter, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 
-import { TRPCReactProvider } from "~/trpc/react";
+import { QueryProvider } from "~/components/providers/query-provider";
 import { MeshProvider } from "~/components/providers/mesh-provider";
 import { AuthProvider } from "~/components/providers/auth-provider";
 import { TxWatcherBridge } from "~/components/providers/tx-watcher-provider";
@@ -65,11 +65,11 @@ export default function RootLayout({
         >
           <MeshProvider>
             <AuthProvider>
-              <TRPCReactProvider>
+              <QueryProvider>
                 <TxWatcherBridge>
                   {children}
                 </TxWatcherBridge>
-              </TRPCReactProvider>
+              </QueryProvider>
               <Toaster position="top-right" richColors closeButton />
             </AuthProvider>
           </MeshProvider>
