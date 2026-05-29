@@ -146,11 +146,13 @@ export function parseOutline(content: string): ParsedOutline {
       continue;
     }
 
-    // Parse code from "code: VALUE" line (case-insensitive)
+    // Parse code from "code: VALUE" line (case-insensitive).
+    // Strip surrounding quotes so YAML-frontmatter values like `code: "201"`
+    // yield `201` rather than `"201"` (a code can't contain quotes anyway).
     if (!code) {
       const codeMatch = /^code:\s*(.+)$/i.exec(trimmed);
       if (codeMatch?.[1]) {
-        code = codeMatch[1].trim();
+        code = codeMatch[1].trim().replace(/^["']|["']$/g, "");
         continue;
       }
     }
