@@ -156,7 +156,7 @@ export function ConnectWalletButton({
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         <DialogHeader>
-          <DialogTitle>Sign in to Tracom Academy</DialogTitle>
+          <DialogTitle>Sign in to Tracom Credentials</DialogTitle>
           <DialogDescription>
             {hasSocial
               ? "No wallet or crypto experience needed"

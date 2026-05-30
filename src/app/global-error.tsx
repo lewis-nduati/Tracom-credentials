@@ -50,7 +50,7 @@ export default function GlobalError({
               color: "rgba(255,255,255,0.4)",
             }}
           >
-            Tracom Academy
+            Tracom Credentials
           </p>
           <h1
             style={{

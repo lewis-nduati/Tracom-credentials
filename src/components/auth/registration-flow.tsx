@@ -225,7 +225,7 @@ export function RegistrationFlow({ onMinted, onBack, darkLayout = false }: Regis
                 Get started
               </p>
               <h2 className="text-4xl font-bold leading-tight text-white">
-                Sign in to Tracom Academy
+                Sign in to Tracom Credentials
               </h2>
               <p className="text-base leading-relaxed text-white/60">
                 No wallet or crypto experience needed. Connect with Google, Discord, or X to begin.
@@ -254,7 +254,7 @@ export function RegistrationFlow({ onMinted, onBack, darkLayout = false }: Regis
         <AndamioCard>
           <AndamioCardHeader className="pb-2">
             <AndamioText variant="overline" className="mb-1">Get started</AndamioText>
-            <AndamioCardTitle className="text-xl">Sign in to Tracom Academy</AndamioCardTitle>
+            <AndamioCardTitle className="text-xl">Sign in to Tracom Credentials</AndamioCardTitle>
             <AndamioCardDescription>
               No wallet or crypto experience needed.
             </AndamioCardDescription>

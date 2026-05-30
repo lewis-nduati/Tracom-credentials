@@ -19,7 +19,7 @@ export default function Error({
     <div className="flex min-h-dvh items-center justify-center px-6">
       <div className="max-w-sm space-y-5 text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground/60">
-          Tracom Academy
+          Tracom Credentials
         </p>
         <h1 className="text-4xl font-bold text-foreground sm:text-5xl">
           Something went wrong

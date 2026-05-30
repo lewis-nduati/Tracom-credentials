@@ -466,7 +466,7 @@ export function MintAccessToken({ onSuccess, onSubmitted, skipCeremony = false }
           <div className="mx-auto mb-3 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
             <SuccessIcon className="h-10 w-10 text-primary" />
           </div>
-          <AndamioCardTitle className="text-2xl">Welcome to Tracom Academy!</AndamioCardTitle>
+          <AndamioCardTitle className="text-2xl">Welcome to Tracom Credentials!</AndamioCardTitle>
           <AndamioCardDescription className="mx-auto max-w-sm text-center text-base">
             You&apos;re now signed in as{" "}
             <span className="font-mono font-semibold text-foreground">{user.accessTokenAlias}</span>
@@ -569,7 +569,7 @@ export function MintAccessToken({ onSuccess, onSubmitted, skipCeremony = false }
           {/* The ceremony message with auto-progress indicator */}
           <div className="rounded-sm border border-primary/20 bg-primary/5 p-5 text-center space-y-3">
             <AndamioText className="font-semibold text-lg">
-              Welcome to Tracom Academy!
+              Welcome to Tracom Credentials!
             </AndamioText>
             <div className="flex items-center justify-center gap-2">
               <LoadingIcon className="h-4 w-4 animate-spin text-primary" />

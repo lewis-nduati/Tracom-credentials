@@ -49,17 +49,19 @@ const GUILLOCHE_PATHS = buildGuillochePaths();
  * hero and the footer so the navy surfaces carry one consistent texture.
  */
 export function GuillocheBackdrop({
-  className,
+  className = "absolute inset-0 h-full w-full",
   opacity = 0.12,
+  preserveAspectRatio = "xMidYMid slice",
 }: {
   className?: string;
   opacity?: number;
+  preserveAspectRatio?: string;
 }) {
   return (
     <svg
-      className={`pointer-events-none absolute inset-0 h-full w-full text-brand-gold ${className ?? ""}`}
+      className={`pointer-events-none text-brand-gold ${className}`}
       viewBox="0 0 400 400"
-      preserveAspectRatio="xMidYMid slice"
+      preserveAspectRatio={preserveAspectRatio}
       fill="none"
       aria-hidden="true"
     >
@@ -87,7 +89,7 @@ const STEPS = [
   {
     step: "01",
     title: "Complete a course",
-    desc: "Finish Tracom Academy coursework and assignments at your own pace.",
+    desc: "Finish your coursework and assignments at your own pace.",
   },
   {
     step: "02",
@@ -144,7 +146,7 @@ function CredentialBadge() {
       xmlns="http://www.w3.org/2000/svg"
       className="w-full max-w-sm"
       role="img"
-      aria-label="Tracom Academy on-chain credential badge"
+      aria-label="Tracom on-chain credential badge"
     >
       <defs>
         <radialGradient id="badgeFace" cx="38%" cy="32%" r="75%">
@@ -271,7 +273,13 @@ function HeroSection({ onEnter }: { onEnter: () => void }) {
             "radial-gradient(110% 120% at 82% 0%, color-mix(in oklch, var(--brand-gold) 18%, transparent) 0%, transparent 58%)",
         }}
       />
-      <GuillocheBackdrop />
+      {/* Guilloché rosette centred on the badge (right) so its "star" surrounds
+          the seal, with the outer rings fanning out toward the headline. On
+          mobile (no badge) it sits centred. */}
+      <GuillocheBackdrop
+        className="absolute left-1/2 top-1/2 h-[170%] w-auto -translate-x-1/2 -translate-y-1/2 lg:left-[72%]"
+        preserveAspectRatio="xMidYMid meet"
+      />
 
       <div className="relative z-10 mx-auto max-w-6xl">
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">

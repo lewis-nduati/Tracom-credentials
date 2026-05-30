@@ -13,7 +13,7 @@ export default function NotFound() {
       </div>
       <div className="relative z-10 max-w-sm space-y-5 text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/40">
-          Tracom Academy
+          Tracom Credentials
         </p>
         <h1 className="text-4xl font-bold leading-tight text-white sm:text-5xl">
           Page not found

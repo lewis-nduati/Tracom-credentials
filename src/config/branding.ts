@@ -11,20 +11,20 @@ import type { Metadata } from "next";
 
 export const BRANDING = {
   /** App name displayed in header, title, etc. */
-  name: "Tracom Academy",
+  name: "Tracom Credentials",
 
   /** Secondary text (e.g., "App Template", "Platform", etc.) */
   tagline: "Blockchain Learning Platform",
 
   /** Full app title for page titles */
-  fullTitle: "Tracom Academy",
+  fullTitle: "Tracom Credentials",
 
   /** Short description for meta tags */
-  description: "Blockchain credentialing for Tracom Academy students on Cardano",
+  description: "Blockchain credentialing for Tracom students on Cardano",
 
   /** Longer description for landing pages */
   longDescription:
-    "Tracom Academy students earn verifiable credentials on Cardano for completing courses and projects. Credentials are blockchain-issued and independently verifiable by anyone.",
+    "Tracom students earn verifiable credentials on Cardano for completing courses and projects. Credentials are blockchain-issued and independently verifiable by anyone.",
 
   /** URL paths for logos/icons */
   logo: {
