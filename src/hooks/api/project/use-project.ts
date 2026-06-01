@@ -39,6 +39,7 @@ import type {
 } from "~/types/generated/gateway";
 import { GATEWAY_API_BASE } from "~/lib/api-utils";
 import { getPreAssignedAlias } from "~/lib/task-metadata";
+import { env } from "~/env";
 
 // =============================================================================
 // App-Level Types (exported for components)
@@ -828,7 +829,14 @@ export function useProjects() {
         items = result.data ?? [];
       }
 
-      return items.map(transformProjectListItem);
+      // Scope the browse page to this instance's projects only.
+      // NEXT_PUBLIC_PROJECT_OWNER pins it to Tracom's owner alias; without it
+      // the page shows every project on the shared network. Mirrors the course
+      // owner filter in useActiveCourses.
+      const projectOwner = env.NEXT_PUBLIC_PROJECT_OWNER;
+      return items
+        .map(transformProjectListItem)
+        .filter((project) => !projectOwner || project.owner === projectOwner);
     },
     staleTime: 60 * 1000,
   });

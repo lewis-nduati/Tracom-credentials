@@ -35,6 +35,7 @@ export const env = createEnv({
     // Andamio alias of the account that owns Tracom's courses.
     // Used to filter the course browse page to Tracom courses only.
     NEXT_PUBLIC_COURSE_OWNER: z.string().optional(),
+    NEXT_PUBLIC_PROJECT_OWNER: z.string().optional(),
     // UTXOS/Web3 SDK — client-side (wallet connect dialog)
     NEXT_PUBLIC_WEB3_SDK_PROJECT_ID: z.string().optional(),
     NEXT_PUBLIC_WEB3_SDK_NETWORK: z.enum(["mainnet", "testnet"]).default("testnet"),
@@ -52,6 +53,7 @@ export const env = createEnv({
     NEXT_PUBLIC_ACCESS_TOKEN_POLICY_ID: process.env.NEXT_PUBLIC_ACCESS_TOKEN_POLICY_ID,
     NEXT_PUBLIC_BLOCKFROST_PROJECT_ID: process.env.NEXT_PUBLIC_BLOCKFROST_PROJECT_ID,
     NEXT_PUBLIC_COURSE_OWNER: process.env.NEXT_PUBLIC_COURSE_OWNER,
+    NEXT_PUBLIC_PROJECT_OWNER: process.env.NEXT_PUBLIC_PROJECT_OWNER,
     NEXT_PUBLIC_WEB3_SDK_PROJECT_ID: process.env.NEXT_PUBLIC_WEB3_SDK_PROJECT_ID,
     NEXT_PUBLIC_WEB3_SDK_NETWORK: process.env.NEXT_PUBLIC_WEB3_SDK_NETWORK,
     WEB3_SDK_API_KEY: process.env.WEB3_SDK_API_KEY,
