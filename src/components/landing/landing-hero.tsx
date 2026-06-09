@@ -291,7 +291,7 @@ function HeroSection({ onEnter }: { onEnter: () => void }) {
           >
             <motion.div variants={revealItem}>
               <AndamioText variant="overline" as="div" className="text-white/50">
-                Tracom Academy
+                Tracom Credentials
               </AndamioText>
             </motion.div>
             <motion.div variants={revealItem}>

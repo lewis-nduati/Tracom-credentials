@@ -68,7 +68,7 @@ export const MARKETING = {
   pioneers: {
     title: "What are Pioneers?",
     description: [
-      "Tracom Academy's credential platform is still being built. We're inviting early users to help shape it before mainnet.",
+      "Tracom Credentials is still being built. We're inviting early users to help shape it before mainnet.",
       "When you find something broken or confusing, that goes straight into what we build next.",
     ],
     linkText: "Read the Pioneers documentation",
