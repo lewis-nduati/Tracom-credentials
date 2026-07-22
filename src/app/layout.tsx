@@ -55,8 +55,12 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${geistMono.variable} overflow-hidden overscroll-none`} suppressHydrationWarning>
-      <body className="font-sans overflow-hidden overscroll-none">
+    <html
+  lang="en"
+  className={`${inter.variable} ${geistMono.variable}`}
+  suppressHydrationWarning
+>
+      <body className="font-sans">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
