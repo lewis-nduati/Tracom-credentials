@@ -255,7 +255,7 @@ export default function ConsultingPage() {
             </p>
 
             <a
-              href="https://lewoverse.gumroad.com/l/gorbnx"
+              href="https://www.paypal.com/ncp/payment/PJRMRFCYQC3H4"
               target="_blank"
               rel="noopener noreferrer"
               className="mt-8 block rounded-xl bg-black py-4 text-center text-lg font-semibold text-white transition hover:bg-gray-800"
