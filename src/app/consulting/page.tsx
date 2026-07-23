@@ -14,9 +14,9 @@ export default function ConsultingPage() {
           </h1>
 
           <p className="mx-auto mt-6 max-w-3xl text-lg text-white/80">
-            TRACOM helps universities, colleges, TVETs, NGOs, and corporate
-            academies deploy production-ready Andamio-powered digital credential
-            platforms on Cardano.
+            TRACOM helps universities, colleges, TVETs, NGOs, government programs,
+professional associations, corporate academies, and training organizations
+deploy production-ready Andamio-powered digital credential platforms on Cardano.
           </p>
 
           <div className="mt-10 flex justify-center gap-4">
