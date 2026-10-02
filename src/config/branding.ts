@@ -48,6 +48,14 @@ export const BRANDING = {
   links: {
     /** Main website */
     website: "https://tracom.co.ke",
+    /**
+     * Where this app is served. Used for metadata and absolute links, so a
+     * shared verification link previews under the right domain. Move to a
+     * Tracom subdomain once one is agreed.
+     */
+    app: "https://tracom-credentials.vercel.app",
+    /** The protocol the credentials are issued with */
+    andamio: "https://andamio.io",
     /** Documentation */
     docs: "https://docs.andamio.io",
     /** GitHub repository */

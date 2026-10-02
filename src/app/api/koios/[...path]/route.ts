@@ -7,15 +7,9 @@
 
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { env } from "~/env";
+import { koiosBaseUrl } from "~/lib/koios";
 
-const KOIOS_URLS = {
-  mainnet: "https://api.koios.rest/api/v1",
-  preprod: "https://preprod.koios.rest/api/v1",
-  preview: "https://preview.koios.rest/api/v1",
-} as const;
-
-const KOIOS_API_BASE = KOIOS_URLS[env.NEXT_PUBLIC_CARDANO_NETWORK];
+const KOIOS_API_BASE = koiosBaseUrl();
 
 export async function GET(
   request: NextRequest,

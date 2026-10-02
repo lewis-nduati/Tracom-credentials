@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     description: BRANDING.description,
     images: [BRANDING.logo.ogImage],
   },
-  metadataBase: new URL(BRANDING.links.website),
+  metadataBase: new URL(BRANDING.links.app),
 };
 
 const inter = Inter({
