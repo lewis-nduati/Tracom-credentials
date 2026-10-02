@@ -32,13 +32,6 @@ export default function Home() {
             </a>
 
             <Link
-              href="/consulting"
-              className="rounded-md border border-white/30 px-5 py-2 text-sm font-semibold text-white transition-all hover:border-white/60 hover:bg-white/10 active:scale-[0.98]"
-            >
-              Consulting
-            </Link>
-
-            <Link
               href="/course"
               className="rounded-md border border-white/30 px-5 py-2 text-sm font-semibold text-white transition-all hover:border-white/60 hover:bg-white/10 active:scale-[0.98]"
             >
