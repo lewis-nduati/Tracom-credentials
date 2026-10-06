@@ -46,3 +46,9 @@ next-env.d.ts
 graphify-out/
 src/graphify-out/
 .impeccable/
+
+# Internal business docs (pricing, prospects, strategy). Repo is public; Drive is the record.
+/docs/founder/
+/docs/policy/
+/docs/sales/
+/docs/social/
