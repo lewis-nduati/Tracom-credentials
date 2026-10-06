@@ -78,3 +78,77 @@ describe("parseLesson", () => {
     assert.throws(() => parseLesson("# X", "notes.md"), ImportParseError);
   });
 });
+
+describe("parseOutline — Coach compile output", () => {
+  // Coach's compile skill writes title and code into YAML frontmatter and
+  // explicitly tells authors NOT to add a `# Title` heading. Before this was
+  // supported, every Coach-compiled module failed with "Module title is
+  // required" and could not be imported at all.
+  it("reads title and code from frontmatter with no # heading", () => {
+    const md = [
+      "---",
+      "title: Your On-Chain Identity",
+      'code: "101"',
+      "---",
+      "",
+      "## SLTs",
+      "",
+      "1. I can mint an access token.",
+      "2. I can explain what the token proves.",
+    ].join("\n");
+
+    const outline = parseOutline(md);
+    assert.equal(outline.title, "Your On-Chain Identity");
+    assert.equal(outline.code, "101");
+    assert.deepEqual(outline.slts, [
+      "I can mint an access token.",
+      "I can explain what the token proves.",
+    ]);
+  });
+
+  it("accepts an unquoted numeric code from frontmatter", () => {
+    const md = ["---", "title: Browsing Courses", "code: 102", "---", "", "## SLTs", "", "- I can find a course."].join("\n");
+    const outline = parseOutline(md);
+    assert.equal(outline.code, "102");
+    assert.deepEqual(outline.slts, ["I can find a course."]);
+  });
+
+  it("accepts a slug code, as the compile skill allows", () => {
+    const md = ["---", "title: Intro to Cardano", "code: intro-cardano", "---", "", "## SLTs", "", "1. I can define a UTxO."].join("\n");
+    assert.equal(parseOutline(md).code, "intro-cardano");
+  });
+
+  it("still parses a hand-written outline that uses a # heading", () => {
+    const md = [
+      "# Chemical Safety Basics",
+      "",
+      "code: SAFETY-101",
+      "",
+      "## SLTs",
+      "",
+      "1. I can identify the four hazard classes.",
+    ].join("\n");
+
+    const outline = parseOutline(md);
+    assert.equal(outline.title, "Chemical Safety Basics");
+    assert.equal(outline.code, "SAFETY-101");
+    assert.deepEqual(outline.slts, ["I can identify the four hazard classes."]);
+  });
+
+  it("prefers the frontmatter title when a body heading is also present", () => {
+    const md = ["---", "title: Canonical Title", "code: 201", "---", "", "# Leftover Heading", "", "## SLTs", "", "1. I can do the thing."].join("\n");
+    assert.equal(parseOutline(md).title, "Canonical Title");
+  });
+
+  it("does not treat a horizontal rule as frontmatter", () => {
+    const md = ["# Real Title", "", "code: HR-1", "", "---", "", "## SLTs", "", "1. I can survive a horizontal rule."].join("\n");
+    const outline = parseOutline(md);
+    assert.equal(outline.title, "Real Title");
+    assert.equal(outline.code, "HR-1");
+  });
+
+  it("still throws when frontmatter carries no title", () => {
+    const md = ["---", 'code: "301"', "---", "", "## SLTs", "", "1. I can fail loudly."].join("\n");
+    assert.throws(() => parseOutline(md), ImportParseError);
+  });
+});

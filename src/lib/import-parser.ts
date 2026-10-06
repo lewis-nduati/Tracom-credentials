@@ -105,6 +105,39 @@ export class ImportParseError extends Error {
 // =============================================================================
 
 /**
+ * Split a leading YAML frontmatter block from the rest of the document.
+ *
+ * Coach (Andamio's authoring assistant) compiles `outline.md` with the module
+ * title and code in frontmatter and *no* `# Heading` — its compile skill lists
+ * "adding a # Title heading" as a common mistake. Hand-written outlines use the
+ * heading instead. Both have to import, so the frontmatter is read first and
+ * the body parse below fills in whatever it didn't supply.
+ *
+ * Only the flat `key: value` pairs we care about are read; this is deliberately
+ * not a general YAML parser.
+ */
+function splitFrontmatter(content: string): {
+  frontmatter: Record<string, string>;
+  body: string;
+} {
+  const match = /^\uFEFF?---[ \t]*\r?\n([\s\S]*?)\r?\n---[ \t]*(?:\r?\n|$)/.exec(
+    content
+  );
+  if (!match?.[1]) return { frontmatter: {}, body: content };
+
+  const frontmatter: Record<string, string> = {};
+  for (const line of match[1].split("\n")) {
+    const pair = /^([A-Za-z0-9_-]+):\s*(.*)$/.exec(line.trim());
+    if (pair?.[1]) {
+      frontmatter[pair[1].toLowerCase()] = (pair[2] ?? "")
+        .trim()
+        .replace(/^["']|["']$/g, "");
+    }
+  }
+  return { frontmatter, body: content.slice(match[0].length) };
+}
+
+/**
  * Parse outline.md content to extract title, code, and SLTs
  *
  * Expected format:
@@ -121,6 +154,7 @@ export class ImportParseError extends Error {
  * ```
  *
  * Parsing rules:
+ * - YAML frontmatter `title:` / `code:` (Coach output) take precedence
  * - First `# Heading` = module title
  * - `code: VALUE` line (case-insensitive) = module code
  * - Numbered list under `## SLTs` heading = SLT texts
@@ -130,10 +164,11 @@ export class ImportParseError extends Error {
  * @throws ImportParseError if required fields are missing
  */
 export function parseOutline(content: string): ParsedOutline {
-  const lines = content.split("\n");
+  const { frontmatter, body } = splitFrontmatter(content);
+  const lines = body.split("\n");
 
-  let title = "";
-  let code = "";
+  let title = frontmatter.title ?? "";
+  let code = frontmatter.code ?? "";
   const slts: string[] = [];
   let inSltsSection = false;
 
@@ -190,14 +225,14 @@ export function parseOutline(content: string): ParsedOutline {
   // Validate required fields
   if (!title) {
     throw new ImportParseError(
-      "Missing module title. Add a # Heading at the top of the file.",
+      "Missing module title. Add a `title:` to the YAML frontmatter, or a # Heading at the top of the file.",
       "outline.md"
     );
   }
 
   if (!code) {
     throw new ImportParseError(
-      "Missing module code. Add a 'code: YOUR-CODE' line.",
+      "Missing module code. Add a `code:` to the YAML frontmatter, or a 'code: YOUR-CODE' line.",
       "outline.md"
     );
   }
