@@ -1,6 +1,5 @@
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { ModuleIcon } from "~/components/icons";
 import { BRANDING, SIDEBAR_LAYOUT } from "~/config";
 import { cn } from "~/lib/utils";
@@ -74,24 +73,17 @@ export function SidebarHeader({
     );
   }
 
-  // Default: logo variant
+  // Default: serif wordmark
   return (
-    <div
-      className={cn(
-        "flex items-center border-b border-sidebar-border px-3",
-        headerHeight,
-        className
-      )}
-    >
-      <Link href={linkHref}>
-        <Image
-          src={BRANDING.logo.horizontalDark}
-          alt={BRANDING.name}
-          width={120}
-          height={28}
-          priority
-          className="h-7 w-auto"
-        />
+    <div className={cn("flex items-center border-b border-sidebar-border px-4", headerHeight, className)}>
+      <Link
+        href={linkHref}
+        className="flex flex-col leading-none outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring"
+      >
+        <span className="font-serif text-xl font-medium text-sidebar-foreground">Tracom</span>
+        <span className="mt-1 text-[9px] font-semibold uppercase tracking-[0.18em] text-sidebar-foreground/55">
+          Credentials
+        </span>
       </Link>
     </div>
   );

@@ -2,8 +2,6 @@
 
 import React from "react";
 import Link from "next/link";
-import { NextIcon } from "~/components/icons";
-import { AndamioHeading } from "~/components/andamio/andamio-heading";
 import { SIDEBAR_DESKTOP, SIDEBAR_MOBILE } from "~/config";
 import { cn } from "~/lib/utils";
 import type { NavSection, NavItem } from "~/types/ui";
@@ -56,7 +54,6 @@ export function SidebarNavSection({
   showDescriptions = false,
   isItemActive,
 }: SidebarNavSectionProps) {
-  const styles = variant === "desktop" ? SIDEBAR_DESKTOP : SIDEBAR_MOBILE;
   const isMobile = variant === "mobile";
 
   // Default active check: exact match or prefix match
@@ -68,17 +65,14 @@ export function SidebarNavSection({
   return (
     <div className="space-y-0.5">
       {/* Section Header */}
-      <AndamioHeading
-        level={3}
-        size="base"
+      <div
         className={cn(
-          "px-2 font-medium uppercase tracking-wider mb-1",
-          styles.sectionHeaderSize,
-          section.muted ? "text-sidebar-foreground/30" : "text-sidebar-foreground/45"
+          "mb-1 px-2 text-[10px] font-semibold uppercase tracking-[0.16em]",
+          section.muted ? "text-sidebar-foreground/30" : "text-sidebar-foreground/50",
         )}
       >
         {section.title}
-      </AndamioHeading>
+      </div>
 
       {/* Section Items */}
       {section.items.map((item) => (
@@ -122,15 +116,14 @@ function SidebarNavItem({
   const content = (
     <div
       className={cn(
-        "group flex items-center rounded-md transition-standard cursor-pointer select-none",
+        "group flex min-h-9 cursor-pointer select-none items-center border-l-2 transition-colors",
         styles.itemPadding,
         styles.fontSize,
         styles.gap,
-        variant === "mobile" && "rounded-lg",
         isActive
-          ? "bg-sidebar-accent text-sidebar-accent-foreground"
-          : "text-sidebar-foreground/60 hover:bg-sidebar-accent/40 hover:text-sidebar-foreground",
-        muted && !isActive && "opacity-60"
+          ? "border-sidebar-primary font-semibold text-sidebar-foreground"
+          : "border-transparent text-sidebar-foreground/65 hover:border-sidebar-foreground/30 hover:text-sidebar-foreground",
+        muted && !isActive && "opacity-60",
       )}
     >
       <Icon
@@ -138,7 +131,7 @@ function SidebarNavItem({
           "flex-shrink-0",
           styles.iconSize,
           isActive
-            ? "text-sidebar-primary"
+            ? "text-sidebar-foreground"
             : "text-sidebar-foreground/50 group-hover:text-sidebar-foreground"
         )}
       />
@@ -154,7 +147,7 @@ function SidebarNavItem({
             {item.name}
           </span>
           {item.description && (
-            <span className="block text-[11px] text-muted-foreground truncate">
+            <span className="block text-[11px] text-sidebar-foreground/60 truncate">
               {item.description}
             </span>
           )}
@@ -171,14 +164,6 @@ function SidebarNavItem({
         </span>
       )}
 
-      {isActive && (
-        <NextIcon
-          className={cn(
-            "text-muted-foreground flex-shrink-0 ml-auto",
-            variant === "desktop" ? "h-3 w-3" : "h-4 w-4"
-          )}
-        />
-      )}
     </div>
   );
 

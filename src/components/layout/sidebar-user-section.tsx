@@ -9,6 +9,8 @@ import { LogOutIcon, CopyIcon, CompletedIcon } from "~/components/icons";
 import { useCopyFeedback } from "~/hooks/ui/use-success-notification";
 import { ConnectWalletButton } from "~/components/auth/connect-wallet-button";
 import { PendingTxIndicator } from "~/components/tx/pending-tx-indicator";
+import { ThemeToggle } from "./theme-toggle";
+import { AuthNotice } from "./auth-notice";
 import { truncateWalletAddress } from "~/config";
 import { cn } from "~/lib/utils";
 
@@ -69,7 +71,8 @@ export function SidebarUserSection({
 
   if (!isAuthenticated || !user) {
     return (
-      <div className={cn("border-t border-sidebar-border p-2", className)}>
+      <div className={cn("space-y-2 border-t border-sidebar-border p-2", className)}>
+        <AuthNotice />
         <ConnectWalletButton
           label="Sign In"
           className={cn(
@@ -77,6 +80,7 @@ export function SidebarUserSection({
             isExpanded ? "text-sm h-9" : "text-[11px] h-7"
           )}
         />
+        <ThemeToggle />
       </div>
     );
   }
@@ -98,7 +102,7 @@ export function SidebarUserSection({
           {user.accessTokenAlias && (
             <div
               className={cn(
-                "font-semibold text-sidebar-foreground truncate",
+                "font-serif font-medium text-sidebar-foreground truncate",
                 isExpanded ? "text-base" : "text-sm"
               )}
             >
@@ -137,6 +141,8 @@ export function SidebarUserSection({
             </button>
           </div>
         </div>
+
+        <ThemeToggle />
 
         {/* Sign Out Button */}
         {showDisconnect && (

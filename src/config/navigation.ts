@@ -25,7 +25,7 @@ import type { NavSection } from "~/types/ui";
  */
 export const SIDEBAR_NAVIGATION: NavSection[] = [
   {
-    title: "Overview",
+    title: "Record",
     items: [
       {
         name: "Dashboard",
@@ -42,16 +42,16 @@ export const SIDEBAR_NAVIGATION: NavSection[] = [
     ],
   },
   {
-    title: "Discover",
+    title: "Catalogue",
     items: [
       {
-        name: "Browse Courses",
+        name: "Courses",
         href: "/course",
         icon: LearnerIcon,
         description: "Learn new skills",
       },
       {
-        name: "Browse Projects",
+        name: "Projects",
         href: "/project",
         icon: ProjectIcon,
         description: "Find opportunities",
