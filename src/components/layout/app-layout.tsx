@@ -4,7 +4,7 @@ import React from "react";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { AppSidebar } from "./app-sidebar";
-import { AuthStatusBar } from "./auth-status-bar";
+import { MobileTopBar } from "./mobile-top-bar";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -14,7 +14,7 @@ interface AppLayoutProps {
  * Professional full-screen app layout with responsive design
  * - Mobile: Hamburger menu in status bar, full-width content
  * - Desktop (md+): Sidebar on left, content on right
- * - Minimal status bar at top
+ * - Mobile: slim top bar with the menu
  * - Spacious main content area with refined padding
  */
 export function AppLayout({ children }: AppLayoutProps) {
@@ -30,8 +30,8 @@ export function AppLayout({ children }: AppLayoutProps) {
         Skip to main content
       </a>
 
-      {/* Status Bar */}
-      <AuthStatusBar />
+      {/* Mobile top bar (phones only) */}
+      <MobileTopBar />
 
       {/* Main Container */}
       <div className="flex min-h-0 flex-1 overflow-hidden">
@@ -41,7 +41,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         </div>
 
         {/* Content Area - Scrollable, full width on mobile */}
-        <main id="main-content" className="bg-muted/30 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
+        <main id="main-content" className="bg-background flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
           <div className="mx-auto w-full max-w-6xl px-4 py-6 has-[.full-bleed]:h-full has-[.full-bleed]:max-w-none has-[.full-bleed]:p-0 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
             <AnimatePresence mode="wait" initial={false}>
               <motion.div

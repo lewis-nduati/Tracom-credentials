@@ -12,8 +12,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "~/components/ui/sheet";
-import { MenuIcon, ModuleIcon } from "~/components/icons";
-import { getNavigationSections, isNavItemActive, BRANDING } from "~/config";
+import { MenuIcon } from "~/components/icons";
+import { getNavigationSections, isNavItemActive } from "~/config";
 import { SidebarNavList } from "./sidebar-nav-section";
 import { SidebarUserSection } from "./sidebar-user-section";
 
@@ -41,7 +41,7 @@ export function MobileNav() {
         <AndamioButton
           variant="ghost"
           size="sm"
-          className="text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/15 h-10 w-10 p-0 md:hidden"
+          className="h-11 w-11 p-0 text-foreground hover:bg-accent md:hidden"
           aria-label="Open navigation menu"
         >
           <MenuIcon className="h-4 w-4" />
@@ -51,16 +51,11 @@ export function MobileNav() {
       <SheetContent side="left" className="flex flex-col gap-0 p-0 bg-sidebar text-sidebar-foreground">
         {/* Header with branding */}
         <SheetHeader className="border-sidebar-border gap-0 border-b py-4">
-          <div className="flex items-center gap-3 px-4">
-            <div className="bg-sidebar-primary text-sidebar-primary-foreground flex h-8 w-8 items-center justify-center rounded-lg">
-              <ModuleIcon className="h-4 w-4" />
-            </div>
-            <div className="flex flex-col">
-              <SheetTitle className="text-sidebar-foreground">{BRANDING.name}</SheetTitle>
-              <span className="text-sidebar-foreground/50 text-[10px]">
-                {BRANDING.tagline}
-              </span>
-            </div>
+          <div className="flex flex-col px-4 leading-none">
+            <SheetTitle className="font-serif text-xl font-medium text-sidebar-foreground">Tracom</SheetTitle>
+            <span className="mt-1 text-[9px] font-semibold uppercase tracking-[0.18em] text-sidebar-foreground/55">
+              Credentials
+            </span>
           </div>
         </SheetHeader>
 

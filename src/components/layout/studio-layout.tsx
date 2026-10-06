@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
-import { AuthStatusBar } from "./auth-status-bar";
+import { MobileTopBar } from "./mobile-top-bar";
 import { AppSidebar } from "./app-sidebar";
 import {
   StudioHeader,
@@ -32,7 +32,7 @@ interface StudioLayoutProps {
  * Focused full-screen layout for studio/content creation
  *
  * Structure (unified app shell):
- * - AuthStatusBar at top (same as main app)
+ * - MobileTopBar on phones (same as main app)
  * - AppSidebar on left (SAME navigation as main app - unified shell)
  * - Full-height content area with StudioHeader for context
  *
@@ -84,7 +84,7 @@ export function StudioLayout({
     <StudioHeaderContext.Provider value={contextValue}>
       <div className="flex h-screen w-full flex-col overflow-hidden overscroll-none bg-background">
         {/* Status Bar - Same as main app */}
-        <AuthStatusBar />
+        <MobileTopBar />
 
         {/* Main Container */}
         <div className="flex min-h-0 flex-1 overflow-hidden">
