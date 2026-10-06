@@ -32,6 +32,8 @@ import { useAndamioAuth } from "~/hooks/auth/use-andamio-auth";
 import { GATEWAY_API_BASE } from "~/lib/api-utils";
 import { DashboardResponseWrapperSchema } from "~/lib/api-schemas";
 import { validateResponse } from "~/lib/api-validation";
+import { scopeDashboard } from "~/lib/dashboard-scope";
+import { isTracomCourse, isTracomProject } from "~/lib/tenant";
 import type {
   DashboardResponseWrapper,
   DashboardResponse as ApiDashboardResponse,
@@ -305,6 +307,28 @@ function transformDashboard(
   };
 }
 
+/**
+ * Ids of the Tracom-owned items in a public list endpoint. The dashboard
+ * carries no owner fields, so it is scoped by these ids (see scopeDashboard).
+ * Fails closed: if the list can't be read, nothing matches.
+ */
+async function fetchOwnedIds(
+  path: string,
+  idField: "course_id" | "project_id",
+  isTracom: (owner: string | null | undefined) => boolean,
+): Promise<Set<string>> {
+  const response = await fetch(`${GATEWAY_API_BASE}/${path}`);
+  if (!response.ok) return new Set();
+  const json = (await response.json()) as { data?: Record<string, unknown>[] } | Record<string, unknown>[];
+  const items = Array.isArray(json) ? json : json.data ?? [];
+  return new Set(
+    items
+      .filter((item) => isTracom(item.owner as string | undefined))
+      .map((item) => item[idField] as string)
+      .filter(Boolean),
+  );
+}
+
 // =============================================================================
 // Hook
 // =============================================================================
@@ -353,7 +377,16 @@ export function useDashboard() {
         console.warn("[useDashboard] API warning (partial content):", result.meta?.warning);
       }
 
-      return transformDashboard(result.data ?? {}, result.meta?.warning);
+      const [courseIds, projectIds] = await Promise.all([
+        fetchOwnedIds("course/user/courses/list", "course_id", isTracomCourse),
+        fetchOwnedIds("project/user/projects/list", "project_id", isTracomProject),
+      ]);
+
+      return scopeDashboard(
+        transformDashboard(result.data ?? {}, result.meta?.warning),
+        courseIds,
+        projectIds,
+      );
     },
     enabled: isAuthenticated,
     staleTime: 30_000, // 30 seconds - dashboard data should be relatively fresh
