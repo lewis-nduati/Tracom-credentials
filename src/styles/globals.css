@@ -91,72 +91,72 @@
    ========================================================================== */
 
 :root {
-  --radius: 0.5rem;
+  --radius: 0.25rem;
 
   /* Brand */
   --brand-navy: oklch(0.282 0.09 252);
   /* Credential gold: the seal accent on the navy hero. Reads in any theme. */
   --brand-gold: oklch(0.71 0.105 88);
 
-  /* Base */
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  /* Base: warm paper and ink */
+  --background: oklch(0.973 0.007 85);
+  --foreground: oklch(0.21 0.015 260);
 
-  /* Cards */
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  /* Cards: slightly lighter paper */
+  --card: oklch(0.988 0.004 85);
+  --card-foreground: oklch(0.21 0.015 260);
 
-  /* Popover */
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
+  --popover: oklch(0.988 0.004 85);
+  --popover-foreground: oklch(0.21 0.015 260);
 
-  /* Primary - Blue */
-  --primary: oklch(0.546 0.211 255);
-  --primary-foreground: oklch(1 0 0);
+  /* Primary: Tracom brand navy */
+  --primary: oklch(0.282 0.09 252);
+  --primary-foreground: oklch(0.985 0.004 85);
 
-  /* Secondary - Deep Blue */
-  --secondary: oklch(0.387 0.134 250.505);
-  --secondary-foreground: oklch(1 0 0);
+  /* Secondary: a lighter navy */
+  --secondary: oklch(0.42 0.1 252);
+  --secondary-foreground: oklch(0.985 0.004 85);
 
-  /* Muted - Warm-tinted surfaces */
-  --muted: oklch(0.985 0.002 106.423);
-  --muted-foreground: oklch(0.478 0.029 255.508);
+  /* Muted: a slightly darker paper band */
+  --muted: oklch(0.945 0.011 85);
+  --muted-foreground: oklch(0.47 0.02 70);
 
-  /* Accent - Warm cream/yellow */
-  --accent: oklch(0.988 0.008 79.439);
-  --accent-foreground: oklch(0.145 0 0);
+  /* Accent: hover wash on paper */
+  --accent: oklch(0.93 0.014 85);
+  --accent-foreground: oklch(0.21 0.015 260);
 
-  /* Status colors */
-  --destructive: oklch(0.608 0.227 27.325);
-  --success: oklch(0.52 0.15 160);
-  --success-foreground: oklch(1 0 0);
-  --warning: oklch(0.75 0.16 70);
-  --warning-foreground: oklch(0.22 0.04 70);
-  --info: oklch(0.55 0.15 250);
-  --info-foreground: oklch(1 0 0);
+  /* Status colours */
+  --destructive: oklch(0.52 0.19 27);
+  --success: oklch(0.47 0.12 155);
+  --success-foreground: oklch(0.985 0.004 85);
+  --warning: oklch(0.75 0.15 75);
+  --warning-foreground: oklch(0.25 0.05 70);
+  --info: oklch(0.45 0.1 245);
+  --info-foreground: oklch(0.985 0.004 85);
 
-  /* Borders */
-  --border: oklch(0.922 0.003 106.423);
-  --input: oklch(0.922 0.003 106.423);
-  --ring: oklch(0.546 0.211 255);
+  /* Rules */
+  --border: oklch(0.87 0.018 85);
+  --input: oklch(0.85 0.018 85);
+  --ring: oklch(0.282 0.09 252);
 
   /* Charts */
-  --chart-1: oklch(0.68 0.16 255);
-  --chart-2: oklch(0.387 0.134 250.505);
-  --chart-3: oklch(0.627 0.106 181.764);
-  --chart-4: oklch(0.546 0.211 255);
-  --chart-5: oklch(0.387 0.134 250.505);
+  --chart-1: oklch(0.282 0.09 252);
+  --chart-2: oklch(0.42 0.1 252);
+  --chart-3: oklch(0.55 0.08 200);
+  --chart-4: oklch(0.71 0.105 88);
+  --chart-5: oklch(0.6 0.05 252);
 
-  /* Sidebar — brand navy */
+  /* Sidebar: the navy spine */
   --sidebar: oklch(0.282 0.09 252);
-  --sidebar-foreground: oklch(0.93 0.008 252);
-  --sidebar-primary: oklch(0.68 0.18 255);
-  --sidebar-primary-foreground: oklch(0.188 0.013 257.128);
-  --sidebar-accent: oklch(0.35 0.08 252);
-  --sidebar-accent-foreground: oklch(0.95 0.005 252);
-  --sidebar-border: oklch(0.34 0.08 252);
-  --sidebar-ring: oklch(0.68 0.18 255);
+  --sidebar-foreground: oklch(0.95 0.008 85);
+  --sidebar-primary: oklch(0.71 0.105 88);
+  --sidebar-primary-foreground: oklch(0.21 0.015 260);
+  --sidebar-accent: oklch(0.33 0.085 252);
+  --sidebar-accent-foreground: oklch(0.97 0.006 85);
+  --sidebar-border: oklch(0.36 0.07 252);
+  --sidebar-ring: oklch(0.71 0.105 88);
 }
+
 
 /* ==========================================================================
    Brand Colors - Dark Theme
@@ -166,54 +166,56 @@
   --brand-navy: oklch(0.282 0.09 252);
   --brand-gold: oklch(0.71 0.105 88);
 
-  --background: oklch(0.188 0.013 257.128);
-  --foreground: oklch(0.922 0.003 106.423);
+  /* Night record: navy-charcoal paper, warm ink */
+  --background: oklch(0.19 0.02 255);
+  --foreground: oklch(0.93 0.012 85);
 
-  --card: oklch(0.241 0.018 257.128);
-  --card-foreground: oklch(0.922 0.003 106.423);
+  --card: oklch(0.225 0.022 255);
+  --card-foreground: oklch(0.93 0.012 85);
 
-  --popover: oklch(0.241 0.018 257.128);
-  --popover-foreground: oklch(0.922 0.003 106.423);
+  --popover: oklch(0.225 0.022 255);
+  --popover-foreground: oklch(0.93 0.012 85);
 
-  --primary: oklch(0.68 0.18 255);
-  --primary-foreground: oklch(0.188 0.013 257.128);
+  --primary: oklch(0.78 0.08 252);
+  --primary-foreground: oklch(0.17 0.03 255);
 
-  --secondary: oklch(0.605 0.155 250.505);
-  --secondary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.7 0.09 252);
+  --secondary-foreground: oklch(0.17 0.03 255);
 
-  --muted: oklch(0.241 0.018 257.128);
-  --muted-foreground: oklch(0.717 0.014 257.128);
+  --muted: oklch(0.25 0.02 255);
+  --muted-foreground: oklch(0.74 0.015 85);
 
-  --accent: oklch(0.338 0.024 257.128);
-  --accent-foreground: oklch(0.922 0.003 106.423);
+  --accent: oklch(0.28 0.025 255);
+  --accent-foreground: oklch(0.93 0.012 85);
 
-  --destructive: oklch(0.704 0.191 22.216);
-  --success: oklch(0.62 0.16 160);
-  --success-foreground: oklch(0.145 0 0);
-  --warning: oklch(0.8 0.15 70);
-  --warning-foreground: oklch(0.18 0.04 70);
-  --info: oklch(0.65 0.14 250);
-  --info-foreground: oklch(0.145 0 0);
+  --destructive: oklch(0.7 0.17 25);
+  --success: oklch(0.72 0.13 155);
+  --success-foreground: oklch(0.17 0.03 255);
+  --warning: oklch(0.8 0.14 75);
+  --warning-foreground: oklch(0.2 0.04 70);
+  --info: oklch(0.75 0.1 245);
+  --info-foreground: oklch(0.17 0.03 255);
 
-  --input: oklch(0.338 0.024 257.128);
-  --border: oklch(0.338 0.024 257.128);
-  --ring: oklch(0.68 0.18 255);
+  --border: oklch(0.32 0.02 255);
+  --input: oklch(0.34 0.02 255);
+  --ring: oklch(0.78 0.08 252);
 
-  --chart-1: oklch(0.68 0.14 255);
-  --chart-2: oklch(0.605 0.155 250.505);
-  --chart-3: oklch(0.696 0.09 181.764);
-  --chart-4: oklch(0.68 0.18 255);
-  --chart-5: oklch(0.605 0.155 250.505);
+  --chart-1: oklch(0.78 0.08 252);
+  --chart-2: oklch(0.7 0.09 252);
+  --chart-3: oklch(0.72 0.08 200);
+  --chart-4: oklch(0.71 0.105 88);
+  --chart-5: oklch(0.6 0.05 252);
 
-  --sidebar: oklch(0.241 0.018 257.128);
-  --sidebar-foreground: oklch(0.922 0.003 106.423);
-  --sidebar-primary: oklch(0.68 0.18 255);
-  --sidebar-primary-foreground: oklch(0.188 0.013 257.128);
-  --sidebar-accent: oklch(0.338 0.024 257.128);
-  --sidebar-accent-foreground: oklch(0.922 0.003 106.423);
-  --sidebar-border: oklch(0.338 0.024 257.128);
-  --sidebar-ring: oklch(0.68 0.18 255);
+  --sidebar: oklch(0.155 0.03 255);
+  --sidebar-foreground: oklch(0.93 0.012 85);
+  --sidebar-primary: oklch(0.71 0.105 88);
+  --sidebar-primary-foreground: oklch(0.17 0.03 255);
+  --sidebar-accent: oklch(0.22 0.03 255);
+  --sidebar-accent-foreground: oklch(0.95 0.008 85);
+  --sidebar-border: oklch(0.26 0.03 255);
+  --sidebar-ring: oklch(0.71 0.105 88);
 }
+
 
 /* ==========================================================================
    Base Layer - Minimal Resets & Heading Defaults
