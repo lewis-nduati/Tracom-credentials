@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { useAndamioAuth } from "~/hooks/auth/use-andamio-auth";
 import { AndamioButton } from "~/components/andamio/andamio-button";
 import { ConfirmDialog } from "~/components/ui/confirm-dialog";
-import { LogOutIcon } from "~/components/icons";
+import { LogOutIcon, CopyIcon, CompletedIcon } from "~/components/icons";
+import { useCopyFeedback } from "~/hooks/ui/use-success-notification";
 import { ConnectWalletButton } from "~/components/auth/connect-wallet-button";
 import { PendingTxIndicator } from "~/components/tx/pending-tx-indicator";
 import { truncateWalletAddress } from "~/config";
@@ -55,6 +56,7 @@ export function SidebarUserSection({
 }: SidebarUserSectionProps) {
   const router = useRouter();
   const { isAuthenticated, user, logout } = useAndamioAuth();
+  const { isCopied, copy } = useCopyFeedback();
 
   const isExpanded = variant === "expanded";
 
@@ -112,14 +114,27 @@ export function SidebarUserSection({
                 isExpanded ? "h-2 w-2" : "h-1.5 w-1.5"
               )}
             />
-            <span
+            {/* Click to copy the full address, e.g. to fund a new social-login wallet */}
+            <button
+              type="button"
+              onClick={() => {
+                if (user.cardanoBech32Addr) void copy(user.cardanoBech32Addr);
+              }}
+              title="Copy wallet address"
               className={cn(
-                "font-mono text-sidebar-foreground/50 truncate",
+                "flex min-w-0 items-center gap-1 font-mono text-sidebar-foreground/50 hover:text-sidebar-foreground focus-ring rounded-sm",
                 isExpanded ? "text-xs" : "text-[10px]"
               )}
             >
-              {truncateWalletAddress(user.cardanoBech32Addr ?? undefined)}
-            </span>
+              <span className="truncate">
+                {truncateWalletAddress(user.cardanoBech32Addr ?? undefined)}
+              </span>
+              {isCopied ? (
+                <CompletedIcon className="h-3 w-3 flex-shrink-0" />
+              ) : (
+                <CopyIcon className="h-3 w-3 flex-shrink-0" />
+              )}
+            </button>
           </div>
         </div>
 
