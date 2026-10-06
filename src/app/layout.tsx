@@ -1,7 +1,7 @@
 import "~/styles/globals.css";
 
 import { type Metadata, type Viewport } from "next";
-import { Inter, Geist_Mono } from "next/font/google";
+import { Inter, Geist_Mono, Newsreader } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 
 import { QueryProvider } from "~/components/providers/query-provider";
@@ -45,6 +45,13 @@ const inter = Inter({
   display: "swap",
 });
 
+const newsreader = Newsreader({
+  subsets: ["latin"],
+  variable: "--font-newsreader",
+  weight: ["400", "500"],
+  display: "swap",
+});
+
 const geistMono = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-geist-mono",
@@ -56,10 +63,10 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
-  lang="en"
-  className={`${inter.variable} ${geistMono.variable}`}
-  suppressHydrationWarning
->
+      lang="en"
+      className={`${inter.variable} ${geistMono.variable} ${newsreader.variable}`}
+      suppressHydrationWarning
+    >
       <body className="font-sans">
         <ThemeProvider
           attribute="class"
