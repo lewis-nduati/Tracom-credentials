@@ -38,7 +38,11 @@ export const env = createEnv({
     NEXT_PUBLIC_PROJECT_OWNER: z.string().optional(),
     // UTXOS/Web3 SDK — client-side (wallet connect dialog)
     NEXT_PUBLIC_WEB3_SDK_PROJECT_ID: z.string().optional(),
-    NEXT_PUBLIC_WEB3_SDK_NETWORK: z.enum(["mainnet", "testnet"]).default("testnet"),
+    // Derived from NEXT_PUBLIC_CARDANO_NETWORK in runtimeEnv below unless set
+    // explicitly. Keep these two in agreement: a mainnet app with a testnet
+    // wallet network hands social-login users a wallet on the wrong chain,
+    // where the mainnet access token can never appear.
+    NEXT_PUBLIC_WEB3_SDK_NETWORK: z.enum(["mainnet", "testnet"]),
   },
 
   /**
@@ -55,7 +59,9 @@ export const env = createEnv({
     NEXT_PUBLIC_COURSE_OWNER: process.env.NEXT_PUBLIC_COURSE_OWNER,
     NEXT_PUBLIC_PROJECT_OWNER: process.env.NEXT_PUBLIC_PROJECT_OWNER,
     NEXT_PUBLIC_WEB3_SDK_PROJECT_ID: process.env.NEXT_PUBLIC_WEB3_SDK_PROJECT_ID,
-    NEXT_PUBLIC_WEB3_SDK_NETWORK: process.env.NEXT_PUBLIC_WEB3_SDK_NETWORK,
+    NEXT_PUBLIC_WEB3_SDK_NETWORK:
+      process.env.NEXT_PUBLIC_WEB3_SDK_NETWORK ??
+      (process.env.NEXT_PUBLIC_CARDANO_NETWORK === "mainnet" ? "mainnet" : "testnet"),
     WEB3_SDK_API_KEY: process.env.WEB3_SDK_API_KEY,
     WEB3_SDK_PRIVATE_KEY: process.env.WEB3_SDK_PRIVATE_KEY,
     UTXOS_SPONSORSHIP_ID: process.env.UTXOS_SPONSORSHIP_ID,
