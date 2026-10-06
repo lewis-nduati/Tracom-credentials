@@ -1,5 +1,6 @@
 "use client";
 
+import { isTracomCourse } from "~/lib/tenant";
 import { Suspense, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import {
@@ -97,8 +98,8 @@ function CourseDetailContent() {
     return <AndamioPageLoading variant="detail" />;
   }
 
-  // Error state
-  if (error || !course) {
+  // Error state. Courses from other Andamio owners are treated as not found.
+  if (error || !course || !isTracomCourse(course.owner)) {
     return (
       <AndamioNotFoundCard
         title="Course Not Found"

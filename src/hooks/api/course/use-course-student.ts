@@ -15,6 +15,7 @@
  * ```
  */
 
+import { isTracomCourse } from "~/lib/tenant";
 import { useCallback } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAndamioAuth } from "~/hooks/auth/use-andamio-auth";
@@ -164,10 +165,11 @@ export function useStudentCourses() {
         warning?: string;
       };
 
+      // Only Tracom courses, even if the learner is enrolled elsewhere on Andamio.
       const rawCourses = result.data ?? [];
-      return rawCourses.map((raw) =>
-        transformStudentCourse(raw as Record<string, unknown>)
-      );
+      return rawCourses
+        .map((raw) => transformStudentCourse(raw as Record<string, unknown>))
+        .filter((course) => isTracomCourse(course.owner));
     },
     enabled: isAuthenticated,
     staleTime: 60_000,

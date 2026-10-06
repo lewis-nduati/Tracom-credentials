@@ -1,5 +1,6 @@
 "use client";
 
+import { isTracomProject } from "~/lib/tenant";
 import React from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
@@ -131,7 +132,8 @@ export default function ProjectDetailPage() {
     return <AndamioPageLoading variant="detail" />;
   }
 
-  if (error || !project) {
+  // Projects from other Andamio owners are treated as not found.
+  if (error || !project || !isTracomProject(project.owner)) {
     return (
       <div className="space-y-6">
         <AndamioBackButton href="/project" label="Back to Projects" />
