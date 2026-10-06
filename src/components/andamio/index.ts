@@ -58,6 +58,14 @@ export * from "./andamio-prerequisite-gate";
 export * from "./andamio-tx-summary";
 export * from "./copy-id";
 
+// Record design system (paper, ledgers, path)
+export * from "./andamio-section-label";
+export * from "./andamio-record-header";
+export * from "./andamio-ledger";
+export * from "./andamio-next-step";
+export * from "./andamio-path-timeline";
+export * from "./andamio-record-layout";
+
 // Loading components (unified loading system)
 export * from "./andamio-loading";
 
