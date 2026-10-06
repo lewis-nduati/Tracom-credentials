@@ -6,35 +6,29 @@ Generated from: `src/styles/globals.css`, `src/components/andamio/`, `src/app/la
 
 ## Color Palette
 
-Strategy: **Restrained** — tinted neutrals with one saturated primary (blue). Status colors used semantically. The navy `#1A3D6B` from the Tracom brand logo should be mapped to CSS variables, not hardcoded.
+Strategy: **the Record.** Warm paper and ink, with Tracom brand navy as the one strong colour. Status colours are semantic. Depth comes from rules (hairlines) and background steps, never shadows. Every text pair is checked for WCAG AA by `src/styles/tokens.test.ts`; a token change that breaks contrast fails the test suite.
 
-All values in OKLCH. Do not add chroma at extreme lightness.
+All values in OKLCH.
 
-### Light Mode
+### Light mode ("paper")
 
 | Role | Token | Value | Notes |
 |------|-------|-------|-------|
-| Background | `--background` | `oklch(1 0 0)` | Pure white — could benefit from subtle warm tint (chroma ~0.005) |
-| Foreground | `--foreground` | `oklch(0.145 0 0)` | Near-black — currently untinted |
-| Card | `--card` | `oklch(1 0 0)` | Same as background |
-| Primary | `--primary` | `oklch(0.546 0.211 255)` | Tracom blue |
-| Secondary | `--secondary` | `oklch(0.387 0.134 250.505)` | Deep blue |
-| Muted | `--muted` | `oklch(0.985 0.002 106.423)` | Warm-tinted surface |
-| Accent | `--accent` | `oklch(0.988 0.008 79.439)` | Warm cream — sidebar, highlights |
-| Sidebar | `--sidebar` | `oklch(0.988 0.008 79.439)` | Warm cream — matches accent |
-| Border | `--border` | `oklch(0.922 0.003 106.423)` | Subtle, warm-tinted |
-| Success | `--success` | `oklch(0.52 0.15 160)` | Green |
-| Warning | `--warning` | `oklch(0.75 0.16 70)` | Amber |
-| Destructive | `--destructive` | `oklch(0.608 0.227 27.325)` | Red |
-| Info | `--info` | `oklch(0.55 0.15 250)` | Info blue |
+| Background | `--background` | `oklch(0.973 0.007 85)` | Warm paper (~`#F7F5F0`) |
+| Foreground | `--foreground` | `oklch(0.21 0.015 260)` | Ink |
+| Card | `--card` | `oklch(0.988 0.004 85)` | Slightly lighter paper |
+| Primary | `--primary` | `oklch(0.282 0.09 252)` | Brand navy `#1A3D6B` |
+| Secondary | `--secondary` | `oklch(0.42 0.1 252)` | Lighter navy |
+| Muted | `--muted` | `oklch(0.945 0.011 85)` | Darker paper band |
+| Muted text | `--muted-foreground` | `oklch(0.47 0.02 70)` | Warm grey, AA on paper |
+| Accent | `--accent` | `oklch(0.93 0.014 85)` | Hover wash |
+| Border | `--border` | `oklch(0.87 0.018 85)` | Warm hairline |
+| Sidebar | `--sidebar` | `oklch(0.282 0.09 252)` | Navy spine |
+| Sidebar marker | `--sidebar-primary` | `oklch(0.71 0.105 88)` | Credential gold rule on the active item |
 
-**Brand navy** (Tracom logo color): `#1A3D6B` ≈ `oklch(0.282 0.09 252)`. Not yet a CSS token. Avoid hardcoding — add as `--brand-navy` or map to `--secondary`.
+### Dark mode ("night record")
 
-### Dark Mode
-
-Background: `oklch(0.188 0.013 257.128)` — deep blue-dark. This is well-tinted toward the brand.
-
-Primary shifts from `0.546` to `0.68` in dark mode — correct lightness boost.
+Navy-charcoal paper (`--background: oklch(0.19 0.02 255)`), warm off-white ink (`oklch(0.93 0.012 85)`), primary navy lightened to `oklch(0.78 0.08 252)` with dark text on it. The spine goes darker than the page (`oklch(0.155 0.03 255)`).
 
 ---
 
@@ -42,6 +36,7 @@ Primary shifts from `0.546` to `0.68` in dark mode — correct lightness boost.
 
 | Role | Font | Weights | Notes |
 |------|------|---------|-------|
+| Serif (titles, names) | Newsreader | 400, 500 | `--font-newsreader` → `font-serif`. Page titles, people's aliases, course and credential names. Nothing else. |
 | Sans (body, UI) | Inter | 300, 400, 500, 600, 700, 800 | `--font-inter` via Next.js |
 | Mono (code, addresses, hashes) | Geist Mono | default | `--font-geist-mono` |
 
@@ -78,14 +73,7 @@ Base unit: `0.25rem` (4px). All spacing follows Tailwind scale.
 
 ## Radius
 
-Base: `0.5rem` (8px).
-
-| Token | Value | Usage |
-|-------|-------|-------|
-| `rounded-sm` | 4px | Tags, badges |
-| `rounded-md` | 6px | Inputs, small buttons |
-| `rounded-lg` | 8px | Cards (default) |
-| `rounded-xl` | 12px | Large feature cards |
+Base: `0.25rem` (4px). Square, like paper. `rounded-sm` (2px) for banners and rows, `rounded-lg` (4px) for cards.
 
 ---
 
@@ -106,13 +94,34 @@ Reduced motion is handled globally via `@media (prefers-reduced-motion: reduce)`
 
 ## Elevation / Shadows
 
-Cards use a minimal double shadow: `0 1px 3px / 0 1px 2px -1px` at 4% opacity (nearly invisible, just enough depth).
+Record pages separate content with rules, not boxes or shadows.
 
 No large drop shadows. No glassmorphism. Depth is expressed through background color difference (card vs. muted vs. sidebar), not elevation.
 
 ---
 
 ## Components
+
+### Record building blocks
+
+The Record redesign (spec: `docs/superpowers/specs/2026-10-06-record-redesign-design.md`) adds:
+
+| Component | Use |
+|-----------|-----|
+| `AndamioRecordHeader` | Every page heading: small-caps label, serif title, meta line, navy rule |
+| `AndamioSectionLabel` | Small-caps navy label for a section |
+| `AndamioLedger` / `AndamioLedgerRow` | Ruled lists instead of card grids; `AndamioLedgerEmpty`, `AndamioLedgerSkeleton` for states |
+| `AndamioNextStep` | Navy banner with the single next action |
+| `AndamioPathTimeline` | Milestones, filled when done, hollow when to come |
+| `AndamioRecordLayout` / `AndamioRecordSection` | Main column plus margin column; margin drops below under 1024px |
+
+**Rules for every page:**
+- Start with `AndamioRecordHeader`.
+- Lists are ledgers, not card grids. Cards only for real objects, such as a credential.
+- Secondary information goes in the margin column when the page is wide enough.
+- Status is written in words; colour only supports it.
+- Serif only for names of people, courses and credentials.
+- Semantic tokens only.
 
 ### Button
 
@@ -155,7 +164,7 @@ Four patterns used in this app:
 | Master-Detail | Course Studio | List panel + preview panel |
 | Wizard | Module Editor | Outline panel + step content |
 
-Sidebar background: warm cream (`--sidebar`). App content area: white (`--background`).
+Sidebar: the navy spine (`--sidebar`), serif wordmark, small-caps index groups (Record, Catalogue, Studio), active item marked by a gold rule. App content area: paper (`--background`). There is no top status bar; phones get a slim paper top bar with the menu.
 
 ---
 
